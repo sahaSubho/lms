@@ -1,0 +1,46 @@
+export const filterItems = [
+  { id: 1, name: "Strategy (2)", key: 1 },
+  { id: 2, name: "Tactical Patterns (2)", key: 2 },
+  { id: 3, name: "Opening (4)", key: 3 },
+  { id: 3, name: "Endgame (2)", key: 4 },
+  { id: 3, name: "Calculation (2)", key: 5 },
+];
+
+export const learningCourses = [
+  {
+    id: 1,
+    title: "Improve your Opening game play by 20%",
+    booksCount: 15,
+    puzzlesCount: 15,
+    studentsCount: 15,
+    videosCount: 15,
+    chaptersCount: 15,
+    badges: ["lifetime-access", "verified-circlechess"],
+    price: 299,
+    // percentageDetails: { from: number, to: number },
+  },
+  {
+    id: 1,
+    title: "Improve your Opening game play by 20%",
+    booksCount: 15,
+    puzzlesCount: 15,
+    studentsCount: 15,
+    videosCount: 15,
+    chaptersCount: 15,
+    badges: ["lifetime-access", "verified-circlechess"],
+    price: 299,
+    // percentageDetails: { from: number, to: number },
+  },
+  {
+    id: 1,
+    title: "Improve your Opening game play by 20%",
+    booksCount: 15,
+    puzzlesCount: 15,
+    studentsCount: 15,
+    videosCount: 15,
+    chaptersCount: 15,
+    badges: ["lifetime-access", "verified-circlechess"],
+    price: 299,
+    // percentageDetails: { from: number, to: number },
+  },
+];
