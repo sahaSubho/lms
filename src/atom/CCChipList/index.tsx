@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from "react";
 import CCText from "../CCText";
 
-type chipItem = {
+export type chipItem = {
   id: number;
-  name: string;
+  name: string | JSX.Element;
   key: string | number;
 };
 
@@ -37,13 +37,13 @@ function CCChipList(props: CCChipListProps) {
           className={`border-2 border-grey px-[12px] py-[6px] rounded-lg 
             ${
               selected?.key === i?.key
-                ? "bg-brand-lightYellow"
+                ? "bg-brand-lightYellow border-brown"
                 : "transition-transform transform  hover:drop-shadow bg-white"
             }
             `}
           onClick={() => handleChipClick(i)}
         >
-          <CCText className="text-sm">{i?.name}</CCText>
+          <CCText className="text-sm flex">{i?.name}</CCText>
         </button>
       ))}
     </div>

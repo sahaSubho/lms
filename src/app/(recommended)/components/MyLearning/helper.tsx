@@ -1,0 +1,34 @@
+export const myLearningData = [
+  {
+    completedPercentage: 40,
+    title: "1001 Chess Exercises for Beginners",
+    chapterNumber: 1,
+    subTitle: "Pawn Placement",
+    points: 50,
+    // bookImg: ,
+  },
+  {
+    completedPercentage: 40,
+    title: "1001 Chess Exercises for Beginners",
+    chapterNumber: 1,
+    subTitle: "Pawn Placement",
+    points: 50,
+    // bookImg: ,
+  },
+  {
+    completedPercentage: 40,
+    title: "1001 Chess Exercises for Beginners",
+    chapterNumber: 1,
+    subTitle: "Pawn Placement",
+    points: 50,
+    // bookImg: ,
+  },
+  {
+    completedPercentage: 40,
+    title: "1001 Chess Exercises for Beginners",
+    chapterNumber: 1,
+    subTitle: "Pawn Placement",
+    points: 50,
+    // bookImg: ,
+  },
+];

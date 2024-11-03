@@ -5,7 +5,7 @@ import circlechessLogo from "@/assets/logos/cc-logo-full.png";
 
 function Header() {
   return (
-    <header className="sticky top-0">
+    <header className="sticky top-0 z-10">
       <div className="bg-white w-full p-2.5 flex justify-between">
         <div style={{ width: "12%" }}>
           <Image

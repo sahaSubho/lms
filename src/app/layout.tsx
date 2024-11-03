@@ -3,16 +3,22 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Header from "@/components/Header";
 import LeftMenu from "@/components/LeftMenu";
+import { DM_Sans } from "@next/font/google";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+// const geistSans = localFont({
+//   src: "./fonts/GeistVF.woff",
+//   variable: "--font-geist-sans",
+//   weight: "100 900",
+// });
+// const geistMono = localFont({
+//   src: "./fonts/GeistMonoVF.woff",
+//   variable: "--font-geist-mono",
+//   weight: "100 900",
+// });
+const dmSans = DM_Sans({
+  subsets: ["latin"], // Specify the subset you want to load
+  weight: ["400", "500", "700"], // Optional: load specific font weights
+  style: ["normal", "italic"], // Optional: load specific font styles
 });
 
 export const metadata: Metadata = {
@@ -27,9 +33,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${dmSans.className} `}>
         <Header />
         <LeftMenu />
         <div style={{ marginLeft: 68 }}>

@@ -6,6 +6,8 @@ import TabRecommenedIcon from "@/assets/explore/expore-tab-recommended.svg";
 import TabSearchIcon from "@/assets/explore/explore-tab-search.svg";
 import TabTimerIcon from "@/assets/explore/explore-tab-timer.svg";
 import RecommendedSection from "./components/RecommendedSection";
+import MyLearning from "./components/MyLearning";
+import ExploreCources from "./components/ExploreCourses";
 
 export default async function Home() {
   const tabs = [
@@ -17,12 +19,12 @@ export default async function Home() {
     {
       name: "My Learnings",
       icon: <Image alt="icon" src={TabTimerIcon} width={35} height={35} />,
-      content: <CCText>Here are your Settings</CCText>,
+      content: <MyLearning />,
     },
     {
       name: "Explore Courses",
       icon: <Image alt="icon" src={TabSearchIcon} width={35} height={35} />,
-      content: <CCText>This is your Profile</CCText>,
+      content: <ExploreCources />,
     },
   ];
   return (

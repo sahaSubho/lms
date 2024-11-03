@@ -25,3 +25,7 @@ body {
     text-wrap: balance;
   }
 }
+
+.font-thunder {
+  font-family: var(--font-thunder), sans-serif;
+}
