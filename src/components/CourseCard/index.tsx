@@ -7,7 +7,9 @@ import { FiClock } from "react-icons/fi";
 import CCDivider from "@/atom/CCDivider";
 import CCButton from "@/atom/CCButton";
 import { badges, Badges } from "../ExploreCards";
-import { formatCurrency } from "@/utils/commonUtils";
+import { formatCurrency, getRandomBookUrl } from "@/utils/commonUtils";
+// import { bookDetails } from "@/app/book/[bookKey]/helper";
+import Image from "next/image";
 
 type CourseCardProp = {
   title: string;
@@ -18,6 +20,8 @@ type CourseCardProp = {
   price: number;
   mrp: number;
   onClick?: (a: unknown) => void;
+  handleBuy?: (a: unknown, alreadyBought: boolean) => void;
+
   rating?: number;
   badges?: badges[];
   cardClassName?: string;
@@ -53,10 +57,14 @@ function CourseCard(props: CourseCardProp) {
     rating = 5,
     badges,
     cardClassName,
+    alreadyBought,
+    handleBuy,
   } = props;
+  const randomBookUrl = getRandomBookUrl();
+
   return (
     <div
-      className={`flex flex-col rounded-lg border border-grey w-80 h-[500px] my-5 ${
+      className={`flex flex-col rounded-lg border border-grey w-72 h-[500px] my-5 ${
         cardClassName && cardClassName
       }`}
     >
@@ -69,6 +77,17 @@ function CourseCard(props: CourseCardProp) {
         </div>
         <div className="absolute top-0 right-0  ">
           <NewTag />
+        </div>
+        <div className="w-8/12 m-auto">
+          <Image
+            src={randomBookUrl} // Dynamic image URL
+            alt="Random Book Cover"
+            // className="w-full"
+            layout="responsive"
+            width={100} // Set the desired width
+            height={200} // Set the desired height
+            priority // Optional: ensures the image loads quickly
+          />
         </div>
       </div>
       <div className="flex-[0.45]">
@@ -115,7 +134,14 @@ function CourseCard(props: CourseCardProp) {
               <>MRP: {formatCurrency(mrp)}</>
             </CCText>
           </div>
-          <CCButton>Buy Now</CCButton>
+          <CCButton
+            onClick={() => {
+              onClick?.(courseKey);
+              handleBuy?.(courseKey, alreadyBought);
+            }}
+          >
+            {alreadyBought ? "Resume" : "Buy Now"}
+          </CCButton>
         </div>
       </div>
     </div>

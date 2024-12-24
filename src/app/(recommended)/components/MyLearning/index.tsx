@@ -1,23 +1,36 @@
+"use client";
 import CCText from "@/atom/CCText";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import EmptyList from "@/atom/EmptyList";
 import EachLearningCard from "./Components/EachLearningCard";
-import { myLearningData } from "./helper";
+// import { myLearningData } from "./helper";
+import { useGetAllRegisterCourses } from "@/APIHooks/GetAllRegisterCourses/useGetAllRegisterCourses";
+import EachLearningCardSkeleton from "./Components/EachLearningCard/loading";
 
 function MyLearning() {
+  const { data: courses, isLoading, error } = useGetAllRegisterCourses();
+
   const isListEmpty = useMemo(
-    () => myLearningData?.length === 0,
+    () => courses?.length === 0,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [myLearningData]
+    [courses]
   );
+
   return (
     <div>
       <CCText className="text-lg font-medium">My Learnings</CCText>
+      {isLoading && (
+        <>
+          <EachLearningCardSkeleton />
+          <EachLearningCardSkeleton />
+          <EachLearningCardSkeleton />
+        </>
+      )}
       {isListEmpty ? (
         <EmptyList />
       ) : (
         <>
-          {myLearningData?.map((i, index) => (
+          {courses?.map((i, index) => (
             <div key={index}>
               <EachLearningCard {...i} />
             </div>

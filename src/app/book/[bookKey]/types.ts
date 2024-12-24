@@ -48,8 +48,8 @@ export interface BookDetails {
   mrp: number;
   rating: number;
   badges: string[];
-  courseIncludes: CourseInclude[];
-  WhatYouLearn: string[];
+  course_include: CourseInclude[];
+  what_you_learn: string[];
   CourseContent: CourseContent[];
   CourseRating: CourseRating;
   FAQContent: faq[];

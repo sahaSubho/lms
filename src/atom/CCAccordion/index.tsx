@@ -24,7 +24,7 @@ const CCAccordion: React.FC<CCAccordionProps> = ({ sections }) => {
 
   return (
     <div className="space-y-5">
-      {sections.map((section, index) => (
+      {sections?.map((section, index) => (
         <>
           <div key={index} className="overflow-hidden ">
             {/* CCAccordion Header */}
@@ -33,7 +33,7 @@ const CCAccordion: React.FC<CCAccordionProps> = ({ sections }) => {
               onClick={() => toggleCCAccordion(index)}
             >
               <CCText className="font-medium text-lg cursor-pointer">
-                {section.heading}
+                {section?.heading}
               </CCText>
               {openIndex === index ? (
                 <FaAngleUp

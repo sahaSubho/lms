@@ -1,4 +1,3 @@
-import CCCard from "@/atom/CCCard";
 import CCText from "@/atom/CCText";
 import Spacer from "@/atom/Spacer";
 import React, { useMemo } from "react";

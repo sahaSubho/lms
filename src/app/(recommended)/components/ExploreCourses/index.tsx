@@ -1,28 +1,32 @@
 "use client";
-import CCText from "@/atom/CCText";
-import CourseCard from "@/components/CourseCard";
 import React, { useState } from "react";
-import { AllCourses } from "./helper";
+import CourseCard from "@/components/CourseCard";
+import CCText from "@/atom/CCText";
 import CCInput from "@/atom/CCInput";
 import { IoIosSearch } from "react-icons/io";
-import CCButton from "@/atom/CCButton";
 import { HiOutlineFilter } from "react-icons/hi";
 import CCModal from "@/atom/CCModal";
 import CCAccordion from "@/atom/CCAccordion";
 import Spacer from "@/atom/Spacer";
 import { useRouter } from "next/navigation";
+import { useGetAllCourses } from "@/APIHooks/AllCoursesApi/useGetAllCourses";
+import CourseCardShimmer from "@/components/CourseCard/loading";
 
 function ExploreCourses() {
   const [openFilter, setOpenFilter] = useState(false);
   const router = useRouter();
+  const { data: courses, isLoading, error } = useGetAllCourses();
 
   const handleFilterOpen = () => {
     setOpenFilter((prev) => !prev);
   };
 
-  const handleCourseClick = (courseKey: unknown) => {
+  const handleCourseClick = (courseKey: string) => {
     router.push(`/book/${courseKey}`);
   };
+
+  if (error) return <CCText>Error loading courses: {error}</CCText>;
+
   return (
     <div>
       <div className="flex justify-between items-center">
@@ -41,10 +45,28 @@ function ExploreCourses() {
       </div>
 
       <div className="flex flex-wrap gap-10">
-        {AllCourses?.map((i) => (
-          <CourseCard {...i} onClick={handleCourseClick} />
-        ))}
+        {isLoading && (
+          <>
+            <CourseCardShimmer />
+            <CourseCardShimmer />
+            <CourseCardShimmer />
+            <CourseCardShimmer />
+            <CourseCardShimmer />
+            <CourseCardShimmer />
+            <CourseCardShimmer />
+          </>
+        )}
+        {courses
+          ?.filter((i) => !i?.already_bought)
+          ?.map((course) => (
+            <CourseCard
+              key={course?.courseKey}
+              {...course}
+              onClick={() => handleCourseClick(course.courseKey)}
+            />
+          ))}
       </div>
+
       <CCModal
         header="Filter by"
         isOpen={openFilter}

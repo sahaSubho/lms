@@ -1,4 +1,4 @@
-"use client"; // If you're using the App Router in Next.js
+"use client";
 
 import React, { useState } from "react";
 import Image from "next/image";
@@ -16,7 +16,11 @@ interface TabsProps {
 }
 
 const CCTabs: React.FC<TabsProps> = ({ tabs }) => {
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState<number>(1); // Manage active tab here
+
+  const handleTabClick = (index: number) => {
+    setActiveTab(index);
+  };
 
   return (
     <div className="w-full">
@@ -24,9 +28,9 @@ const CCTabs: React.FC<TabsProps> = ({ tabs }) => {
         <div className="flex justify-evenly border-2 border-solid border-custom-border w-11/12 rounded-lg bg-white">
           {tabs?.map((tab, index) => (
             <button
-              style={{ flexBasis: `${100 / tabs?.length}%` }}
               key={index}
-              onClick={() => setActiveTab(index)}
+              style={{ flexBasis: `${100 / tabs.length}%` }}
+              onClick={() => handleTabClick(index)}
               className={`flex justify-between items-center text-gray-600 focus:outline-none ${
                 activeTab === index
                   ? "bg-brand-orange text-white"
@@ -63,7 +67,7 @@ const CCTabs: React.FC<TabsProps> = ({ tabs }) => {
         </div>
       </div>
 
-      {/* Tab Content */}
+      {/* Render the active tab's content */}
       <div className="w-11/12 m-auto mt-8">{tabs?.[activeTab]?.content}</div>
     </div>
   );

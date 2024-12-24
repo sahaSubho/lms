@@ -20,26 +20,25 @@ function CourseIncludes({ bookDetails }: { bookDetails: BookDetails }) {
 
       {/* Render the course includes with icons */}
       <div className="grid grid-cols-2 gap-2">
-        {bookDetails?.courseIncludes?.map((course) => {
+        {bookDetails?.course_include?.map((course) => {
           // Check if the icon is a string (for react-icons) or an imported SVG
-          const IconElement =
-            typeof course?.icon === "string" ? (
-              <DynamicIcon
-                icon={course?.icon}
-                // color="currentColor"
-                size="22px"
-                className="text-textColor-default"
-                fallback={<div>...</div>}
-              />
-            ) : (
-              <Image
-                src={course?.icon || ""}
-                alt={course?.description || ""}
-                width={22}
-                height={22}
-                className="text-textColor-default"
-              />
-            );
+          const IconElement = !course?.icon?.includes("https") ? (
+            <DynamicIcon
+              icon={course?.icon}
+              // color="currentColor"
+              size="22px"
+              className="text-textColor-default"
+              fallback={<div>...</div>}
+            />
+          ) : (
+            <Image
+              src={course?.icon || ""}
+              alt={course?.description || ""}
+              width={22}
+              height={22}
+              className="text-textColor-default"
+            />
+          );
 
           return (
             <div key={course?.id} className="p-2 flex items-center gap-2">

@@ -20,6 +20,7 @@ const config: Config = {
         white: "#FFFFFF",
         textColor: {
           default: "#4D3F37",
+          DEFAULT: "#4D3F37",
           lightBrown: "#4D3F37CC",
           yellow: "#FACF47",
           grey: "#676564",

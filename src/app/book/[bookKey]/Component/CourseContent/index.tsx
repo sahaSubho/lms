@@ -2,7 +2,6 @@ import CCText from "@/atom/CCText";
 import Spacer from "@/atom/Spacer";
 import React, { useMemo, useState } from "react";
 import { BookDetails, chapterDetails } from "../../types";
-import CCExpandableCard from "@/atom/CCExpandableCard";
 import { TbNotes } from "react-icons/tb";
 import CCChipList, { chipItem } from "@/atom/CCChipList";
 import { FiBook } from "react-icons/fi";
@@ -14,13 +13,16 @@ type SelectedDayType = chipItem & {
   chapters: chapterDetails[];
 };
 
-function CourseContent({ bookDetails }: { bookDetails: BookDetails }) {
+function CourseContent({
+  bookDetails,
+  isCoursePage,
+}: {
+  bookDetails: BookDetails;
+  isCoursePage: Boolean;
+}) {
   const [selectedDay, setSelectedDay] = useState<SelectedDayType | null>(null);
 
-  const courseContent = useMemo(
-    () => bookDetails?.CourseContent,
-    [bookDetails]
-  );
+  const courseContent = useMemo(() => bookDetails?.chapters, [bookDetails]);
 
   const courseDays = useMemo(() => {
     const refactoredDays = bookDetails?.CourseContent?.map((i) => ({
@@ -47,30 +49,36 @@ function CourseContent({ bookDetails }: { bookDetails: BookDetails }) {
         <CCChipList items={courseDays} onChange={(e) => setSelectedDay(e)} />
       </div>
       <>
-        {selectedDay?.chapters?.map((i) => (
-          <>
-            <Spacer spacing={20} />
-            <div className="flex justify-between items-start gap-5">
-              <div className="flex-[0.9] flex justify-start items-start gap-5">
-                <FiBook className="text-textColor-default mt-1" size={20} />
-                <div className=" flex-col justify-start items-start">
-                  <CCText className="text-base">{`${i?.id}. Chapter ${i?.id} - ${i?.title}`}</CCText>
-                  <CCText className="flex text-textColor-lightBrown">
-                    <CCText className="text-base text-white">
-                      {`${i?.id}.`}&nbsp;
-                    </CCText>
-                    {i?.subTitle}
-                  </CCText>
+        {(isCoursePage ? courseContent : selectedDay?.chapters)?.map(
+          (i, index) => (
+            <>
+              <Spacer spacing={20} />
+              <div className="flex justify-between items-start gap-5">
+                <div className="flex-[0.9] flex justify-start items-start gap-5">
+                  <FiBook className="text-textColor-default mt-1" size={20} />
+                  <div className=" flex-col justify-start items-start">
+                    <CCText className="text-base">{`${
+                      i?.id || index + 1
+                    }. Chapter ${i?.id || index + 1} - ${i?.title}`}</CCText>
+                    {i?.sub_title && (
+                      <CCText className="flex text-textColor-lightBrown">
+                        <CCText className="text-base text-white">
+                          {`${i?.id || index + 1}.`}&nbsp;
+                        </CCText>
+                        {i?.sub_title}
+                      </CCText>
+                    )}
+                  </div>
+                </div>
+                <div className="flex-[0.1]">
+                  <CCText>{formatSecondsToTime(i?.time_required)}</CCText>
                 </div>
               </div>
-              <div className="flex-[0.1]">
-                <CCText>{formatSecondsToTime(i?.time)}</CCText>
-              </div>
-            </div>
-            <Spacer spacing={20} />
-            <CCDivider />
-          </>
-        ))}
+              <Spacer spacing={20} />
+              <CCDivider />
+            </>
+          )
+        )}
       </>
       {/* <div className="grid grid-cols-2 gap-2">
         {bookDetails?.CourseContent?.map((learnDetail, index) => {

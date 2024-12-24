@@ -1,10 +1,14 @@
+"use client";
 import CCButton from "@/atom/CCButton";
 import CCCard from "@/atom/CCCard";
 import CCCoin from "@/atom/CCCoin";
 import CCProgressBar from "@/atom/CCProgressBar";
 import CCText from "@/atom/CCText";
 import Spacer from "@/atom/Spacer";
+import { getRandomBookUrl } from "@/utils/commonUtils";
+import { useRouter } from "next/navigation";
 import React from "react";
+import Image from "next/image";
 
 type EachLearningCardProp = {
   completedPercentage: number;
@@ -13,6 +17,8 @@ type EachLearningCardProp = {
   subTitle: string;
   points: number;
   bookImg?: string | JSX.Element;
+  learningKey?: string;
+  courseKey?: string;
 };
 
 function EachLearningCard(props: EachLearningCardProp) {
@@ -24,12 +30,31 @@ function EachLearningCard(props: EachLearningCardProp) {
     points,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     bookImg,
+    // learningKey,
+    courseKey,
   } = props;
+  const router = useRouter();
+
+  const handleResume = () => {
+    router.push(`learning/${courseKey}`);
+  };
+  const randomBookUrl = getRandomBookUrl();
+
   return (
     <div>
       <CCCard className="gap-5 h-28">
         <div className="flex-[0.1] flex justify-center items-center bg-gradient-to-b from-white to-brand-lightYellow">
-          <CCText>img</CCText>
+          <div className="w-full m-auto">
+            <Image
+              src={randomBookUrl} // Dynamic image URL
+              alt="Random Book Cover"
+              // className="w-full"
+              layout="responsive"
+              width={50} // Set the desired width
+              height={60} // Set the desired height
+              priority // Optional: ensures the image loads quickly
+            />
+          </div>
         </div>
         <div className="flex-[0.9] flex justify-between items-center">
           <div className="flex-col justify-center items-center flex-[0.5]">
@@ -42,7 +67,7 @@ function EachLearningCard(props: EachLearningCardProp) {
                 </CCText>
               </div>
               <Spacer spacing={8} horizontal />
-              <CCText className="flex justify-start items-center">
+              <CCText className="flex justify-start items-center" lines={1}>
                 <>
                   {subTitle} (&nbsp;
                   <CCCoin />
@@ -54,10 +79,12 @@ function EachLearningCard(props: EachLearningCardProp) {
           <div className="flex-[0.3] flex flex-col justify-end items-end w-3/12">
             <CCProgressBar percentage={completedPercentage} />
             <Spacer spacing={6} />
-            <CCText>{`${completedPercentage}`}% complete</CCText>
+            <CCText>{`${completedPercentage?.toFixed(0)}`}% complete</CCText>
           </div>
           <div className="flex-[0.2] flex justify-center">
-            <CCButton>Resume</CCButton>
+            <CCButton onClick={handleResume}>
+              {completedPercentage?.toFixed(0) > 0 ? "Resume" : "Start"}
+            </CCButton>
           </div>
         </div>
       </CCCard>

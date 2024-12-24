@@ -2,19 +2,9 @@ import CCText from "@/atom/CCText";
 import Spacer from "@/atom/Spacer";
 import React, { useMemo, useState } from "react";
 import { BookDetails, chapterDetails } from "../../types";
-import CCExpandableCard from "@/atom/CCExpandableCard";
-import { TbNotes } from "react-icons/tb";
-import CCChipList, { chipItem } from "@/atom/CCChipList";
-import { FiBook } from "react-icons/fi";
-import CCDivider from "@/atom/CCDivider";
 import CCCard from "@/atom/CCCard";
-import { formatSecondsToTime } from "@/utils/commonUtils";
 import { RiQuestionnaireLine } from "react-icons/ri";
 import CCAccordion from "@/atom/CCAccordion";
-
-type SelectedDayType = chipItem & {
-  chapters: chapterDetails[];
-};
 
 function FAQContent({ bookDetails }: { bookDetails: BookDetails }) {
   const FAQContent = useMemo(

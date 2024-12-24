@@ -1,11 +1,7 @@
-import CCCard from "@/atom/CCCard";
 import CCText from "@/atom/CCText";
 import Spacer from "@/atom/Spacer";
-import DynamicIcon from "@/utils/DynamicIcon";
 import React from "react";
-import { LiaBookMedicalSolid } from "react-icons/lia";
 import { BookDetails } from "../../types";
-import Image from "next/image";
 import { HiOutlineLightBulb } from "react-icons/hi";
 import { FaCheck } from "react-icons/fa6";
 import CCExpandableCard from "@/atom/CCExpandableCard";
@@ -22,7 +18,7 @@ function WhatYouLearn({ bookDetails }: { bookDetails: BookDetails }) {
       <Spacer spacing={20} />
 
       <div className="grid grid-cols-2 gap-2">
-        {bookDetails?.WhatYouLearn?.map((learnDetail, index) => {
+        {bookDetails?.what_you_learn?.map((learnDetail, index) => {
           return (
             <div key={index} className="p-2 flex items-start gap-2">
               <div className="p-2 flex justify-center items-center rounded-full bg-brand-aqua-lighter">

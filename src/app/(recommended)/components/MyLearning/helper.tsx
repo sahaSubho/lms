@@ -5,6 +5,7 @@ export const myLearningData = [
     chapterNumber: 1,
     subTitle: "Pawn Placement",
     points: 50,
+    learningKey: "234",
     // bookImg: ,
   },
   {
@@ -13,6 +14,7 @@ export const myLearningData = [
     chapterNumber: 1,
     subTitle: "Pawn Placement",
     points: 50,
+    learningKey: "234",
     // bookImg: ,
   },
   {
@@ -21,6 +23,7 @@ export const myLearningData = [
     chapterNumber: 1,
     subTitle: "Pawn Placement",
     points: 50,
+    learningKey: "234",
     // bookImg: ,
   },
   {
@@ -29,6 +32,7 @@ export const myLearningData = [
     chapterNumber: 1,
     subTitle: "Pawn Placement",
     points: 50,
+    learningKey: "234",
     // bookImg: ,
   },
 ];

@@ -14,6 +14,7 @@ type CCTextProp = {
   style?: React.CSSProperties;
   lines?: number; // Optional number of lines to display when truncated
   fontFamily?: "thunder" | "dm-sans";
+  isLineExpandable?: boolean;
 };
 
 export const thunderFont = localFont({
@@ -26,12 +27,14 @@ function CCText({
   className = "",
   style,
   fontFamily = "dm-sans",
+  isLineExpandable = true,
   ...rest
 }: CCTextProp) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Toggle between expanded and collapsed states
-  const toggleExpand = () => setIsExpanded(!isExpanded);
+  const toggleExpand = () =>
+    setIsExpanded(isLineExpandable ? !isExpanded : false);
   const isFontThunder = useMemo(() => fontFamily === "thunder", [fontFamily]);
   return (
     <div

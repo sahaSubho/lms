@@ -1,3 +1,4 @@
+import { Chess } from "chess.js";
 import Image, { StaticImageData } from "next/image";
 import { IconType } from "react-icons"; // Type for icons
 
@@ -113,3 +114,34 @@ export function getRelativeTime(pastDate: Date | string): string {
 //   console.error(`Invalid icon format: ${icon}`);
 //   return null;
 // };
+
+export function getRandomBookUrl(index?: number) {
+  const urls = [
+    "https://cc-home.s3.ap-south-1.amazonaws.com/LMS/sample-book-imgs/book1-removebg-preview.png",
+    "https://cc-home.s3.ap-south-1.amazonaws.com/LMS/sample-book-imgs/book2-removebg-preview.png",
+    "https://cc-home.s3.ap-south-1.amazonaws.com/LMS/sample-book-imgs/book3-removebg-preview.png",
+    "https://cc-home.s3.ap-south-1.amazonaws.com/LMS/sample-book-imgs/book4-removebg-preview.png",
+  ];
+
+  const randomIndex = Math.floor(Math.random() * urls.length);
+  return urls[index || randomIndex];
+}
+
+export function applyMoveAndGetNewFEN(
+  previousFEN: string,
+  sanMove: string
+): string {
+  // Create a new chess instance with the given FEN
+  const chess = new Chess(previousFEN);
+
+  // Apply the move in SAN notation
+  const move = chess.move(sanMove);
+
+  if (move === null) {
+    console.error("Invalid move");
+    return previousFEN;
+  }
+
+  // Return the updated FEN after the move
+  return chess.fen();
+}
