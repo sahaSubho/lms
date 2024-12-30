@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  productionBrowserSourceMaps: false,
+  // productionBrowserSourceMaps: false,
   // swcMinify: false,
   images: {
     domains: ["fastly.picsum.photos", "cc-home.s3.ap-south-1.amazonaws.com"], // Add the external domain here
