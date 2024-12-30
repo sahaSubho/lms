@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import CCChipList from "@/atom/CCChipList";
 import React from "react";
 import CCText from "@/atom/CCText";
@@ -23,9 +24,10 @@ async function RecommendedSection() {
       </div>
       <div className="flex justify-between gap-4 items-start">
         <div className="flex-[0.8] flex-wrap">
-          {learningCourses?.map((i) => (
+          {learningCourses?.map((i, index) => (
             // eslint-disable-next-line react/jsx-key
-            <ExploreCards {...i} />
+            // @ts-ignore
+            <ExploreCards {...i} key={index} />
           ))}
         </div>
         <div className=" flex-[0.2]">

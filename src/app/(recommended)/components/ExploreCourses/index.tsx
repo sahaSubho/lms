@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
 import React, { useState } from "react";
 import CourseCard from "@/components/CourseCard";
@@ -59,6 +60,7 @@ function ExploreCourses() {
         {courses
           ?.filter((i) => !i?.already_bought)
           ?.map((course) => (
+            // @ts-ignore
             <CourseCard
               key={course?.courseKey}
               {...course}

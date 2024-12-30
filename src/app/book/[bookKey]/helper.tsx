@@ -9,7 +9,7 @@ export const bookDetails: BookDetails = {
   mrp: 1250,
   rating: 3.5,
   badges: ["lifetime-access", "verified-circlechess"],
-  courseIncludes: [
+  course_include: [
     { id: 1, icon: "lu/LuPlayCircle", description: "6 hours on-demand video" },
     { id: 2, icon: "lu/LuBookCopy", description: "25 chapters" },
     { id: 3, icon: "lu/LuPuzzle", description: "25 top level puzzles" },
@@ -21,7 +21,7 @@ export const bookDetails: BookDetails = {
       description: "Access on Mobile and Computer",
     },
   ],
-  WhatYouLearn: [
+  what_you_learn: [
     "Learn advanced Python features, like the collections module and how to work.",
     "Learn advanced Python features, like the collections module and how to work.",
     "Learn advanced Python features, like the collections module and how to work.",

@@ -1,6 +1,6 @@
 "use client";
 import CCText from "@/atom/CCText";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import EmptyList from "@/atom/EmptyList";
 import EachLearningCard from "./Components/EachLearningCard";
 // import { myLearningData } from "./helper";
@@ -8,7 +8,7 @@ import { useGetAllRegisterCourses } from "@/APIHooks/GetAllRegisterCourses/useGe
 import EachLearningCardSkeleton from "./Components/EachLearningCard/loading";
 
 function MyLearning() {
-  const { data: courses, isLoading, error } = useGetAllRegisterCourses();
+  const { data: courses, isLoading } = useGetAllRegisterCourses();
 
   const isListEmpty = useMemo(
     () => courses?.length === 0,

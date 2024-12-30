@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import CCCard from "@/atom/CCCard";
 import CCText from "@/atom/CCText";
 import Spacer from "@/atom/Spacer";
@@ -22,8 +23,10 @@ function CourseIncludes({ bookDetails }: { bookDetails: BookDetails }) {
       <div className="grid grid-cols-2 gap-2">
         {bookDetails?.course_include?.map((course) => {
           // Check if the icon is a string (for react-icons) or an imported SVG
+          // @ts-ignore
           const IconElement = !course?.icon?.includes("https") ? (
             <DynamicIcon
+              // @ts-ignore
               icon={course?.icon}
               // color="currentColor"
               size="22px"

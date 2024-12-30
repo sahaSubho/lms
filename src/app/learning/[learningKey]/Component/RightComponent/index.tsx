@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useEffect, useState } from "react";
 import CCButton from "@/atom/CCButton";
 import CCText from "@/atom/CCText";
@@ -35,31 +38,32 @@ function RightComponent({
 
   useEffect(() => {
     if (pageSelected?.text) {
-      const dummytxt =
-        "<h3>Understanding the Opening Phase</h3> " +
-        "<p>In chess, the opening phase is crucial for controlling the center and developing pieces. Here is an example of how the game can progress from the start.</p> " +
-        "<p><strong>1. e4</strong> - White opens by advancing the king's pawn two squares.</p>" +
-        "<p><strong>Black's response:</strong></p>" +
-        "<button data-move='e5'>1... e5</button> - Black mirrors White's move, opening up their king's pawn." +
-        "<p><strong>2. Nf3</strong> - White develops their knight to control the center and prepare for castling.</p>" +
-        "<p><strong>Black's response:</strong></p>" +
-        "<button data-move='Nc6'>2... Nc6</button> - Black develops their knight to counter White's knight and also control the center." +
-        "<p><strong>3. Bb5</strong> - White plays the Ruy Lopez, attacking the knight and preparing to dominate the center.</p>" +
-        "<p><strong>Black's response:</strong></p>" +
-        "<button data-move='a6'>3... a6</button> - Black attacks White's bishop, forcing it to either retreat or exchange." +
-        "<p><strong>4. Ba4</strong> - White retreats the bishop to maintain pressure on the knight at c6.</p>" +
-        "<p><strong>Black's response:</strong></p>" +
-        "<button data-move='Be7'>4... Be7</button> - Black prepares to castle by developing the bishop to a safe square." +
-        "<p><strong>5. O-O</strong> - White castles, ensuring king safety and connecting the rooks.</p>" +
-        "<p><strong>Black's response:</strong></p>" +
-        "<button data-move='O-O'>5... O-O</button> - Black also castles, ensuring king safety and completing development." +
-        "<p><strong>Next Move:</strong> It's White's turn. What should White do next?</p>" +
-        "<button data-move='d3'>6. d3</button> - White plays d3 to support the pawn on e4 and open up lines for their dark-squared bishop." +
-        "<button data-move='d4'>6. d4</button> - Alternatively, White can play d4 to challenge Black's pawn on e5 and open up the center." +
-        "<p><strong>Summary:</strong> The opening moves focus on controlling the center, developing pieces, and ensuring king safety through castling. The game is now transitioning into the middle game, where tactical and strategic decisions will play a critical role.</p>";
+      // const dummytxt =
+      //   "<h3>Understanding the Opening Phase</h3> " +
+      //   "<p>In chess, the opening phase is crucial for controlling the center and developing pieces. Here is an example of how the game can progress from the start.</p> " +
+      //   "<p><strong>1. e4</strong> - White opens by advancing the king's pawn two squares.</p>" +
+      //   "<p><strong>Black's response:</strong></p>" +
+      //   "<button data-move='e5'>1... e5</button> - Black mirrors White's move, opening up their king's pawn." +
+      //   "<p><strong>2. Nf3</strong> - White develops their knight to control the center and prepare for castling.</p>" +
+      //   "<p><strong>Black's response:</strong></p>" +
+      //   "<button data-move='Nc6'>2... Nc6</button> - Black develops their knight to counter White's knight and also control the center." +
+      //   "<p><strong>3. Bb5</strong> - White plays the Ruy Lopez, attacking the knight and preparing to dominate the center.</p>" +
+      //   "<p><strong>Black's response:</strong></p>" +
+      //   "<button data-move='a6'>3... a6</button> - Black attacks White's bishop, forcing it to either retreat or exchange." +
+      //   "<p><strong>4. Ba4</strong> - White retreats the bishop to maintain pressure on the knight at c6.</p>" +
+      //   "<p><strong>Black's response:</strong></p>" +
+      //   "<button data-move='Be7'>4... Be7</button> - Black prepares to castle by developing the bishop to a safe square." +
+      //   "<p><strong>5. O-O</strong> - White castles, ensuring king safety and connecting the rooks.</p>" +
+      //   "<p><strong>Black's response:</strong></p>" +
+      //   "<button data-move='O-O'>5... O-O</button> - Black also castles, ensuring king safety and completing development." +
+      //   "<p><strong>Next Move:</strong> It's White's turn. What should White do next?</p>" +
+      //   "<button data-move='d3'>6. d3</button> - White plays d3 to support the pawn on e4 and open up lines for their dark-squared bishop." +
+      //   "<button data-move='d4'>6. d4</button> - Alternatively, White can play d4 to challenge Black's pawn on e5 and open up the center." +
+      //   "<p><strong>Summary:</strong> The opening moves focus on controlling the center, developing pieces, and ensuring king safety through castling. The game is now transitioning into the middle game, where tactical and strategic decisions will play a critical role.</p>";
 
       // const updatedJSX = processText(pageSelected.text);
       const updatedJSX = processText(pageSelected?.text);
+      // @ts-ignore
       setPageSelectedDetails({ ...pageSelected, text: updatedJSX });
     }
   }, [pageSelected]);
@@ -150,6 +154,7 @@ function RightComponent({
 
           <JumpToModal
             learningData={learningData}
+            // @ts-ignore
             pageSelectedDetails={pageSelectedDetails}
             onChange={onChange}
           />

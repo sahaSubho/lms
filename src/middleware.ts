@@ -5,21 +5,24 @@ export function middleware(request: NextRequest) {
   const url = request.nextUrl;
   const pathname = url.pathname;
 
-  // Convert the pathname to lowercase
-  const lowerCasePathname = pathname.toLowerCase();
-
-  // If the pathname is already lowercase, continue with the request
-  if (pathname === lowerCasePathname) {
+  // If pathname is already lowercase, continue with the request
+  if (pathname === pathname.toLowerCase()) {
     return NextResponse.next();
   }
 
-  // If not, redirect to the lowercase version of the URL
+  // Skip paths with dynamic segments or API routes
+  if (pathname.includes("[") || pathname.startsWith("/api")) {
+    return NextResponse.next();
+  }
+
+  // Redirect to lowercase version
+  const lowerCasePathname = pathname.toLowerCase();
   return NextResponse.redirect(
     new URL(lowerCasePathname + url.search, request.url)
   );
 }
 
 export const config = {
-  // Apply this middleware to all routes (you can adjust the matcher as needed)
-  matcher: "/:path*",
+  // Apply middleware to all routes except API and dynamic routes
+  matcher: "/((?!api|_next|favicon.ico|[\\[\\]]).*)",
 };

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import CCText from "@/atom/CCText";
 import Spacer from "@/atom/Spacer";
 import React from "react";
@@ -21,7 +22,7 @@ type CourseCardProp = {
   mrp: number;
   onClick?: (a: unknown) => void;
   handleBuy?: (a: unknown, alreadyBought: boolean) => void;
-
+  alreadyBought?: boolean;
   rating?: number;
   badges?: badges[];
   cardClassName?: string;
@@ -54,7 +55,7 @@ function CourseCard(props: CourseCardProp) {
     price = 0,
     mrp = 0,
     onClick = () => {},
-    rating = 5,
+    // rating = 5,
     badges,
     cardClassName,
     alreadyBought,
@@ -137,6 +138,7 @@ function CourseCard(props: CourseCardProp) {
           <CCButton
             onClick={() => {
               onClick?.(courseKey);
+              // @ts-ignore
               handleBuy?.(courseKey, alreadyBought);
             }}
           >

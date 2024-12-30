@@ -83,7 +83,7 @@ function EachLearningCard(props: EachLearningCardProp) {
           </div>
           <div className="flex-[0.2] flex justify-center">
             <CCButton onClick={handleResume}>
-              {completedPercentage?.toFixed(0) > 0 ? "Resume" : "Start"}
+              {Number(completedPercentage?.toFixed(0)) > 0 ? "Resume" : "Start"}
             </CCButton>
           </div>
         </div>

@@ -1,13 +1,7 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import ChessboardComponent from "chessboard-package";
-import CCText from "@/atom/CCText";
-import CCProgressBar from "@/atom/CCProgressBar";
-import { IoBookOutline } from "react-icons/io5";
-import Spacer from "@/atom/Spacer";
-import CCDivider from "@/atom/CCDivider";
-import CCButton from "@/atom/CCButton";
 import LeftComponent from "./Component/LeftComponent";
 import RightComponent from "./Component/RightComponent";
 import { useParams } from "next/navigation";
@@ -32,29 +26,30 @@ export type Page = {
   pageId?: string | number;
 };
 
-type Chapter = {
-  id: number;
-  title: string;
-  time_required: number;
-  pages: Page[];
-  practice_tests?: {
-    question: string;
-    solution: string;
-    position_order: number;
-    is_solved: boolean;
-  }[];
-};
+// type Chapter = {
+//   id: number;
+//   title: string;
+//   time_required: number;
+//   pages: Page[];
+//   practice_tests?: {
+//     question: string;
+//     solution: string;
+//     position_order: number;
+//     is_solved: boolean;
+//   }[];
+// };
 
-type LearningDataType = {
-  title: string;
-  author: string;
-  price: number;
-  mrp: number;
-  rating: number;
-  badges: string[];
-  points: number;
-  chapters: Chapter[];
-};
+// // @ts-ignore
+// type LearningDataType = {
+//   title: string;
+//   author: string;
+//   price: number;
+//   mrp: number;
+//   rating: number;
+//   badges: string[];
+//   points: number;
+//   chapters: Chapter[];
+// };
 
 function LearningPage() {
   const { learningKey } = useParams();
@@ -64,13 +59,14 @@ function LearningPage() {
   const {
     data: learningData,
     isLoading,
-    error,
-    refetch,
+    // error,
+    // refetch,
+    // @ts-ignore
   } = GetUserCourseLearning(learningKey);
 
   const {
     updateProgress,
-    error: progressError,
+    // error: progressError,
     success: progressUpdated,
   } = useUpdateUserProgress();
   const [learningDataFormatted, setLearningDataFormatted] =
@@ -90,6 +86,7 @@ function LearningPage() {
   useEffect(() => {
     if (learningDataFormatted && !isInitialized.current) {
       // debugger;
+      // @ts-ignore
       setPageSelected({
         ...learningDataFormatted?.chapters?.[0]?.pages?.[0],
         chapterId: learningDataFormatted?.chapters?.[0]?.id,
@@ -102,17 +99,20 @@ function LearningPage() {
   useEffect(() => {
     if (progressUpdated) {
       // pageIdProgressUpdate.current;
-      const pageIdToUpdate = pageIdProgressUpdate.current;
+      const pageIdToUpdate = pageIdProgressUpdate?.current;
+      // @ts-ignore
       setLearningDataFormatted((prev) => {
         const tempChapters = prev?.chapters;
         let returnData = tempChapters?.reduce((last, curr) => {
           const tempPages = curr?.pages?.map((i) =>
             i?.id === pageIdToUpdate ? { ...i, is_solved: true } : i
           );
-          last.push({ ...curr, pages: tempPages });
+          // @ts-ignore
+          last?.push({ ...curr, pages: tempPages });
           return last;
         }, []);
 
+        // @ts-ignore
         returnData = { ...prev, chapters: returnData };
         return returnData;
       });

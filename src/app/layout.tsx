@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+// import localFont from "next/font/local";
 import "./globals.css";
 import Header from "@/components/Header";
 import LeftMenu from "@/components/LeftMenu";
@@ -19,6 +19,7 @@ const dmSans = DM_Sans({
   subsets: ["latin"], // Specify the subset you want to load
   weight: ["400", "500", "700"], // Optional: load specific font weights
   style: ["normal", "italic"], // Optional: load specific font styles
+  display: "swap",
 });
 
 export const metadata: Metadata = {

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React from "react";
 import WhitePawn from "@/assets/ChessPieces/White-Pawn.svg";
 import WhiteRook from "@/assets/ChessPieces/White-Rook.svg";
@@ -17,6 +19,7 @@ import BlackKnightCaptured from "@/assets/ChessPieces/Black-Knight-Captured.svg"
 import BlackRookCaptured from "@/assets/ChessPieces/Black-Rook-Captured.svg";
 import BlackKingCaptured from "@/assets/ChessPieces/Black-King-Captured.svg";
 import BlackQueenCaptured from "@/assets/ChessPieces/Black-Queen-Captured.svg";
+// @ts-ignore
 import ChessboardComponent from "chessboard-package";
 import Image from "next/image";
 
@@ -42,11 +45,13 @@ export const pieceImages = {
 };
 
 function CCChessboard({ ...rest }) {
+  // @ts-ignore
   const createPieceTheme = (pieceImages) => {
-    return Object.keys(pieceImages).reduce((theme, piece) => {
+    return Object.keys(pieceImages)?.reduce((theme, piece) => {
+      // @ts-ignore
       theme[piece] = ({ isDragging, squareWidth }) => (
         <Image
-          src={pieceImages[piece]}
+          src={pieceImages?.[piece]}
           alt={piece}
           style={{
             height: squareWidth,

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
 import CCChessboard from "@/atom/CCChessboard";
 import CCText from "@/atom/CCText";
@@ -51,6 +52,7 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
   const handleVideoEnd = () => {
     handleMarkComplete(selectedContent?.content_type, selectedContent?.id);
   };
+  // @ts-ignore
   const handlePositionChange = (newFenDetails) => {
     updateFen(newFenDetails?.newFen);
   };

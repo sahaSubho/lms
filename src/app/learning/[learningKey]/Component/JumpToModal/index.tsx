@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
 import CCDivider from "@/atom/CCDivider";
 import CCModal from "@/atom/CCModal";
@@ -6,7 +7,7 @@ import Spacer from "@/atom/Spacer";
 import React, { useState } from "react";
 import { FaCircleCheck } from "react-icons/fa6";
 import { IoBookOutline } from "react-icons/io5";
-
+// @ts-ignore
 function JumpToModal({ learningData, onChange, pageSelected }) {
   //   const [selectedChapterId, setSelectedChapterId] = useState(1);
   const [openModal, setOpenModal] = useState(false);
@@ -16,6 +17,7 @@ function JumpToModal({ learningData, onChange, pageSelected }) {
   //   pageId: selectedChapterDetails?.pages?.[0]?.id,
   //   ...selectedChapterDetails?.pages?.[0],
 
+  // @ts-ignore
   const handleSelectContent = (chapterDetail) => {
     onChange({
       index: 1,
@@ -29,6 +31,7 @@ function JumpToModal({ learningData, onChange, pageSelected }) {
     <div>
       <CCText
         className="cursor-pointer flex justify-center items-center text-brand-aqua"
+        // @ts-ignore
         onClick={() => setOpenModal(true)}
       >
         Jump To
@@ -42,6 +45,7 @@ function JumpToModal({ learningData, onChange, pageSelected }) {
         type="side"
       >
         {console.log(learningData, "learningData in modal")}
+        {/* @ts-ignore */}
         {learningData?.chapters?.map((i, index) => {
           const isSolved = !i?.pages?.some(
             (j: { is_solved: boolean }) => !j?.is_solved

@@ -7,7 +7,7 @@ import chessboardBgRight from "@/assets/explore/selected-chessboard-bg-right.svg
 
 interface Tab {
   name: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   content: React.ReactNode;
 }
 

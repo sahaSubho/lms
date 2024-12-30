@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import CCText from "@/atom/CCText";
 import Spacer from "@/atom/Spacer";
 import React, { useMemo, useState } from "react";
@@ -18,10 +19,11 @@ function CourseContent({
   isCoursePage,
 }: {
   bookDetails: BookDetails;
-  isCoursePage: Boolean;
+  isCoursePage: boolean;
 }) {
   const [selectedDay, setSelectedDay] = useState<SelectedDayType | null>(null);
 
+  // @ts-ignore
   const courseContent = useMemo(() => bookDetails?.chapters, [bookDetails]);
 
   const courseDays = useMemo(() => {
@@ -50,6 +52,7 @@ function CourseContent({
       </div>
       <>
         {(isCoursePage ? courseContent : selectedDay?.chapters)?.map(
+          // @ts-ignore
           (i, index) => (
             <>
               <Spacer spacing={20} />

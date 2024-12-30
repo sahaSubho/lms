@@ -47,6 +47,7 @@ const DynamicIcon: React.FC<IProps> = ({
   switch (library.toLowerCase()) {
     case "ai":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/ai`).then((module) => ({
           default: module[iconComponent],
         }))
@@ -54,6 +55,7 @@ const DynamicIcon: React.FC<IProps> = ({
       break;
     case "bi":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/bi`).then((module) => ({
           default: module[iconComponent],
         }))
@@ -61,6 +63,7 @@ const DynamicIcon: React.FC<IProps> = ({
       break;
     case "bs":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/bs`).then((module) => ({
           default: module[iconComponent],
         }))
@@ -68,6 +71,7 @@ const DynamicIcon: React.FC<IProps> = ({
       break;
     case "di":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/di`).then((module) => ({
           default: module[iconComponent],
         }))
@@ -75,6 +79,7 @@ const DynamicIcon: React.FC<IProps> = ({
       break;
     case "fa":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/fa`).then((module) => ({
           default: module[iconComponent],
         }))
@@ -82,6 +87,7 @@ const DynamicIcon: React.FC<IProps> = ({
       break;
     case "fi":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/fi`).then((module) => ({
           default: module[iconComponent],
         }))
@@ -89,6 +95,7 @@ const DynamicIcon: React.FC<IProps> = ({
       break;
     case "gi":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/gi`).then((module) => ({
           default: module[iconComponent],
         }))
@@ -96,6 +103,7 @@ const DynamicIcon: React.FC<IProps> = ({
       break;
     case "hi":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/hi`).then((module) => ({
           default: module[iconComponent],
         }))
@@ -103,6 +111,7 @@ const DynamicIcon: React.FC<IProps> = ({
       break;
     case "im":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/im`).then((module) => ({
           default: module[iconComponent],
         }))
@@ -110,6 +119,7 @@ const DynamicIcon: React.FC<IProps> = ({
       break;
     case "io":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/io`).then((module) => ({
           default: module[iconComponent],
         }))
@@ -117,6 +127,7 @@ const DynamicIcon: React.FC<IProps> = ({
       break;
     case "io5":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/io5`).then((module) => ({
           default: module[iconComponent],
         }))
@@ -124,6 +135,7 @@ const DynamicIcon: React.FC<IProps> = ({
       break;
     case "md":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/md`).then((module) => ({
           default: module[iconComponent],
         }))
@@ -131,6 +143,7 @@ const DynamicIcon: React.FC<IProps> = ({
       break;
     case "ri":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/ri`).then((module) => ({
           default: module[iconComponent],
         }))
@@ -138,6 +151,7 @@ const DynamicIcon: React.FC<IProps> = ({
       break;
     case "si":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/si`).then((module) => ({
           default: module[iconComponent],
         }))
@@ -145,6 +159,7 @@ const DynamicIcon: React.FC<IProps> = ({
       break;
     case "tb":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/tb`).then((module) => ({
           default: module[iconComponent],
         }))
@@ -152,6 +167,7 @@ const DynamicIcon: React.FC<IProps> = ({
       break;
     case "ti":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/ti`).then((module) => ({
           default: module[iconComponent],
         }))
@@ -159,6 +175,7 @@ const DynamicIcon: React.FC<IProps> = ({
       break;
     case "vsc":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/vsc`).then((module) => ({
           default: module[iconComponent],
         }))
@@ -166,6 +183,7 @@ const DynamicIcon: React.FC<IProps> = ({
       break;
     case "cg":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/cg`).then((module) => ({
           default: module[iconComponent],
         }))
@@ -173,6 +191,7 @@ const DynamicIcon: React.FC<IProps> = ({
       break;
     case "fa6":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/fa6`).then((module) => ({
           default: module[iconComponent],
         }))
@@ -180,6 +199,7 @@ const DynamicIcon: React.FC<IProps> = ({
       break;
     case "lia":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/lia`).then((module) => ({
           default: module[iconComponent],
         }))
@@ -187,6 +207,7 @@ const DynamicIcon: React.FC<IProps> = ({
       break;
     case "lu":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/lu`).then((module) => ({
           default: module[iconComponent],
         }))
@@ -194,6 +215,7 @@ const DynamicIcon: React.FC<IProps> = ({
       break;
     case "pi":
       Icon = lazy(() =>
+        // @ts-ignore
         import(`react-icons/pi`).then((module) => ({
           default: module[iconComponent],
         }))

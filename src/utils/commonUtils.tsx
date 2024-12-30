@@ -1,6 +1,5 @@
 import { Chess } from "chess.js";
-import Image, { StaticImageData } from "next/image";
-import { IconType } from "react-icons"; // Type for icons
+// import { IconType } from "react-icons"; // Type for icons
 
 export function formatCurrency(
   amount: number = 0,
