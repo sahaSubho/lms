@@ -11,7 +11,7 @@ pipelines:
           - export AWS_ROLE_ARN=arn:aws:iam::324298177213:role/bitbucket-pipelines
           - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
           - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
-          - npm install
+          - npm install -f
           - npm run build
           - apt-get update -y && apt-get install awscli -y
           - aws s3 sync dist s3://cc-lms-pp
