@@ -14,5 +14,5 @@ pipelines:
           - npm install -f
           - npm run build
           - apt-get update -y && apt-get install awscli -y
-          - aws s3 sync .next s3://cc-lms-pp
+          - aws s3 sync out s3://cc-lms-pp
           - aws cloudfront create-invalidation --distribution-id E2PYRO4CMR33HG --paths "/*"
