@@ -7,7 +7,9 @@ import { useUploadCourseBook } from "@/APIHooks/uploadCoursesApi";
 
 const UploadBookForm = () => {
   const [bookTitle, setBookTitle] = useState("");
-  const [chapters, setChapters] = useState<File[]>([]);
+  const [chapters, setChapters] = useState<File[]>([
+    new File([""], "test.pgn"),
+  ]);
   const [loading, setLoading] = useState(false);
 
   const { uploadCourseBook, error } = useUploadCourseBook();
@@ -25,7 +27,7 @@ const UploadBookForm = () => {
 
   // Add a new chapter field
   const addChapter = () => {
-    setChapters([...chapters]);
+    setChapters([...chapters, new File([""], "test.pgn")]);
   };
 
   // Remove a chapter field
@@ -43,7 +45,7 @@ const UploadBookForm = () => {
       return;
     }
 
-    if (chapters.length) {
+    if (!chapters.length) {
       alert("Each chapter must have a PGN file.");
       return;
     }
