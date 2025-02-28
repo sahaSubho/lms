@@ -1,0 +1,17 @@
+image: node:18.20.5
+pipelines:
+  custom:
+    push_to_preprod:
+    - step:
+        oidc: true
+        name: 'Push to preprod'
+        script:
+          - export AWS_REGION=ap-south-1
+          - export AWS_ROLE_ARN=arn:aws:iam::324298177213:role/bitbucket-pipelines
+          - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
+          - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
+          - npm install -f
+          - npm run build
+          - apt-get update -y && apt-get install awscli -y
+          - aws s3 sync .next s3://cc-lms-pp/_next
+          - aws cloudfront create-invalidation --distribution-id E2PYRO4CMR33HG --paths "/*"
