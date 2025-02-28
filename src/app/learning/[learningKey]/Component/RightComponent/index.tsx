@@ -16,6 +16,11 @@ type Page = {
   text: string;
   content: string;
   content_type: "chess_position" | "video" | "img";
+  mcq: {
+    question: string;
+    options: string[];
+    answer: string;
+  };
   position_order: number;
   is_solved: boolean;
 };
@@ -25,7 +30,11 @@ type RightComponentProps = {
   learningData: any;
   onChange: any;
   handleMove?: (move: string) => void; // handleMove now accepts a move string
-  handleMarkComplete?: () => void;
+  handleMarkComplete?: (
+    contentType: string,
+    pageId: number,
+    move?: string
+  ) => void;
 };
 
 function RightComponent({
@@ -69,6 +78,7 @@ function RightComponent({
       // const updatedJSX = processText(pageSelected.text);
       const obj = { ...pageSelected };
       if (pageSelected?.text) {
+        // @ts-ignore
         obj.text = processText(pageSelected?.text);
       }
       // @ts-ignore
@@ -196,11 +206,13 @@ function RightComponent({
                     <Spacer horizontal />
                     {o}
                   </div>
-                  {selectedAnswer === o && (
+                  {selectedAnswer === o ? (
                     <FaCircleCheck
                       size={20}
                       className="text-brand-yellow bg-brand-darkBrown rounded-full"
                     />
+                  ) : (
+                    <></>
                   )}
                 </CCButton>
               ))}
@@ -231,11 +243,13 @@ function RightComponent({
                 : "white"
             }
             onClick={() => {
-              handleMarkComplete(
-                pageSelectedDetails?.content_type,
-                pageSelectedDetails?.id,
-                "c6"
-              );
+              if (pageSelectedDetails && handleMarkComplete) {
+                handleMarkComplete(
+                  pageSelectedDetails?.content_type,
+                  pageSelectedDetails?.id,
+                  "c6"
+                );
+              }
             }}
           >
             Next

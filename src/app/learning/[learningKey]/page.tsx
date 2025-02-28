@@ -24,6 +24,11 @@ export type Page = {
   is_solved: boolean;
   chapterId?: string | number;
   pageId?: string | number;
+  mcq: {
+    question: string;
+    options: string[];
+    answer: string;
+  };
 };
 
 // type Chapter = {

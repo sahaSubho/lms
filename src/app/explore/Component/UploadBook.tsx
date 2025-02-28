@@ -7,42 +7,35 @@ import { useUploadCourseBook } from "@/APIHooks/uploadCoursesApi";
 
 const UploadBookForm = () => {
   const [bookTitle, setBookTitle] = useState("");
-  const [chapters, setChapters] = useState([{ title: "", file: null }]);
+  const [chapters, setChapters] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const { uploadCourseBook, isLoading, error, success } = useUploadCourseBook();
+  const { uploadCourseBook, error } = useUploadCourseBook();
   // Handle book title change
-  const handleBookTitleChange = (e) => {
+  const handleBookTitleChange = (e: { target: { value: string } }) => {
     setBookTitle(e.target.value);
   };
 
-  // Handle chapter title change
-  //   const handleChapterTitleChange = (index, value) => {
-  //     const updatedChapters = [...chapters];
-  //     updatedChapters[index].title = value;
-  //     setChapters(updatedChapters);
-  //   };
-
   // Handle file selection
-  const handleFileChange = (index, file) => {
+  const handleFileChange = (index: number, file: File) => {
     const updatedChapters = [...chapters];
-    updatedChapters[index].file = file;
+    updatedChapters[index] = file;
     setChapters(updatedChapters);
   };
 
   // Add a new chapter field
   const addChapter = () => {
-    setChapters([...chapters, { title: "", file: null }]);
+    setChapters([...chapters]);
   };
 
   // Remove a chapter field
-  const removeChapter = (index) => {
+  const removeChapter = (index: number) => {
     const updatedChapters = chapters.filter((_, i) => i !== index);
     setChapters(updatedChapters);
   };
 
   // Handle form submission
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
     if (!bookTitle.trim()) {
@@ -50,8 +43,8 @@ const UploadBookForm = () => {
       return;
     }
 
-    if (chapters.some((chap) => !chap.file)) {
-      alert("Each chapter must have a title and a PGN file.");
+    if (chapters.length) {
+      alert("Each chapter must have a PGN file.");
       return;
     }
 
@@ -60,27 +53,25 @@ const UploadBookForm = () => {
 
     chapters.forEach((chapter, index) => {
       //   formData.append(`chapter_title_${index}`, chapter.title);
-      console.log("file", chapter.file);
-      formData.append(`chapter_file_${index}`, chapter.file);
+      formData.append(`chapter_file_${index}`, chapter);
     });
 
     try {
       setLoading(true);
       await uploadCourseBook(formData);
-      //   const response = await fetch("http://127.0.0.1:8000/api/upload-book/", {
-      //     method: "POST",
-      //     body: formData,
-      //   });
-
       if (error) {
         throw new Error("Failed to upload book.");
       }
 
       alert("Book uploaded successfully!");
       setBookTitle("");
-      setChapters([{ title: "", file: null }]);
-    } catch (error) {
-      alert(error.message);
+      setChapters([]);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("An unknown error occurred");
+      }
     } finally {
       setLoading(false);
     }
@@ -111,11 +102,14 @@ const UploadBookForm = () => {
           </label>
           {chapters.map((chapter, index) => (
             <div key={index} className="flex items-center space-x-2 mb-3">
-              <CCText>Chapter {index + 1}</CCText>
+              <CCText>Chapter {String(index + 1)}</CCText>
               <input
                 type="file"
                 accept=".pgn"
-                onChange={(e) => handleFileChange(index, e.target.files[0])}
+                onChange={(e) => {
+                  if (e.target.files)
+                    handleFileChange(index, e.target.files[0]);
+                }}
                 className="text-gray-500 border p-2 rounded-md"
                 required
               />
@@ -142,12 +136,7 @@ const UploadBookForm = () => {
         </CCButton>
 
         {/* Submit Button */}
-        <CCButton
-          type="submit"
-          buttonStyle="square"
-          disabled={loading}
-          className="w-full"
-        >
+        <CCButton type="submit" buttonStyle="square" className="w-full">
           {loading ? "Uploading..." : "Upload Book"}
         </CCButton>
       </form>

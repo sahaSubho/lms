@@ -15,7 +15,7 @@ type SelectedContentType = {
   text: string;
   content: string; // URL or FEN based on content_type
   content_type: "video" | "chess_position" | "img";
-  custom_pieces: object;
+  custom_pieces: Record<string, string>;
   position_order: number;
   is_solved: boolean;
 };
@@ -36,9 +36,9 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
   const chessFen = useChessStore((state) => state.fen);
   const updateFen = useChessStore((state) => state.updateFen);
   const [lastMove, setLastMove] = useState("");
-  const [customPositions, setCustomPositions] = useState(
-    selectedContent?.custom_pieces
-  );
+  const [customPositions, setCustomPositions] = useState<
+    Record<string, string>
+  >({});
 
   const isWhiteChance = useMemo(
     () => selectedContent?.content?.includes(" w "),
@@ -64,8 +64,11 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
 
     setLastMove(newFenDetails.to);
     setCustomPositions((prev) => {
-      if (Object.keys(prev).includes(newFenDetails.to))
-        delete prev[newFenDetails.to];
+      if (Object.keys(prev).includes(newFenDetails.to)) {
+        const updated = { ...prev };
+        delete updated[newFenDetails.to];
+        return updated;
+      }
       return prev;
     });
   };

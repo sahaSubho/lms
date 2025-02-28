@@ -1,7 +1,7 @@
 import CCText from "@/atom/CCText";
 import Spacer from "@/atom/Spacer";
 import React from "react";
-import AddNewBook from "./Component/AddNewBook";
+// import AddNewBook from "./Component/AddNewBook";
 import UploadBookForm from "./Component/UploadBook";
 import CCTabs from "@/atom/CCTabs";
 
