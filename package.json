@@ -16,7 +16,7 @@
     "@types/react-dom": "^18",
     "axios": "^1.7.7",
     "chess.js": "^1.0.0-beta.8",
-    "chessboard-package": "file:chessboard-package-1.3.39.tgz",
+    "chessboard-package": "file:chessboard-package-1.3.40.tgz",
     "next": "14.2.15",
     "react": "^18",
     "react-chessboard": "^4.4.0",
