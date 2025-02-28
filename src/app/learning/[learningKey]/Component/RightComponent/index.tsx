@@ -7,6 +7,7 @@ import CCText from "@/atom/CCText";
 import Spacer from "@/atom/Spacer";
 import JumpToModal from "../JumpToModal";
 import CCDivider from "@/atom/CCDivider";
+import { FaCircleCheck } from "react-icons/fa6";
 
 type Page = {
   id: number;
@@ -24,6 +25,7 @@ type RightComponentProps = {
   learningData: any;
   onChange: any;
   handleMove?: (move: string) => void; // handleMove now accepts a move string
+  handleMarkComplete?: () => void;
 };
 
 function RightComponent({
@@ -31,13 +33,16 @@ function RightComponent({
   learningData,
   onChange,
   handleMove,
+  handleMarkComplete,
 }: RightComponentProps) {
   const [pageSelectedDetails, setPageSelectedDetails] = useState<Page | null>(
     null
   );
 
+  const [selectedAnswer, setSelectedAnswer] = useState<string>("");
+
   useEffect(() => {
-    if (pageSelected?.text) {
+    if (pageSelected) {
       // const dummytxt =
       //   "<h3>Understanding the Opening Phase</h3> " +
       //   "<p>In chess, the opening phase is crucial for controlling the center and developing pieces. Here is an example of how the game can progress from the start.</p> " +
@@ -62,9 +67,12 @@ function RightComponent({
       //   "<p><strong>Summary:</strong> The opening moves focus on controlling the center, developing pieces, and ensuring king safety through castling. The game is now transitioning into the middle game, where tactical and strategic decisions will play a critical role.</p>";
 
       // const updatedJSX = processText(pageSelected.text);
-      const updatedJSX = processText(pageSelected?.text);
+      const obj = { ...pageSelected };
+      if (pageSelected?.text) {
+        obj.text = processText(pageSelected?.text);
+      }
       // @ts-ignore
-      setPageSelectedDetails({ ...pageSelected, text: updatedJSX });
+      setPageSelectedDetails(obj);
     }
   }, [pageSelected]);
 
@@ -167,6 +175,37 @@ function RightComponent({
           style={{ whiteSpace: "break", height: "54vh" }}
         >
           {pageSelectedDetails?.text}
+          {pageSelectedDetails?.mcq && (
+            <>
+              {pageSelectedDetails?.mcq?.question}
+              <Spacer spacing={20} />
+              {pageSelectedDetails?.mcq?.options.map((o, i) => (
+                <CCButton
+                  key={i}
+                  buttonStyle="square"
+                  buttonType={selectedAnswer === o ? undefined : "white"}
+                  className={`mb-2 pl-4 pr-4 flex justify-between text-start ${
+                    selectedAnswer === pageSelectedDetails?.mcq?.answer
+                      ? "bg-brand-aqua"
+                      : "bg-brand-red"
+                  }`}
+                  onClick={() => setSelectedAnswer(o)}
+                >
+                  <div className={selectedAnswer === o ? "text-white" : ""}>
+                    {String.fromCharCode(65 + i)}.
+                    <Spacer horizontal />
+                    {o}
+                  </div>
+                  {selectedAnswer === o && (
+                    <FaCircleCheck
+                      size={20}
+                      className="text-brand-yellow bg-brand-darkBrown rounded-full"
+                    />
+                  )}
+                </CCButton>
+              ))}
+            </>
+          )}
         </div>
       </div>
 
@@ -184,7 +223,21 @@ function RightComponent({
           </CCText>
         </div>
         <div className="flex-[0.5] flex flex-col justify-end items-end">
-          <CCButton buttonStyle="square" buttonType="white">
+          <CCButton
+            buttonStyle="square"
+            buttonType={
+              selectedAnswer === pageSelectedDetails?.mcq?.answer
+                ? "yellow"
+                : "white"
+            }
+            onClick={() => {
+              handleMarkComplete(
+                pageSelectedDetails?.content_type,
+                pageSelectedDetails?.id,
+                "c6"
+              );
+            }}
+          >
             Next
           </CCButton>
           <CCText className="mt-2 text-xs text-textColor-lightBrown text-end">

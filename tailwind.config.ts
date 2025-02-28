@@ -39,6 +39,7 @@ const config: Config = {
           lightYellow: "#FFF0C8",
           orange: "#E17846",
           purple: "#937ADB",
+          red: '#EB5757',
           aqua: {
             DEFAULT: "#3DAB9E", // Original aqua color
             light: "rgba(61, 171, 158, 0.5)", // 50% opacity

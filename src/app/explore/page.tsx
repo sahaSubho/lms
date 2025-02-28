@@ -2,6 +2,7 @@ import CCText from "@/atom/CCText";
 import Spacer from "@/atom/Spacer";
 import React from "react";
 import AddNewBook from "./Component/AddNewBook";
+import UploadBookForm from "./Component/UploadBook";
 import CCTabs from "@/atom/CCTabs";
 
 function page() {
@@ -9,7 +10,7 @@ function page() {
     {
       name: "Upload books",
       // icon: <Image alt="icon" src={TabRecommenedIcon} width={35} height={35} />,
-      content: <AddNewBook />,
+      content: <UploadBookForm />,
     },
     {
       name: "Bundle books",

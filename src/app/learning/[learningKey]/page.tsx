@@ -179,6 +179,7 @@ function LearningPage() {
           pageSelected={pageSelected}
           onChange={handlePageChange}
           handleMove={handleMove}
+          handleMarkComplete={handleMarkComplete}
         />
       </div>
     </div>

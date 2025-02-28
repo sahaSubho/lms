@@ -7,6 +7,8 @@ import WhiteQueen from "@/assets/ChessPieces/White-Queen.svg";
 import WhiteKnight from "@/assets/ChessPieces/White-Knight.svg";
 import WhiteKing from "@/assets/ChessPieces/White-King.svg";
 import WhiteBishop from "@/assets/ChessPieces/White-Bishop.svg";
+import WhiteCoin from "@/assets/ChessPieces/White-Coin.svg";
+import WhiteFlag from "@/assets/ChessPieces/White-Flag.svg";
 import BlackPawn from "@/assets/ChessPieces/Black-Pawn.svg";
 import BlackRook from "@/assets/ChessPieces/Black-Rook.svg";
 import BlackQueen from "@/assets/ChessPieces/Black-Queen.svg";
@@ -25,6 +27,8 @@ import Image from "next/image";
 
 export const pieceImages = {
   wP: WhitePawn,
+  wC: WhiteCoin,
+  wF: WhiteFlag,
   wR: WhiteRook,
   wQ: WhiteQueen,
   wN: WhiteKnight,

@@ -8,7 +8,7 @@ export const chessClient = axios.create({
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
-    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM4NjU3MzU0LCJpYXQiOjE3MzA4ODEzNTQsImp0aSI6ImMxYjExYTYzYmM3ODQxYzA5N2EwZDNiYzJmMDkyODE0IiwidXNlcl9pZCI6MzMzLCJ1c2VyX2tleSI6IjRlYjdkZGU4LTFmNzMtNDk5Yi04Zjc3LTVjZmFiZDIxZDg5NyJ9.DKmm_86oEUfC5TMHGK7DjWmAslQb2R9kMMuuzDH4Zf0`,
+    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4NTA5Nzc0LCJpYXQiOjE3NDA3MzM3NzQsImp0aSI6IjcyNzFjMzY0OTI1YTQ0YTE5NzNlYmU5MWYyN2VkNTgwIiwidXNlcl9pZCI6MTEzNCwidXNlcl9rZXkiOiJiOTkxMDYzNi1iYjAyLTRjMGQtYTBkZC03Y2YwODI4MjJiZjcifQ.1b1M73jjDY0cPd4yI-JMoc8T7_oC1DAo0Fu-wAJFDNs`,
     "api-key": API_KEY,
   },
 });
