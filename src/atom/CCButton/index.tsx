@@ -11,7 +11,7 @@ type CCButtonProps = {
     | "yellow"
     | "white"
     | "aqua"
-    | "darkRed"
+    | "orange"
     | "darkYellow"
     | "darkBrown";
   buttonStyle?: "circle" | "square" | "none";
