@@ -4,7 +4,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import LeftComponent from "./Component/LeftComponent";
 import RightComponent from "./Component/RightComponent";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import {
   GetUserCourseLearning,
   RegisteredCourseDetails,
@@ -13,6 +13,7 @@ import { useUpdateUserProgress } from "@/APIHooks/UpdateUserProgress/useUpdateUs
 import LearnPageLoader from "./loading";
 import useChessStore from "@/store/chessStore";
 import { applyMoveAndGetNewFEN } from "@/utils/commonUtils";
+import useUserStore from "@/store/userStore";
 
 export type Page = {
   id: number;
@@ -21,10 +22,11 @@ export type Page = {
   content: string;
   content_type: "chess_position" | "video" | "img";
   position_order: number;
+  points: number;
   is_solved: boolean;
   chapterId?: string | number;
   pageId?: string | number;
-  mcq: {
+  mcq?: {
     question: string;
     options: string[];
     answer: string;
@@ -61,6 +63,12 @@ function LearningPage() {
   const chessFen = useChessStore((state) => state.fen);
   const updateFen = useChessStore((state) => state.updateFen);
 
+  const updateScore = useUserStore((state) => state.updateScore);
+
+  const searchParams = useSearchParams();
+
+  const chapter = searchParams.get("chapter");
+
   const {
     data: learningData,
     isLoading,
@@ -84,17 +92,30 @@ function LearningPage() {
 
   useEffect(() => {
     if (!isInitialized.current && learningData) {
-      setLearningDataFormatted(learningData);
+      let filterLearningData = learningData;
+      if (Number(chapter) > 0) {
+        const chapters = filterLearningData.chapters[Number(chapter) - 1];
+        filterLearningData = {
+          ...filterLearningData,
+          chapters: [chapters],
+        };
+      }
+      setLearningDataFormatted(filterLearningData);
     }
-  }, [learningData]);
+  }, [learningData, chapter]);
+
+  console.log("learningDataFormatted", learningDataFormatted);
 
   useEffect(() => {
     if (learningDataFormatted && !isInitialized.current) {
       // debugger;
       // @ts-ignore
+      const currentPage: Page =
+        learningDataFormatted?.chapters?.[0]?.pages.find((p) => !p.is_solved);
       setPageSelected({
-        ...learningDataFormatted?.chapters?.[0]?.pages?.[0],
+        ...currentPage,
         chapterId: learningDataFormatted?.chapters?.[0]?.id,
+        pageId: currentPage?.id,
       });
       isInitialized.current = true; // Mark as initialized to prevent further resetting
     }
@@ -141,6 +162,11 @@ function LearningPage() {
     } else if (contentType === "chess_position") {
       updateProgress({ pageId, contentType, move });
     }
+    const collectCoinSound = new Audio(
+      "https://cc-lms-production.s3.ap-south-1.amazonaws.com/sounds/collect_coins.wav"
+    );
+    collectCoinSound.play();
+    if (pageSelected) updateScore(pageSelected.points);
   };
 
   // Mark as complete when `pageSelected` changes, only on actual selection
@@ -150,9 +176,26 @@ function LearningPage() {
     }
   }, [pageSelected]);
 
-  const handlePageChange = (selectPage: Page) => {
-    setPageSelected(selectPage);
+  const handlePageChange = (selectPage: Page, type?: "prev" | "next") => {
+    const pageId =
+      type === "next"
+        ? selectPage.id + 1
+        : type === "prev"
+        ? selectPage.id - 1
+        : selectPage.id;
+    const currentPage: Page =
+      learningDataFormatted?.chapters?.[0]?.pages?.find(
+        (p) => p.id === pageId
+      ) || selectPage;
+    console.log("page change", pageId, currentPage, learningDataFormatted);
+    if (currentPage)
+      setPageSelected({
+        ...currentPage,
+        chapterId: learningDataFormatted?.chapters?.[0]?.id,
+        pageId: currentPage?.id,
+      });
   };
+
   if (isLoading) {
     return <LearnPageLoader />;
   }
@@ -175,7 +218,7 @@ function LearningPage() {
         />
       </div>
       <div
-        className="flex-[0.27] p-8 flex-shrink-0 overflow-auto"
+        className="flex-[0.27] flex-shrink-0 overflow-auto"
         style={{ width: "30%" }}
       >
         {/* <CCText>{chessFen}</CCText> */}

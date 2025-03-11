@@ -2,12 +2,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import CCButton from "@/atom/CCButton";
 import CCText from "@/atom/CCText";
 import Spacer from "@/atom/Spacer";
 import JumpToModal from "../JumpToModal";
 import CCDivider from "@/atom/CCDivider";
 import { FaCircleCheck } from "react-icons/fa6";
+import CoinBg from "@/assets/Components/Coin_bg.png";
+import Coin from "@/assets/Components/borderCoin.svg";
 
 type Page = {
   id: number;
@@ -16,11 +19,12 @@ type Page = {
   text: string;
   content: string;
   content_type: "chess_position" | "video" | "img";
-  mcq: {
+  mcq?: {
     question: string;
     options: string[];
     answer: string;
   };
+  points: number;
   position_order: number;
   is_solved: boolean;
 };
@@ -49,6 +53,7 @@ function RightComponent({
   );
 
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
+  const [confirmAnswer, setConfirmAnswer] = useState<boolean>(false);
 
   useEffect(() => {
     if (pageSelected) {
@@ -146,14 +151,50 @@ function RightComponent({
     return elements;
   };
 
+  const getTextBasedOnType = (type: string | undefined) => {
+    switch (type) {
+      case "mcq":
+        return "Solve MCQ and move ahead";
+      case "img":
+        return "View this image and learn something";
+      case "video":
+        return "Watch the video and learn something";
+      default:
+        return "Make a move on the board and win";
+    }
+  };
+
   return (
     <div
-      className="flex flex-col justify-between items-center "
+      className="flex border-l-2 flex-col justify-between items-center "
       style={{
         width: "-webkit-fill-available",
       }}
     >
+      <div className="relative w-full bg-white px-6 py-3 flex justify-between items-center border-y-2">
+        <CCText>
+          {getTextBasedOnType(
+            pageSelectedDetails?.mcq ? "mcq" : pageSelectedDetails?.content_type
+          )}
+        </CCText>
+        <CCButton
+          className="px-4 z-10"
+          textColor="white"
+          buttonType="darkYellow"
+          icon={<Image src={Coin} alt="Coin" width={20} height={20} />}
+        >
+          Earn {String(pageSelectedDetails?.points)}
+        </CCButton>
+        <Image
+          src={CoinBg}
+          alt="Coin Bg"
+          width={40}
+          height={100}
+          className="h-full absolute right-0"
+        />
+      </div>
       <div
+        className="p-6"
         style={{
           width: "-webkit-fill-available",
         }}
@@ -170,12 +211,12 @@ function RightComponent({
             }`}
           </CCText>
 
-          <JumpToModal
+          {/* <JumpToModal
             learningData={learningData}
             // @ts-ignore
             pageSelectedDetails={pageSelectedDetails}
             onChange={onChange}
-          />
+          /> */}
         </div>
         <Spacer spacing={12} />
 
@@ -193,12 +234,17 @@ function RightComponent({
                 <CCButton
                   key={i}
                   buttonStyle="square"
-                  buttonType={selectedAnswer === o ? undefined : "white"}
-                  className={`mb-2 pl-4 pr-4 flex justify-between text-start ${
-                    selectedAnswer === pageSelectedDetails?.mcq?.answer
-                      ? "bg-brand-aqua"
-                      : "bg-brand-red"
-                  }`}
+                  buttonType={
+                    selectedAnswer === o
+                      ? confirmAnswer
+                        ? selectedAnswer === pageSelectedDetails?.mcq?.answer
+                          ? "aqua"
+                          : "orange"
+                        : "darkBrown"
+                      : "white"
+                  }
+                  className={`mb-2 pl-4 pr-4 flex text-start`}
+                  textStyle={{ justifyContent: "space-between", width: "100%" }}
                   onClick={() => setSelectedAnswer(o)}
                 >
                   <div className={selectedAnswer === o ? "text-white" : ""}>
@@ -227,7 +273,11 @@ function RightComponent({
 
       <div className="flex justify-between items-center">
         <div className="flex-[0.5] flex flex-col justify-start items-start">
-          <CCButton buttonStyle="square" buttonType="white">
+          <CCButton
+            buttonStyle="square"
+            buttonType="white"
+            onClick={() => onChange(pageSelectedDetails, "prev")}
+          >
             Previous
           </CCButton>
           <CCText className="mt-2 text-xs text-textColor-lightBrown">
@@ -235,25 +285,49 @@ function RightComponent({
           </CCText>
         </div>
         <div className="flex-[0.5] flex flex-col justify-end items-end">
-          <CCButton
-            buttonStyle="square"
-            buttonType={
-              selectedAnswer === pageSelectedDetails?.mcq?.answer
-                ? "yellow"
-                : "white"
-            }
-            onClick={() => {
-              if (pageSelectedDetails && handleMarkComplete) {
-                handleMarkComplete(
-                  pageSelectedDetails?.content_type,
-                  pageSelectedDetails?.id,
-                  "c6"
-                );
+          {!pageSelectedDetails?.mcq ? (
+            <CCButton
+              buttonStyle="square"
+              onClick={() => onChange(pageSelectedDetails, "next")}
+              buttonType="yellow"
+            >
+              Next
+            </CCButton>
+          ) : (
+            <CCButton
+              buttonStyle="square"
+              buttonType={
+                !pageSelectedDetails?.mcq ||
+                selectedAnswer ||
+                selectedAnswer === pageSelectedDetails?.mcq?.answer
+                  ? "yellow"
+                  : "white"
               }
-            }}
-          >
-            Next
-          </CCButton>
+              onClick={() => {
+                if (selectedAnswer) {
+                  if (
+                    confirmAnswer &&
+                    selectedAnswer === pageSelectedDetails?.mcq?.answer &&
+                    handleMarkComplete &&
+                    pageSelectedDetails
+                  ) {
+                    handleMarkComplete(
+                      pageSelectedDetails?.content_type,
+                      pageSelectedDetails?.id,
+                      "c6"
+                    );
+                    onChange(pageSelectedDetails, "next");
+                  } else setConfirmAnswer(true);
+                }
+              }}
+            >
+              {confirmAnswer
+                ? selectedAnswer !== pageSelectedDetails?.mcq?.answer
+                  ? "Try Again"
+                  : "Next"
+                : "Confirm"}
+            </CCButton>
+          )}
           <CCText className="mt-2 text-xs text-textColor-lightBrown text-end">
             The concept of a fortress. Some element...
           </CCText>

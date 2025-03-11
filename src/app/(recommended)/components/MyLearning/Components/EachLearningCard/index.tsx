@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import CCButton from "@/atom/CCButton";
 import CCCard from "@/atom/CCCard";
@@ -10,15 +11,36 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import Image from "next/image";
 
+type Chapter = {
+  id: number;
+  points: number;
+  title: string;
+  time_required: number;
+  pages: {
+    heading: string;
+    text: string;
+    content: string;
+    content_type: string;
+    position_order: number;
+  }[];
+  practice_tests: {
+    question: string;
+    solution: string;
+    position_order: number;
+  }[];
+};
+
 type EachLearningCardProp = {
   completedPercentage: number;
   title: string;
   chapterNumber: number;
+  chapterId?: number;
   subTitle: string;
   points: number;
   bookImg?: string | JSX.Element;
   learningKey?: string;
   courseKey?: string;
+  chapters?: Chapter[];
 };
 
 function EachLearningCard(props: EachLearningCardProp) {
@@ -32,11 +54,13 @@ function EachLearningCard(props: EachLearningCardProp) {
     bookImg,
     // learningKey,
     courseKey,
+    chapterId,
+    chapters,
   } = props;
   const router = useRouter();
 
   const handleResume = () => {
-    router.push(`learning/${courseKey}`);
+    router.push(`learning/${courseKey}?chapter=${chapterNumber}`);
   };
   const randomBookUrl = getRandomBookUrl();
 
@@ -67,11 +91,14 @@ function EachLearningCard(props: EachLearningCardProp) {
                 </CCText>
               </div>
               <Spacer spacing={8} horizontal />
-              <CCText className="flex justify-start items-center" lines={1}>
+              <CCText className="flex justify-start items-center">
                 <>
                   {subTitle} (&nbsp;
                   <CCCoin />
-                  &nbsp;{points} pts )
+                  &nbsp;
+                  {points ||
+                    chapters?.find((c) => c?.id === chapterId)?.points}{" "}
+                  pts )
                 </>
               </CCText>
             </div>

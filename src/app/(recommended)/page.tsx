@@ -8,9 +8,11 @@ import TabTimerIcon from "@/assets/explore/explore-tab-timer.svg";
 import RecommendedSection from "./components/RecommendedSection";
 import MyLearning from "./components/MyLearning";
 import ExploreCourses from "./components/ExploreCourses";
+import BeginnerLMS from "./components/BeginnerLMS";
 
 export default function Home() {
   // Tab configuration without state
+
   const tabs = useMemo(
     () => [
       {
@@ -37,9 +39,10 @@ export default function Home() {
   return (
     <>
       <Banner />
-      <div className="-mt-6">
+      <BeginnerLMS />
+      {/* <div className="-mt-6">
         <CCTabs tabs={tabs} />
-      </div>
+      </div> */}
     </>
   );
 }

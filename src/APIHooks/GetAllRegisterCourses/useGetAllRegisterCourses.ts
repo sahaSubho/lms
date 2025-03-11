@@ -12,8 +12,8 @@ export interface RegisteredCourse {
   // bookImg: string;
 }
 
-export const useGetAllRegisterCourses = () => {
-  const [data, setData] = useState<RegisteredCourse[] | null>(null);
+export const useGetAllRegisterCourses = (type?:string) => {
+  const [data, setData] = useState<RegisteredCourse[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,7 +23,7 @@ export const useGetAllRegisterCourses = () => {
       setError(null);
       try {
         const response = await chessClient.get(
-          "/lms/v1/lms-user-registered-courses"
+          "/lms/v1/lms-user-registered-courses"+ (type ? `?type=${type}`: '')
         );
         setData(response.data);
       } catch (err) {

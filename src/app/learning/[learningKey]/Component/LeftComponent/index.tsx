@@ -140,7 +140,7 @@ const EachChapterTile = ({
   // );
 
   const completedPercentage = useMemo(
-    () => (pages?.filter((i) => i?.is_solved).length / pages.length) * 100,
+    () => (pages?.filter((i) => i?.is_solved).length / pages?.length) * 100,
     [pages]
   );
 
@@ -148,7 +148,7 @@ const EachChapterTile = ({
     <>
       {/* <Spacer spacing={17} /> */}
       <div
-        className={`bg-white flex justify-between items-center px-3 py-3 cursor-pointer hover:opacity-60 `}
+        className={`flex justify-between items-center px-3 py-3 cursor-pointer hover:opacity-60 `}
         onClick={() =>
           handleSelectContent(id, "chapter", chapterContent, index)
         }
@@ -181,8 +181,8 @@ const EachChapterTile = ({
       {selectedContent?.chapterId === id && (
         <>
           {/* <Spacer spacing={17} /> */}
-          {pages.map((page, i) => (
-            <React.Fragment key={page.id}>
+          {pages?.map((page, i) => (
+            <React.Fragment key={page?.id}>
               <CCDivider />
               <EachPageTile
                 {...page}
@@ -219,7 +219,7 @@ const CourseContentComponent = ({
 }: CourseContentComponentProps) => {
   return (
     <div className="flex-col items-start justify-start">
-      <CCText className="font-medium text-sm px-2 py-2 text-start">
+      <CCText className="bg-white uppercase font-medium text-sm px-2 py-2 text-start">
         Course Content
       </CCText>
       <CCDivider />
@@ -227,7 +227,7 @@ const CourseContentComponent = ({
         {/* @ts-ignore  */}
         {learningDataFormated?.chapters?.map((chapter, i) => (
           <EachChapterTile
-            key={chapter.id}
+            key={chapter?.id}
             {...chapter}
             index={i + 1}
             handleSelectContent={handleSelectContent}
@@ -337,16 +337,15 @@ const LeftComponent = ({
   const randomBookUrl = useMemo(() => getRandomBookUrl(), []);
   return (
     <>
-      <div className="flex justify-start items-center gap-3 bg-white h-[60px]">
+      <div className="border-y-2 flex justify-start items-center gap-3 bg-white h-[80px]">
         <div className="flex-[0.1] h-full flex justify-center items-center bg-gradient-to-b from-white to-brand-lightYellow">
-          <div className="w-3/4 m-auto">
+          <div className="m-auto">
             <Image
               src={randomBookUrl} // Dynamic image URL
               alt="Random Book Cover"
               // className="w-full"
-              layout="responsive"
-              width={50} // Set the desired width
-              height={60} // Set the desired height
+              width={80} // Set the desired width
+              height={100} // Set the desired height
               priority // Optional: ensures the image loads quickly
             />
           </div>
@@ -374,7 +373,7 @@ const LeftComponent = ({
             selectedContent={pageSelected}
           />
         </div>
-        <div className="flex-[0.7]">
+        <div className="flex-[0.7] border-l-2">
           <MiddleComponent
             // @ts-ignore
             selectedContent={pageSelected}

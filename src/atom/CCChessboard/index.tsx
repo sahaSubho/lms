@@ -58,6 +58,7 @@ function CCChessboard({ ...rest }) {
           src={pieceImages?.[piece]}
           alt={piece}
           style={{
+            width: squareWidth,
             height: squareWidth,
           }}
         />

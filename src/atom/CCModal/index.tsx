@@ -58,20 +58,22 @@ const CCModal: React.FC<CCModalProps> = ({
           type === "center" ? "h-full sm:h-auto" : "h-full"
         }`}
       >
-        <div className="top-0 static ">
-          <div className=" p-8 flex justify-between items-center ">
-            <CCText fontFamily="thunder" className="font-bold text-4xl ">
-              {`${header}`}
-            </CCText>
-            <button
-              className="text-gray-500 hover:text-gray-700 bg-background p-2 rounded-full"
-              onClick={onClose}
-            >
-              <IoClose size={20} className="text-textColor-default" />
-            </button>
+        {!!header && (
+          <div className="top-0 static ">
+            <div className=" p-8 flex justify-between items-center ">
+              <CCText fontFamily="thunder" className="font-bold text-4xl ">
+                {`${header}`}
+              </CCText>
+              <button
+                className="text-gray-500 hover:text-gray-700 bg-background p-2 rounded-full"
+                onClick={onClose}
+              >
+                <IoClose size={20} className="text-textColor-default" />
+              </button>
+            </div>
+            <CCDivider />
           </div>
-          <CCDivider />
-        </div>
+        )}
         <div className="">{children}</div>
       </div>
     </div>

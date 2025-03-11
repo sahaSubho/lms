@@ -32,21 +32,22 @@ const config: Config = {
           "fit-content": "fit-content",
         },
         brand: {
+          grey: "#FAF6EB",
           background: "#FAF6EB",
           darkBrown: "#262322",
           brown: "#4D3F37",
           yellow: "#FACF47",
           lightYellow: "#FFF0C8",
-          orange: "#E17846",
+          orange: "#EB5757",
           purple: "#937ADB",
-          red: '#EB5757',
+          darkRed: '#EB5757',
           aqua: {
             DEFAULT: "#3DAB9E", // Original aqua color
             light: "rgba(61, 171, 158, 0.5)", // 50% opacity
             lighter: "rgba(61, 171, 158, 0.2)", // 20% opacity
             dark: "#2E857D", // Darker shade of aqua
           },
-          darkYellow: "#A9873B",
+          darkYellow: "#D1AB41",
           blue: "#67B3E1",
         },
       },

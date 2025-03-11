@@ -1,14 +1,40 @@
 import axios from "axios";
+import Cookies from "js-cookie";
+
+const authToken = Cookies.get("auth_token");
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
-export const chessClient = axios.create({
+const MAIN_DOMAIN = process.env.NEXT_PUBLIC_MAIN_DOMAIN || "http://localhost:8081";
+
+const chessClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
-    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4NTA5Nzc0LCJpYXQiOjE3NDA3MzM3NzQsImp0aSI6IjcyNzFjMzY0OTI1YTQ0YTE5NzNlYmU5MWYyN2VkNTgwIiwidXNlcl9pZCI6MTEzNCwidXNlcl9rZXkiOiJiOTkxMDYzNi1iYjAyLTRjMGQtYTBkZC03Y2YwODI4MjJiZjcifQ.1b1M73jjDY0cPd4yI-JMoc8T7_oC1DAo0Fu-wAJFDNs`,
     "api-key": API_KEY,
   },
 });
+
+// Interceptor to set the latest auth token before every request
+chessClient.interceptors.request.use(async (config) => {
+    if (authToken) {
+        config.headers.Authorization = `Bearer ${authToken}`;
+    }
+    return config;
+});
+
+// Response Interceptor: Redirect to main domain on 401
+chessClient.interceptors.response.use(
+    (response) => response, // Pass successful responses
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            console.warn("Unauthorized! Redirecting to main domain...");
+            window.location.href = MAIN_DOMAIN; // Redirect to main domain
+        }
+        return Promise.reject(error);
+    }
+);
+
+export {chessClient}

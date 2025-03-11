@@ -4,6 +4,14 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const url = request.nextUrl;
   const pathname = url.pathname;
+  const token = url.searchParams.get("token");
+
+  if (token) {
+    const newUrl = new URL(url.origin + url.pathname); // Remove query params
+    const res = NextResponse.redirect(newUrl);
+    res.cookies.set("auth_token", token, { httpOnly: false, secure: false });
+    return res;
+  }
 
   // If pathname is already lowercase, continue with the request
   if (pathname === pathname.toLowerCase()) {

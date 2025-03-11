@@ -6,23 +6,23 @@ import CCCard from "@/atom/CCCard";
 import { RiQuestionnaireLine } from "react-icons/ri";
 import CCAccordion from "@/atom/CCAccordion";
 
-function FAQContent({ bookDetails }: { bookDetails: BookDetails }) {
+function FAQContent({ bookDetails }: { bookDetails?: BookDetails }) {
   const FAQContent = useMemo(
     () =>
-      bookDetails?.FAQContent?.map((i) => ({
-        id: i?.id,
-        heading: i?.question,
+      [1, 2]?.map((i) => ({
+        id: i,
+        heading: "How to earn more points",
         content: (
           <CCText className="text-base text-textColor-lightBrown">
-            {i?.answer}
+            Earn points by solving the board and questions
           </CCText>
         ),
       })),
-    [bookDetails]
+    []
   );
 
   return (
-    <CCCard className="p-8 flex-col ">
+    <CCCard className="p-8 flex-col h-full">
       <div className="flex justify-start items-center gap-4">
         <div className="p-2 flex justify-center items-center rounded-full bg-brand-purple">
           <RiQuestionnaireLine className="text-white" size={26} />

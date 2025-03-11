@@ -25,8 +25,8 @@ const CCAccordion: React.FC<CCAccordionProps> = ({ sections }) => {
   return (
     <div className="space-y-5">
       {sections?.map((section, index) => (
-        <>
-          <div key={index} className="overflow-hidden ">
+        <div key={index}>
+          <div className="overflow-hidden ">
             {/* CCAccordion Header */}
             <div
               className="flex  px-9 justify-between items-center"
@@ -79,7 +79,7 @@ const CCAccordion: React.FC<CCAccordionProps> = ({ sections }) => {
             </div>
           </div>
           <CCDivider />
-        </>
+        </div>
       ))}
     </div>
   );
