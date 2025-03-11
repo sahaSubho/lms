@@ -13,8 +13,7 @@ pipelines:
           - npm install -f
           - npm run build
           - apt-get update -y && apt-get install awscli -y
-          - aws s3 sync .next s3://cc-lms-pp/_next
-          - aws cloudfront create-invalidation --distribution-id E2PYRO4CMR33HG --paths "/*"
+          - aws s3 sync .next s3://cc-lms-pp/.next
     push_to_prod:
     - step:
         oidc: true
@@ -27,4 +26,4 @@ pipelines:
           - npm install -f
           - npm run build
           - apt-get update -y && apt-get install awscli -y
-          - aws s3 sync .next s3://cc-lms-production/_next
+          - aws s3 sync .next s3://cc-lms-production/.next
