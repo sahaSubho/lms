@@ -6,6 +6,9 @@ pipelines:
   custom:
     push_to_preprod:
     - step:
+        caches:
+        - node
+        - nextcache
         oidc: true
         name: 'Push to preprod'
         script:
@@ -19,6 +22,9 @@ pipelines:
           - aws s3 sync .next s3://cc-lms-pp/.next
     push_to_prod:
     - step:
+        caches:
+        - node
+        - nextcache
         oidc: true
         name: 'Push to prod'
         script:
