@@ -54,6 +54,7 @@ function RightComponent({
 
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
   const [confirmAnswer, setConfirmAnswer] = useState<boolean>(false);
+  const [retryCount, setRetryCount] = useState<number>(0);
 
   useEffect(() => {
     if (pageSelected) {
@@ -245,7 +246,10 @@ function RightComponent({
                   }
                   className={`mb-2 pl-4 pr-4 flex text-start`}
                   textStyle={{ justifyContent: "space-between", width: "100%" }}
-                  onClick={() => setSelectedAnswer(o)}
+                  onClick={() => {
+                    setConfirmAnswer(false);
+                    setSelectedAnswer(o);
+                  }}
                 >
                   <div className={selectedAnswer === o ? "text-white" : ""}>
                     {String.fromCharCode(65 + i)}.
@@ -317,14 +321,18 @@ function RightComponent({
                       "c6"
                     );
                     onChange(pageSelectedDetails, "next");
-                  } else setConfirmAnswer(true);
+                  } else {
+                    setConfirmAnswer(true);
+                  }
+                  setRetryCount((prev) => prev + 1);
                 }
               }}
             >
-              {confirmAnswer
-                ? selectedAnswer !== pageSelectedDetails?.mcq?.answer
-                  ? "Try Again"
-                  : "Next"
+              {confirmAnswer &&
+              selectedAnswer === pageSelectedDetails?.mcq?.answer
+                ? "Next"
+                : retryCount > 0
+                ? "Try Again"
                 : "Confirm"}
             </CCButton>
           )}

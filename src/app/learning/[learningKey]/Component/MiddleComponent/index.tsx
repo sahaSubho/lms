@@ -173,7 +173,7 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
           <div className="">
             <CCChessboard
               position={chessFen}
-              skipValidation={!!customPositions}
+              skipValidation={true}
               customPositions={customPositions || {}}
               handleNewFen={handlePositionChange}
             />
