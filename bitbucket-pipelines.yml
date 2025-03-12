@@ -1,4 +1,7 @@
 image: node:18.20.5
+definitions:
+  caches:
+    nextcache: .next/cache
 pipelines:
   custom:
     push_to_preprod:
