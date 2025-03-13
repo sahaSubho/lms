@@ -1,20 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
 import CCChessboard from "@/atom/CCChessboard";
-import CCModal from "@/atom/CCModal";
 import CCText from "@/atom/CCText";
 import CCVideoPlayer from "@/atom/CCVideoPlayer"; // Assuming this is your custom video player component
 import useChessStore from "@/store/chessStore";
-import bg from "@/assets/Components/complete_bg.png";
-import book from "@/assets/Components/Book.png";
-import rectangle from "@/assets/Components/Rectangle.png";
-import rectangle_2 from "@/assets/Components/Rectangle_2.png";
-import star_border from "@/assets/Components/Union.png";
 import Image from "next/image";
 import React, { useEffect, useMemo, useState } from "react";
-import CCButton from "@/atom/CCButton";
-import StarRating from "@/atom/StarRating";
-import { Chess } from "chess.js";
+import { Chess, validateFen } from "chess.js";
+import { getS3Link } from "@/utils/getS3SignedUrl";
 
 type SelectedContentType = {
   chapterId: number;
@@ -32,7 +25,11 @@ type SelectedContentType = {
     move: string;
     comment: string;
   }[];
+  arrows: string;
+  board_disable: boolean;
 };
+
+type Arrow = [string, string, string];
 
 type MiddleComponentProps = {
   selectedContent: SelectedContentType;
@@ -51,11 +48,11 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
   const chessFen = useChessStore((state) => state.fen);
   const updateFen = useChessStore((state) => state.updateFen);
   const [lastMove, setLastMove] = useState("");
+  const [arrowsToShow, setArrowsToShow] = useState<Arrow[]>([]);
   const [customPositions, setCustomPositions] = useState<Record<
     string,
     string
   > | null>(null);
-  const [showCompletePopup, setShowCompletePopup] = useState<boolean>(false);
   const [moveCount, setMoveCount] = useState<number>(0);
   const [moveIndex, setMoveIndex] = useState<number>(1);
 
@@ -72,38 +69,63 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
       updateFen(selectedContent?.content);
     }
     setCustomPositions(selectedContent?.custom_pieces);
+    if (selectedContent?.arrows) {
+      const arrows = selectedContent.arrows.split(",");
+      // @ts-ignore
+      const arrowsArray: Arrow[] = arrows.map((arrowStr) =>
+        arrowStr.split("_")
+      );
+      setArrowsToShow(arrowsArray);
+    } else {
+      setArrowsToShow([]);
+    }
     setCurrentPageId(selectedContent?.id);
-  }, [selectedContent?.content]);
+  }, [selectedContent]);
 
   const handleVideoEnd = () => {
     handleMarkComplete(selectedContent?.content_type, selectedContent?.id);
   };
   // @ts-ignore
-  const handlePositionChange = (newFenDetails) => {
+  const handlePositionChange = async (newFenDetails) => {
     updateFen(newFenDetails?.newFen);
     setLastMove(newFenDetails.to);
     if (!!customPositions) {
-      setCustomPositions((prev) => {
-        if (prev && Object.keys(prev).includes(newFenDetails.to)) {
-          const updated = { ...prev };
-          delete updated[newFenDetails.to];
-          return updated;
+      if (
+        customPositions &&
+        Object.keys(customPositions).includes(newFenDetails.to) &&
+        customPositions[newFenDetails.to] !== "wF"
+      ) {
+        const updated = { ...customPositions };
+        delete updated[newFenDetails.to];
+        setCustomPositions(updated);
+      } else {
+        const res: { url?: string | undefined; error?: unknown | undefined } =
+          await getS3Link("sounds/wrong_move.wav");
+        if (res.url) {
+          const wrongMoveSound = new Audio(res.url);
+          wrongMoveSound.play();
         }
-        return prev;
-      });
-      const correctSound = new Audio(
-        "https://cc-lms-production.s3.ap-south-1.amazonaws.com/sounds/correct_move.wav"
-      );
-      correctSound.play();
+        setTimeout(() => {
+          updateFen(newFenDetails.lastFen);
+        }, 100);
+      }
+      const res: { url?: string | undefined; error?: unknown | undefined } =
+        await getS3Link("sounds/correct_move.wav");
+      if (res.url) {
+        const correctSound = new Audio(res.url);
+        correctSound.play();
+      }
     } else if (selectedContent.moves) {
       const correctMove = selectedContent.moves.find(
         (m) => m.ply === moveIndex
       );
       if (correctMove?.move === `${newFenDetails.from}${newFenDetails.to}`) {
-        const correctSound = new Audio(
-          "https://cc-lms-production.s3.ap-south-1.amazonaws.com/sounds/correct_move.wav"
-        );
-        correctSound.play();
+        const res: { url?: string | undefined; error?: unknown | undefined } =
+          await getS3Link("sounds/correct_move.wav");
+        if (res.url) {
+          const correctSound = new Audio(res.url);
+          correctSound.play();
+        }
         setTimeout(() => {
           const game = new Chess(newFenDetails?.newFen);
           const nextMove = selectedContent.moves.find(
@@ -132,10 +154,12 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
         }, 1000);
         setMoveIndex((prev) => prev + 2);
       } else {
-        const wrongMoveSound = new Audio(
-          "https://cc-lms-production.s3.ap-south-1.amazonaws.com/sounds/wrong_move.wav"
-        );
-        wrongMoveSound.play();
+        const res: { url?: string | undefined; error?: unknown | undefined } =
+          await getS3Link("sounds/wrong_move.wav");
+        if (res.url) {
+          const wrongMoveSound = new Audio(res.url);
+          wrongMoveSound.play();
+        }
         setTimeout(() => {
           updateFen(newFenDetails.lastFen);
         }, 100);
@@ -144,8 +168,6 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
     setMoveCount((prev) => prev + 1);
   };
 
-  console.log("customPositions", customPositions);
-
   useEffect(() => {
     if (
       !selectedContent?.is_solved &&
@@ -153,29 +175,25 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
       customPositions &&
       Object.keys(customPositions).length === 0
     ) {
-      setTimeout(() => {
-        const pageCompleteSound = new Audio(
-          "https://cc-lms-production.s3.ap-south-1.amazonaws.com/sounds/page_complete.wav"
-        );
-        pageCompleteSound.play();
-        setShowCompletePopup(true);
-      }, 1200);
+      handleMarkComplete(selectedContent?.content_type, selectedContent?.id);
     }
-  }, [customPositions, selectedContent]);
+  }, [currentPageId, customPositions, handleMarkComplete, selectedContent]);
 
   return (
-    <div style={{ height: "80vh" }}>
+    <div className="h-full">
       {selectedContent?.content_type === "chess_position" && (
         <div
           className="flex flex-col justify-start"
-          style={{ height: "100%", width: "70%", margin: "auto" }}
+          style={{ height: "100%", width: "78vh", margin: "auto" }}
         >
           <div className="">
             <CCChessboard
               position={chessFen}
-              skipValidation={true}
+              skipValidation={!validateFen(chessFen).ok}
               customPositions={customPositions || {}}
               handleNewFen={handlePositionChange}
+              arrowsToShow={arrowsToShow}
+              disabled={selectedContent?.board_disable}
             />
           </div>
           {!customPositions && (
@@ -205,93 +223,6 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
             className="w-full h-full"
           />
         </div>
-      )}
-      {showCompletePopup && (
-        <CCModal isOpen={showCompletePopup} type="center" onClose={() => {}}>
-          <div className="flex flex-col items-center">
-            <Image
-              src={star_border}
-              alt="Star"
-              // layout="responsive"
-              width={100}
-              height={100}
-              style={{
-                maxWidth: "102%",
-                width: "102%",
-                height: "122%",
-                top: -75,
-              }}
-              className="w-full absolute -left-1 -z-10"
-            />
-            <div
-              className="relative flex flex-col justify-center items-center"
-              style={{
-                backgroundImage: `url(${bg.src})`,
-                top: 5,
-                left: 0,
-                width: "109%",
-                backgroundSize: "100%",
-                height: 120,
-              }}
-            >
-              <div
-                className="absolute -top-16 flex justify-center items-center"
-                style={{ gap: 36 }}
-              >
-                <StarRating percentage={100} />
-                <StarRating percentage={100} />
-                <StarRating percentage={100} />
-              </div>
-              <Image
-                src={rectangle}
-                alt="rect 1"
-                // layout="responsive"
-                width={60}
-                height={400}
-                style={{
-                  position: "absolute",
-                  left: 80,
-                  height: 124,
-                }}
-              />
-              <Image
-                src={rectangle_2}
-                alt="rect 2"
-                // layout="responsive"
-                width={40}
-                height={400}
-                style={{
-                  position: "absolute",
-                  left: 133,
-                  height: 124,
-                }}
-              />
-              <CCText style={{ color: "#fff", fontSize: 28 }}>Completed</CCText>
-            </div>
-            <Image
-              src={book}
-              alt="Book"
-              // layout="responsive"
-              width={400}
-              height={400}
-              // style={{ height: "100%" }}
-              className="mt-5 m-auto"
-            />
-            <CCButton
-              onClick={() => {
-                handleMarkComplete(
-                  selectedContent?.content_type,
-                  selectedContent?.id,
-                  lastMove
-                );
-                setShowCompletePopup(false);
-              }}
-              className="w-3/4 relative m-auto -top-5 border-4 border-white-500"
-            >
-              Continue
-            </CCButton>
-          </div>
-        </CCModal>
       )}
     </div>
   );

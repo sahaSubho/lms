@@ -60,3 +60,10 @@ body::-webkit-scrollbar {
   width: 0;
   height: 0;
 }
+
+ol,
+ul{
+  list-style: disc;
+  margin: 0;
+  padding: 0px 20px;
+}

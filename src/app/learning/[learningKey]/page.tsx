@@ -14,6 +14,18 @@ import LearnPageLoader from "./loading";
 import useChessStore from "@/store/chessStore";
 import { applyMoveAndGetNewFEN } from "@/utils/commonUtils";
 import useUserStore from "@/store/userStore";
+import { getS3Link } from "@/utils/getS3SignedUrl";
+import Image from "next/image";
+import bg from "@/assets/Components/complete_bg.png";
+import book from "@/assets/Components/Book.png";
+import rectangle from "@/assets/Components/Rectangle.png";
+import rectangle_2 from "@/assets/Components/Rectangle_2.png";
+import star_border from "@/assets/Components/Union.png";
+import CCButton from "@/atom/CCButton";
+import StarRating from "@/atom/StarRating";
+import CCModal from "@/atom/CCModal";
+import CCText from "@/atom/CCText";
+import { useRouter } from "next/navigation";
 
 export type Page = {
   id: number;
@@ -60,11 +72,13 @@ export type Page = {
 
 function LearningPage() {
   const { learningKey } = useParams();
+  const router = useRouter();
   const chessFen = useChessStore((state) => state.fen);
   const updateFen = useChessStore((state) => state.updateFen);
 
   const updateScore = useUserStore((state) => state.updateScore);
 
+  const [showCompletePopup, setShowCompletePopup] = useState<boolean>(false);
   const searchParams = useSearchParams();
 
   const chapter = searchParams.get("chapter");
@@ -104,14 +118,13 @@ function LearningPage() {
     }
   }, [learningData, chapter]);
 
-  console.log("learningDataFormatted", learningDataFormatted);
-
   useEffect(() => {
     if (learningDataFormatted && !isInitialized.current) {
       // debugger;
       // @ts-ignore
       const currentPage: Page =
-        learningDataFormatted?.chapters?.[0]?.pages.find((p) => !p.is_solved);
+        learningDataFormatted?.chapters?.[0]?.pages.find((p) => !p.is_solved) ||
+        learningDataFormatted?.chapters?.[0]?.pages?.[0];
       setPageSelected({
         ...currentPage,
         chapterId: learningDataFormatted?.chapters?.[0]?.id,
@@ -147,11 +160,7 @@ function LearningPage() {
     }
   }, [progressUpdated]);
 
-  const handleMarkComplete = (
-    contentType: string,
-    pageId: number,
-    move?: string
-  ) => {
+  const handleMarkComplete = async (contentType: string, pageId: number) => {
     // debugger;
     pageIdProgressUpdate.current = pageId;
     // return;
@@ -160,13 +169,31 @@ function LearningPage() {
     } else if (contentType === "video") {
       updateProgress({ pageId, contentType, videoWatched: true });
     } else if (contentType === "chess_position") {
-      updateProgress({ pageId, contentType, move });
+      updateProgress({ pageId, contentType });
     }
-    const collectCoinSound = new Audio(
-      "https://cc-lms-production.s3.ap-south-1.amazonaws.com/sounds/collect_coins.wav"
+    const res: { url?: string | undefined; error?: unknown | undefined } =
+      await getS3Link("sounds/page_complete.wav");
+    if (res.url) {
+      const pageCompleteSound = new Audio(res.url);
+      pageCompleteSound.play();
+    }
+    if (!pageSelected?.is_solved && pageSelected) {
+      updateScore(pageSelected.points);
+      if (pageSelected.points > 0) {
+        const res: { url?: string | undefined; error?: unknown | undefined } =
+          await getS3Link("sounds/collect_coins.wav");
+        if (res.url) {
+          const collectCoinSound = new Audio(res.url);
+          collectCoinSound.play();
+        }
+      }
+    }
+    const pageNotSolved = learningDataFormatted?.chapters?.[0]?.pages.filter(
+      (p) => !p.is_solved
     );
-    collectCoinSound.play();
-    if (pageSelected) updateScore(pageSelected.points);
+    if (pageNotSolved?.length === 1) {
+      setShowCompletePopup(true);
+    }
   };
 
   // Mark as complete when `pageSelected` changes, only on actual selection
@@ -187,7 +214,6 @@ function LearningPage() {
       learningDataFormatted?.chapters?.[0]?.pages?.find(
         (p) => p.id === pageId
       ) || selectPage;
-    console.log("page change", pageId, currentPage, learningDataFormatted);
     if (currentPage)
       setPageSelected({
         ...currentPage,
@@ -209,7 +235,7 @@ function LearningPage() {
       className="flex justify-between items-start w-full"
       style={{ height: "91vh" }}
     >
-      <div className="flex-[0.73] flex flex-col">
+      <div className="flex-[0.73] h-full flex flex-col">
         <LeftComponent
           learningData={learningDataFormatted}
           onChange={handlePageChange}
@@ -218,7 +244,7 @@ function LearningPage() {
         />
       </div>
       <div
-        className="flex-[0.27] flex-shrink-0 overflow-auto"
+        className="flex-[0.27] h-full border-l-2 flex-shrink-0 overflow-auto"
         style={{ width: "30%" }}
       >
         {/* <CCText>{chessFen}</CCText> */}
@@ -230,6 +256,102 @@ function LearningPage() {
           handleMarkComplete={handleMarkComplete}
         />
       </div>
+      {showCompletePopup && (
+        <CCModal isOpen={showCompletePopup} type="center" onClose={() => {}}>
+          <div className="flex flex-col items-center">
+            <Image
+              src={star_border}
+              alt="Star"
+              // layout="responsive"
+              width={100}
+              height={100}
+              style={{
+                maxWidth: "102%",
+                width: "102%",
+                height: "122%",
+                top: -75,
+              }}
+              className="w-full absolute -left-1 -z-10"
+            />
+            <div
+              className="relative flex flex-col justify-center items-center"
+              style={{
+                backgroundImage: `url(${bg.src})`,
+                top: 5,
+                left: 0,
+                width: "109%",
+                backgroundSize: "100%",
+                height: 120,
+              }}
+            >
+              <div
+                className="absolute -top-16 flex justify-center items-center"
+                style={{ gap: 36 }}
+              >
+                <StarRating percentage={100} />
+                <StarRating percentage={100} />
+                <StarRating percentage={100} />
+              </div>
+              <Image
+                src={rectangle}
+                alt="rect 1"
+                // layout="responsive"
+                width={60}
+                height={400}
+                style={{
+                  position: "absolute",
+                  left: 80,
+                  height: 124,
+                }}
+              />
+              <Image
+                src={rectangle_2}
+                alt="rect 2"
+                // layout="responsive"
+                width={40}
+                height={400}
+                style={{
+                  position: "absolute",
+                  left: 133,
+                  height: 124,
+                }}
+              />
+              <CCText style={{ color: "#fff", fontSize: 28 }}>Completed</CCText>
+            </div>
+            <Image
+              src={book}
+              alt="Book"
+              // layout="responsive"
+              width={400}
+              height={400}
+              // style={{ height: "100%" }}
+              className="mt-5 m-auto"
+            />
+            <CCButton
+              onClick={async () => {
+                const chapterCount = learningData?.chapters?.length || 0;
+                setShowCompletePopup(false);
+                const res: {
+                  url?: string | undefined;
+                  error?: unknown | undefined;
+                } = await getS3Link("sounds/new_chapter.wav");
+                if (res.url) {
+                  const newChapterSound = new Audio(res.url);
+                  newChapterSound.play();
+                }
+                if (chapterCount > Number(chapter) + 1)
+                  router.push(
+                    `learning/${learningKey}?chapter=${Number(chapter) + 1}`
+                  );
+                else router.push("/");
+              }}
+              className="w-3/4 relative m-auto -top-5 border-4 border-white-500"
+            >
+              Continue
+            </CCButton>
+          </div>
+        </CCModal>
+      )}
     </div>
   );
 }

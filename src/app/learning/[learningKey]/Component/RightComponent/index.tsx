@@ -89,6 +89,10 @@ function RightComponent({
       }
       // @ts-ignore
       setPageSelectedDetails(obj);
+      if (pageSelected.mcq && pageSelected.is_solved) {
+        setConfirmAnswer(true);
+        setSelectedAnswer(pageSelected.mcq.answer);
+      }
     }
   }, [pageSelected]);
 
@@ -167,7 +171,7 @@ function RightComponent({
 
   return (
     <div
-      className="flex border-l-2 flex-col justify-between items-center "
+      className="flex flex-col justify-between items-center "
       style={{
         width: "-webkit-fill-available",
       }}
@@ -178,14 +182,16 @@ function RightComponent({
             pageSelectedDetails?.mcq ? "mcq" : pageSelectedDetails?.content_type
           )}
         </CCText>
-        <CCButton
-          className="px-4 z-10"
-          textColor="white"
-          buttonType="darkYellow"
-          icon={<Image src={Coin} alt="Coin" width={20} height={20} />}
-        >
-          Earn {String(pageSelectedDetails?.points)}
-        </CCButton>
+        {pageSelectedDetails?.points && (
+          <CCButton
+            className="px-4 z-10"
+            textColor="white"
+            buttonType="darkYellow"
+            icon={<Image src={Coin} alt="Coin" width={20} height={20} />}
+          >
+            Earn {String(pageSelectedDetails?.points)}
+          </CCButton>
+        )}
         <Image
           src={CoinBg}
           alt="Coin Bg"
@@ -275,7 +281,7 @@ function RightComponent({
       <CCDivider />
       <Spacer spacing={32} />
 
-      <div className="flex justify-between items-center">
+      <div className="flex w-full px-5 justify-between items-center">
         <div className="flex-[0.5] flex flex-col justify-start items-start">
           <CCButton
             buttonStyle="square"
@@ -284,15 +290,24 @@ function RightComponent({
           >
             Previous
           </CCButton>
-          <CCText className="mt-2 text-xs text-textColor-lightBrown">
-            The concept of a fortress. Some element...
-          </CCText>
         </div>
         <div className="flex-[0.5] flex flex-col justify-end items-end">
           {!pageSelectedDetails?.mcq ? (
             <CCButton
               buttonStyle="square"
-              onClick={() => onChange(pageSelectedDetails, "next")}
+              onClick={() => {
+                setConfirmAnswer(false);
+                if (
+                  handleMarkComplete &&
+                  !pageSelectedDetails?.is_solved &&
+                  pageSelectedDetails?.points === 0
+                )
+                  handleMarkComplete(
+                    pageSelectedDetails?.content_type,
+                    pageSelectedDetails?.id
+                  );
+                onChange(pageSelectedDetails, "next");
+              }}
               buttonType="yellow"
             >
               Next
@@ -301,8 +316,7 @@ function RightComponent({
             <CCButton
               buttonStyle="square"
               buttonType={
-                !pageSelectedDetails?.mcq ||
-                selectedAnswer ||
+                !confirmAnswer ||
                 selectedAnswer === pageSelectedDetails?.mcq?.answer
                   ? "yellow"
                   : "white"
@@ -315,11 +329,11 @@ function RightComponent({
                     handleMarkComplete &&
                     pageSelectedDetails
                   ) {
-                    handleMarkComplete(
-                      pageSelectedDetails?.content_type,
-                      pageSelectedDetails?.id,
-                      "c6"
-                    );
+                    if (!pageSelectedDetails.is_solved)
+                      handleMarkComplete(
+                        pageSelectedDetails?.content_type,
+                        pageSelectedDetails?.id
+                      );
                     onChange(pageSelectedDetails, "next");
                   } else {
                     setConfirmAnswer(true);
@@ -331,14 +345,11 @@ function RightComponent({
               {confirmAnswer &&
               selectedAnswer === pageSelectedDetails?.mcq?.answer
                 ? "Next"
-                : retryCount > 0
+                : confirmAnswer
                 ? "Try Again"
                 : "Confirm"}
             </CCButton>
           )}
-          <CCText className="mt-2 text-xs text-textColor-lightBrown text-end">
-            The concept of a fortress. Some element...
-          </CCText>
         </div>
       </div>
     </div>

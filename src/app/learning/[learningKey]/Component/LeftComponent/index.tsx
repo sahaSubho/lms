@@ -364,7 +364,7 @@ const LeftComponent = ({
           </CCText>
         </div>
       </div>
-      <div className="flex justify-between items-start">
+      <div className="flex h-full justify-between items-start">
         <div className="flex-[0.3]">
           <CourseContentComponent
             learningDataFormated={learningData}
@@ -373,7 +373,7 @@ const LeftComponent = ({
             selectedContent={pageSelected}
           />
         </div>
-        <div className="flex-[0.7] border-l-2">
+        <div className="flex-[0.7] h-full border-l-2">
           <MiddleComponent
             // @ts-ignore
             selectedContent={pageSelected}

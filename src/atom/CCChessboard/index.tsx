@@ -21,8 +21,7 @@ import BlackKnightCaptured from "@/assets/ChessPieces/Black-Knight-Captured.svg"
 import BlackRookCaptured from "@/assets/ChessPieces/Black-Rook-Captured.svg";
 import BlackKingCaptured from "@/assets/ChessPieces/Black-King-Captured.svg";
 import BlackQueenCaptured from "@/assets/ChessPieces/Black-Queen-Captured.svg";
-// @ts-ignore
-import ChessboardComponent from "chessboard-package";
+import ChessBoardWithArrow from "./ChessBoardWithArrow";
 import Image from "next/image";
 
 export const pieceImages = {
@@ -67,9 +66,10 @@ function CCChessboard({ ...rest }) {
     }, {});
   };
   const pieceTheme = createPieceTheme(pieceImages);
+
   return (
     <div>
-      <ChessboardComponent customPieces={pieceTheme} {...rest} />
+      <ChessBoardWithArrow customPieces={pieceTheme} {...rest} />
     </div>
   );
 }
