@@ -8,6 +8,7 @@ import React, {
   useImperativeHandle,
   ForwardRefRenderFunction,
 } from "react";
+//@ts-ignore
 import Chessboard from "chessboard-package";
 
 type ChessboardWithArrowProps = {
@@ -32,7 +33,6 @@ const ChessboardWithArrow: ForwardRefRenderFunction<
   { boardOrientation = "white", arrowsToShow = [], disabled, ...rest },
   ref
 ) => {
-  console.log("disabled", disabled);
   const [arrows, setArrows] = useState<Arrow[]>(arrowsToShow);
   const [markedSquares, setMarkedSquares] = useState<
     { square: string; color: string }[]
