@@ -17,8 +17,9 @@ pipelines:
           - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
           - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
           - npm install -f
-          - npm run build
           - apt-get update -y && apt-get install awscli -y
+          - aws secretsmanager get-secret-value --secret-id preprod/lms --query SecretString --output text > .env
+          - npm run build
           - aws s3 sync .next s3://cc-lms-pp/.next
     push_to_prod:
     - step:
@@ -33,6 +34,7 @@ pipelines:
           - export AWS_WEB_IDENTITY_TOKEN_FILE=$(pwd)/web-identity-token
           - echo $BITBUCKET_STEP_OIDC_TOKEN > $(pwd)/web-identity-token
           - npm install -f
-          - npm run build
           - apt-get update -y && apt-get install awscli -y
+          - aws secretsmanager get-secret-value --secret-id prod/lms --query SecretString --output text > .env
+          - npm run build
           - aws s3 sync .next s3://cc-lms-production/.next
