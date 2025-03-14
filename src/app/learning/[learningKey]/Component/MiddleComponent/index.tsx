@@ -47,13 +47,13 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
   const [currentPageId, setCurrentPageId] = useState<number>(0);
   const chessFen = useChessStore((state) => state.fen);
   const updateFen = useChessStore((state) => state.updateFen);
-  const [lastMove, setLastMove] = useState("");
+  // const [lastMove, setLastMove] = useState("");
   const [arrowsToShow, setArrowsToShow] = useState<Arrow[]>([]);
   const [customPositions, setCustomPositions] = useState<Record<
     string,
     string
   > | null>(null);
-  const [moveCount, setMoveCount] = useState<number>(0);
+  // const [moveCount, setMoveCount] = useState<number>(0);
   const [moveIndex, setMoveIndex] = useState<number>(1);
 
   const isWhiteChance = useMemo(
@@ -88,7 +88,7 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
   // @ts-ignore
   const handlePositionChange = async (newFenDetails) => {
     updateFen(newFenDetails?.newFen);
-    setLastMove(newFenDetails.to);
+    // setLastMove(newFenDetails.to);
     if (!!customPositions) {
       if (
         customPositions &&
@@ -170,7 +170,7 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
         }, 100);
       }
     }
-    setMoveCount((prev) => prev + 1);
+    // setMoveCount((prev) => prev + 1);
   };
 
   useEffect(() => {
