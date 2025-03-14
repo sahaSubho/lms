@@ -93,12 +93,17 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
       if (
         customPositions &&
         Object.keys(customPositions).includes(newFenDetails.to) &&
-        customPositions[newFenDetails.to] !== "wF"
+        ((Object.keys(customPositions).length > 1 &&
+          customPositions[newFenDetails.to] !== "wF") ||
+          Object.keys(customPositions).length === 1)
       ) {
         const updated = { ...customPositions };
         delete updated[newFenDetails.to];
         setCustomPositions(updated);
-      } else {
+      } else if (
+        customPositions &&
+        Object.keys(customPositions).includes(newFenDetails.to)
+      ) {
         const res: { url?: string | undefined; error?: unknown | undefined } =
           await getS3Link("sounds/wrong_move.wav");
         if (res.url) {
