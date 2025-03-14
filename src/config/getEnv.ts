@@ -30,7 +30,7 @@ async function getEnv() {
     const secret = response.SecretString
     // Create .env file in root directory
     // @ts-ignore
-    require('fs').writeFileSync(`${__dirname}/../../.env.prod`, secret)
+    require('fs').writeFileSync(`${__dirname}/../../.env`, secret)
   }
 }
 getEnv()
