@@ -88,6 +88,7 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
   // @ts-ignore
   const handlePositionChange = async (newFenDetails) => {
     updateFen(newFenDetails?.newFen);
+    console.log("position change", newFenDetails);
     // setLastMove(newFenDetails.to);
     if (!!customPositions) {
       if (
@@ -182,7 +183,7 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
     ) {
       handleMarkComplete(selectedContent?.content_type, selectedContent?.id);
     }
-  }, [currentPageId, customPositions, handleMarkComplete, selectedContent]);
+  }, [customPositions]);
 
   return (
     <div className="h-full">

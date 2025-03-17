@@ -8,8 +8,6 @@ const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
 const MAIN_DOMAIN = process.env.NEXT_PUBLIC_MAIN_DOMAIN || "http://localhost:8081";
 
-console.log("API_URL", API_BASE_URL)
-
 const chessClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {

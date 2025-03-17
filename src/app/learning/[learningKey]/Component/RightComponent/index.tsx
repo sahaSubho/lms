@@ -11,6 +11,7 @@ import CCDivider from "@/atom/CCDivider";
 import { FaCircleCheck } from "react-icons/fa6";
 import CoinBg from "@/assets/Components/Coin_bg.png";
 import Coin from "@/assets/Components/borderCoin.svg";
+import { getS3Link } from "@/utils/getS3SignedUrl";
 
 type Page = {
   id: number;
@@ -168,6 +169,29 @@ function RightComponent({
         return "Make a move on the board and win";
     }
   };
+
+  const triggerSoundForMcq = async () => {
+    if (selectedAnswer === pageSelectedDetails?.mcq?.answer) {
+      const res: { url?: string | undefined; error?: unknown | undefined } =
+        await getS3Link("sounds/correct_move.wav");
+      if (res.url) {
+        const correctSound = new Audio(res.url);
+        correctSound.play();
+      }
+    } else {
+      const res: { url?: string | undefined; error?: unknown | undefined } =
+        await getS3Link("sounds/wrong_move.wav");
+      if (res.url) {
+        const wrongMoveSound = new Audio(res.url);
+        wrongMoveSound.play();
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (selectedAnswer && confirmAnswer && pageSelectedDetails?.mcq)
+      triggerSoundForMcq();
+  }, [selectedAnswer, confirmAnswer]);
 
   return (
     <div
