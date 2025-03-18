@@ -236,7 +236,7 @@ function RightComponent({
             width: "-webkit-fill-available",
           }}
         >
-          <CCText className="text-lg">
+          <CCText className="text-2xl">
             {`${pageSelectedDetails?.index || 1}. ${
               pageSelectedDetails?.heading || ""
             }`}
@@ -253,11 +253,11 @@ function RightComponent({
 
         {/* Render the processed JSX content */}
         <div
-          className="flex flex-col font-medium text-textColor overflow-auto"
+          className="flex flex-col text-xl font-medium text-textColor overflow-auto"
           style={{ whiteSpace: "break", height: "54vh" }}
         >
           {pageSelectedDetails?.text}
-          {pageSelectedDetails?.mcq && (
+          {!!pageSelectedDetails?.mcq && (
             <>
               {pageSelectedDetails?.mcq?.question}
               <Spacer spacing={20} />

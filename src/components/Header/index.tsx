@@ -1,6 +1,7 @@
 "use client";
 import CCText from "@/atom/CCText";
-import React, { useEffect } from "react";
+import { motion } from "framer-motion";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import circlechessLogo from "@/assets/logos/cc-logo-full.png";
 import CCCoin from "@/atom/CCCoin";
@@ -12,6 +13,7 @@ function Header() {
   const { data: user } = useGetBeginnerUserDetails();
   const userName = useUserStore((state) => state.name);
   const score = useUserStore((state) => state.score);
+  const [animateBox, setAnimateBox] = useState(false);
 
   const updateName = useUserStore((state) => state.updateName);
   const updateScore = useUserStore((state) => state.updateScore);
@@ -22,6 +24,17 @@ function Header() {
       updateScore(user?.total_score);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (score > 0 && score !== user?.total_score) {
+      setAnimateBox(true);
+      setTimeout(() => {
+        setAnimateBox(false);
+      }, 2000);
+    }
+  }, [score]);
+
+  console.log("animateBox", animateBox);
 
   return (
     <header className="sticky top-0 z-10">
@@ -36,7 +49,11 @@ function Header() {
           />
         </div>
         <div className="flex justify-end items-center">
-          <div className="flex relative rounded-full py-1 px-10 bg-brand-darkBrown text-white">
+          <motion.div
+            className="flex relative rounded-full py-1 px-10 bg-brand-darkBrown text-white"
+            animate={animateBox ? { scale: 1.3 } : { scale: 1 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
             <Image
               src={Coin}
               width={40}
@@ -46,7 +63,8 @@ function Header() {
               style={{ left: -10, top: -5 }}
             />
             {score}
-          </div>
+          </motion.div>
+
           <div className="flex-col mx-3">
             <CCText className="text-right">{userName}</CCText>
           </div>

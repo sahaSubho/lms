@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
 
+import { motion } from "framer-motion";
 import React, { useEffect, useState, useRef } from "react";
 import LeftComponent from "./Component/LeftComponent";
 import RightComponent from "./Component/RightComponent";
@@ -26,6 +27,7 @@ import StarRating from "@/atom/StarRating";
 import CCModal from "@/atom/CCModal";
 import CCText from "@/atom/CCText";
 import { useRouter } from "next/navigation";
+import Coin from "@/assets/Components/Coin.png";
 
 export type Page = {
   id: number;
@@ -82,6 +84,24 @@ function LearningPage() {
   const searchParams = useSearchParams();
 
   const chapter = searchParams.get("chapter");
+
+  const [showCoin, setShowCoin] = useState(false);
+
+  const collectCoin = async (pageSelected: Page) => {
+    if (showCoin) return; // Prevent multiple coins at once
+
+    setShowCoin(true);
+    setTimeout(async () => {
+      setShowCoin(false);
+      updateScore(pageSelected.points);
+      const res: { url?: string | undefined; error?: unknown | undefined } =
+        await getS3Link("sounds/collect_coins.wav");
+      if (res.url) {
+        const collectCoinSound = new Audio(res.url);
+        collectCoinSound.play();
+      }
+    }, 2000); // Match animation duration
+  };
 
   const {
     data: learningData,
@@ -178,14 +198,8 @@ function LearningPage() {
       pageCompleteSound.play();
     }
     if (!pageSelected?.is_solved && pageSelected) {
-      updateScore(pageSelected.points);
       if (pageSelected.points > 0) {
-        const res: { url?: string | undefined; error?: unknown | undefined } =
-          await getS3Link("sounds/collect_coins.wav");
-        if (res.url) {
-          const collectCoinSound = new Audio(res.url);
-          collectCoinSound.play();
-        }
+        await collectCoin(pageSelected);
       }
     }
     const pageNotSolved = learningDataFormatted?.chapters?.[0]?.pages.filter(
@@ -351,6 +365,21 @@ function LearningPage() {
             </CCButton>
           </div>
         </CCModal>
+      )}
+      {showCoin && (
+        <motion.div
+          className="absolute w-60 h-60 flex items-center justify-center z-[9999]"
+          initial={{ x: "40vw", y: "70vh", opacity: 1, scale: 1 }} // Starting position
+          animate={{
+            x: ["40vw", "78vw"], // Moves smoothly right
+            y: ["80vh", "-150px"], // Peaks at 20vh, lands at -40px
+            opacity: [1, 1, 0.4], // Fades out at the end
+            scale: [1, 0.5, 0.1], // Shrinks as it moves
+          }}
+          transition={{ duration: 2, ease: "easeInOut" }}
+        >
+          <Image src={Coin} width={150} height={150} alt="Coin" />
+        </motion.div>
       )}
     </div>
   );
