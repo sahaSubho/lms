@@ -42,7 +42,7 @@ const UploadBookForm = () => {
         title: chapter.title,
         pages: chapter.pages,
       })));
-      chapterId = learningData.chapters.length; 
+      chapterId = learningData.chapters.length - 1; 
       if (learningData.chapters.length)
         setSelectedChapter({
           index: 0,
