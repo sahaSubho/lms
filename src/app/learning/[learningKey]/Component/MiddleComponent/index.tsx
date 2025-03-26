@@ -61,6 +61,22 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
     [selectedContent?.content]
   );
 
+  const getColors = (key: string) => {
+    switch (key) {
+      case "R":
+        return "red";
+      case "B":
+        return "blue";
+      case "Y":
+        return "yellow";
+      case "G":
+        return "green";
+      default:
+        return "green"; // default color
+    }
+  }
+
+
   useEffect(() => {
     if (
       selectedContent?.content &&
@@ -70,10 +86,9 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
     }
     setCustomPositions(selectedContent?.custom_pieces);
     if (selectedContent?.arrows) {
-      const arrows = selectedContent.arrows.split(",");
       // @ts-ignore
-      const arrowsArray: Arrow[] = arrows.map((arrowStr) =>
-        arrowStr.split("_")
+      const arrowsArray: Arrow[] = selectedContent.arrows.map((arrow) =>
+        [arrow.from,arrow.to,getColors(arrow.color)]
       );
       setArrowsToShow(arrowsArray);
     } else {

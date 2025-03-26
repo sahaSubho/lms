@@ -18,6 +18,7 @@ type CCButtonProps = {
   className?: string;
   icon?: JSX.Element;
   textStyle?: object;
+  disable?: boolean;
 };
 
 function CCButton(props: CCButtonProps) {
@@ -31,6 +32,7 @@ function CCButton(props: CCButtonProps) {
     buttonStyle = "circle",
     icon,
     textStyle,
+    disable
   } = props;
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -52,7 +54,12 @@ function CCButton(props: CCButtonProps) {
   // const isTextWhite=useMemo(() => textColor==='white', [textColor])
   return (
     <button
+      disabled={disable}
       type={type}
+      style={{
+        filter: disable ? "grayscale(1)" : "unset",
+        cursor: disable ? "not-allowed" : "pointer",
+      }}
       className={`rounded-full py-2 ${
         className?.includes("px") ? "" : "px-8"
       } transition-all duration-300 shadow-md hover:shadow-lg active:shadow-inner ${

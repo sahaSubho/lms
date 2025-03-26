@@ -64,6 +64,7 @@ export const useGetBeginnerCourseDetails = () => {
         const response = await chessClient.get(
           `/lms/v1/lms-beginner-course`
         );
+        localStorage.setItem("courseKey", response.data.courseKey);
         setData(response.data);
       } catch (err) {
         setError(

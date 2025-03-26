@@ -13,10 +13,11 @@ interface Tab {
 
 interface TabsProps {
   tabs: Tab[];
+  active?: number;
 }
 
-const CCTabs: React.FC<TabsProps> = ({ tabs }) => {
-  const [activeTab, setActiveTab] = useState<number>(1); // Manage active tab here
+const CCTabs: React.FC<TabsProps> = ({ tabs, active = 1 }) => {
+  const [activeTab, setActiveTab] = useState<number>(active); // Manage active tab here
 
   const handleTabClick = (index: number) => {
     setActiveTab(index);

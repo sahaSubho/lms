@@ -1,16 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CCText from "@/atom/CCText";
 import CCButton from "@/atom/CCButton";
 import { useUploadCourseBook } from "@/APIHooks/uploadCoursesApi";
+import ChapterForm from "./ChapterForm";
+import { GetUserCourseLearning } from "@/APIHooks/GetUserCourseLearning/GetUserCourseLearning";
+import CCDivider from "@/atom/CCDivider";
+import { TiDelete } from "react-icons/ti";
 
+type Chapter = {
+  index: number;
+  id?: number;
+  title: string;
+  pages: any[];
+};
+let chapterId = 0;
 const UploadBookForm = () => {
+  const courseKey = localStorage.getItem("courseKey") || "";
+  const { data: learningData, isLoading } = GetUserCourseLearning(courseKey);
   const [bookTitle, setBookTitle] = useState("");
-  const [chapters, setChapters] = useState<File[]>([
-    new File([""], "test.pgn"),
+  const [chapters, setChapters] = useState<Chapter[]>([
+    { index: 0, title: "", pages: [] },
   ]);
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [selectedChapter, setSelectedChapter] = useState<Chapter | null>(
+    chapters[0]
+  );
+
+  useEffect(() => {
+    if (learningData) {
+      setChapters(learningData.chapters.map((chapter, index) => ({
+        id: chapter.id,
+        index,
+        title: chapter.title,
+        pages: chapter.pages,
+      }))); 
+      if (learningData.chapters.length)
+        setSelectedChapter({
+          index: 0,
+          id: learningData.chapters[0].id,
+          title: learningData.chapters[0].title,
+          pages: learningData.chapters[0].pages,
+        });
+    }
+  }, [learningData]);
 
   const { uploadCourseBook, error } = useUploadCourseBook();
   // Handle book title change
@@ -18,16 +53,21 @@ const UploadBookForm = () => {
     setBookTitle(e.target.value);
   };
 
-  // Handle file selection
-  const handleFileChange = (index: number, file: File) => {
-    const updatedChapters = [...chapters];
-    updatedChapters[index] = file;
+  const submitChapter = (chapterData: Chapter, chapterId?: number) => {
+    const updatedChapters = chapters.map((chapter, index) => {
+      if (index === chapterId) {
+        return chapterData;
+      }
+      return chapter;
+    });
+    setSubmitted(true);
     setChapters(updatedChapters);
   };
-
   // Add a new chapter field
   const addChapter = () => {
-    setChapters([...chapters, new File([""], "test.pgn")]);
+    chapterId += 1;
+    setChapters([...chapters, { index: chapterId, title: "", pages: [] }]);
+    setSelectedChapter({ index: chapterId, title: "", pages: [] });
   };
 
   // Remove a chapter field
@@ -37,25 +77,27 @@ const UploadBookForm = () => {
   };
 
   // Handle form submission
-  const handleSubmit = async (e: { preventDefault: () => void }) => {
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    if (!bookTitle.trim()) {
-      alert("Book title is required!");
-      return;
-    }
+    // if (!bookTitle.trim()) {
+    //   alert("Book title is required!");
+    //   return;
+    // }
 
     if (!chapters.length) {
-      alert("Each chapter must have a PGN file.");
+      alert("chapter must have content.");
       return;
     }
 
     const formData = new FormData();
-    formData.append("book_title", bookTitle);
-
+    formData.append("courseKey", courseKey);
+    formData.append(`chapters`, JSON.stringify(chapters));
     chapters.forEach((chapter, index) => {
-      //   formData.append(`chapter_title_${index}`, chapter.title);
-      formData.append(`chapter_file_${index}`, chapter);
+      chapter.pages.forEach((page, pageIndex) => {
+        if (page.pgn instanceof File)
+          formData.append(`chapter_${index}_page_${pageIndex}`, page.pgn);
+      });
     });
 
     try {
@@ -79,12 +121,14 @@ const UploadBookForm = () => {
     }
   };
 
+  console.log(chapters, selectedChapter);
+
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <CCText className="text-2xl font-bold mb-6">Upload New Book</CCText>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Book Title */}
-        <div>
+      <CCText className="text-2xl font-bold mb-6">Upload Chapter</CCText>
+      {/* <form onSubmit={handleSubmit} className="space-y-4"> */}
+      {/* Book Title */}
+      {/* <div>
           <label className="block text-sm font-medium text-gray-700">
             Book Title
           </label>
@@ -95,53 +139,68 @@ const UploadBookForm = () => {
             className="mt-1 text-gray-700 w-full border p-2 rounded-md"
             required
           />
-        </div>
+        </div> */}
 
-        {/* Chapters */}
-        <div>
+      {/* Chapters */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
           <label className="block text-sm font-medium text-gray-700">
-            Chapters (Upload PGN file)
+            Chapters
           </label>
-          {chapters.map((chapter, index) => (
-            <div key={index} className="flex items-center space-x-2 mb-3">
-              <CCText>Chapter {String(index + 1)}</CCText>
-              <input
-                type="file"
-                accept=".pgn"
-                onChange={(e) => {
-                  if (e.target.files)
-                    handleFileChange(index, e.target.files[0]);
-                }}
-                className="text-gray-500 border p-2 rounded-md"
-                required
-              />
-              {chapters.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeChapter(index)}
-                  className="px-3 py-1 bg-red-500 text-white rounded-md"
-                >
-                  ✖
-                </button>
-              )}
-            </div>
+          <CCButton
+            buttonType="grey"
+            onClick={addChapter}
+            className="bg-brand-darkBrown text-white rounded-md"
+          >
+            Add Chapter
+          </CCButton>
+        </div>
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          {selectedChapter && chapters.map((chapter, index) => (
+            <CCButton
+              className="relative"
+              buttonStyle="square"
+              onClick={() => setSelectedChapter(chapter)}
+              key={chapter.index}
+              textColor={selectedChapter.index === chapter.index ? "white" : "black"}
+              buttonType={
+                selectedChapter.index === chapter.index ? "darkBrown" : "grey"
+              }
+            >
+              <div>
+                Chapter {String(index + 1)}
+                {index > 0 && (
+                <div className="absolute -right-2 -top-2">
+                  <TiDelete
+                    color="red"
+                    fontSize={20}
+                    onClick={() => removeChapter(index)}
+                  />
+                </div>)}
+              </div>
+            </CCButton>
           ))}
         </div>
+        <CCDivider className="my-8" />
+        {selectedChapter && (
+          <ChapterForm
+            data={selectedChapter}
+            chapterIndex={selectedChapter?.index}
+            submitChapter={submitChapter}
+          />
+        )}
+      </div>
 
-        {/* Add Chapter Button */}
-        <CCButton
-          buttonType="grey"
-          onClick={addChapter}
-          className="bg-brand-darkBrown text-white rounded-md"
-        >
-          Add Chapter
-        </CCButton>
-
-        {/* Submit Button */}
-        <CCButton type="submit" buttonStyle="square" className="w-full">
-          {loading ? "Uploading..." : "Upload Book"}
-        </CCButton>
-      </form>
+      {/* Submit Button */}
+      <CCButton
+        disable={!submitted}
+        buttonStyle="square"
+        className="w-full"
+        onClick={(e) => handleSubmit(e as React.MouseEvent<HTMLButtonElement>)}
+      >
+        {loading ? "Updating..." : "Update"}
+      </CCButton>
+      {/* </form> */}
     </div>
   );
 };

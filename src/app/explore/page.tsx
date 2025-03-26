@@ -27,7 +27,7 @@ function page() {
     <div className="m-5">
       <CCText className="text-3xl">Admin panel</CCText>
       <Spacer spacing={24} />
-      <CCTabs tabs={tabs} />
+      <CCTabs tabs={tabs} active={0} />
     </div>
   );
 }
