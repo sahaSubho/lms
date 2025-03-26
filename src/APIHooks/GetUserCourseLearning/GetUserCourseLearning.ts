@@ -48,7 +48,7 @@ export interface RegisteredCourseDetails {
   chapters: Chapter[];
 }
 
-export const GetUserCourseLearning = (courseKey: string) => {
+export const GetUserCourseLearning = (courseKey: string|null) => {
   const [data, setData] = useState<RegisteredCourseDetails | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

@@ -5,7 +5,7 @@ import CCText from "@/atom/CCText";
 import CCButton from "@/atom/CCButton";
 import { useUploadCourseBook } from "@/APIHooks/uploadCoursesApi";
 import ChapterForm from "./ChapterForm";
-import { GetUserCourseLearning } from "@/APIHooks/GetUserCourseLearning/GetUserCourseLearning";
+import { GetUserCourseLearning, RegisteredCourseDetails } from "@/APIHooks/GetUserCourseLearning/GetUserCourseLearning";
 import CCDivider from "@/atom/CCDivider";
 import { TiDelete } from "react-icons/ti";
 
@@ -17,8 +17,8 @@ type Chapter = {
 };
 let chapterId = 0;
 const UploadBookForm = () => {
-  const courseKey = localStorage.getItem("courseKey") || "";
-  const { data: learningData, isLoading } = GetUserCourseLearning(courseKey);
+  const [courseKey, setCourseKey] = useState<string>('');
+  const { data: learningData, } = GetUserCourseLearning(courseKey);
   const [bookTitle, setBookTitle] = useState("");
   const [chapters, setChapters] = useState<Chapter[]>([
     { index: 0, title: "", pages: [] },
@@ -28,6 +28,11 @@ const UploadBookForm = () => {
   const [selectedChapter, setSelectedChapter] = useState<Chapter | null>(
     chapters[0]
   );
+
+  useEffect(() => {
+    const courseKey = localStorage.getItem("courseKey") || "";
+    setCourseKey(courseKey);
+  }, []);
 
   useEffect(() => {
     if (learningData) {
@@ -91,7 +96,7 @@ const UploadBookForm = () => {
     }
 
     const formData = new FormData();
-    formData.append("courseKey", courseKey);
+    formData.append("courseKey", courseKey || "");
     formData.append(`chapters`, JSON.stringify(chapters));
     chapters.forEach((chapter, index) => {
       chapter.pages.forEach((page, pageIndex) => {
