@@ -63,7 +63,7 @@ export default function ChapterForm({
         content_type: "",
         custom_pieces: "",
         points: 0,
-        pgn: new File([""], "test.pgn"),
+        pgn: '',
       },
     ],
   });
@@ -78,7 +78,7 @@ export default function ChapterForm({
             content_type: "",
             custom_pieces: "",
             points: 0,
-            pgn: new File([""], "test.pgn"),
+            pgn: '',
             },
         ],      
     });
@@ -92,8 +92,6 @@ export default function ChapterForm({
       }, 300);
     }
   }, [data]);
-
-console.log(data, formData, "Called");
 
   const [coins, setCoins] = useState<string[]>([]);
 
@@ -124,7 +122,7 @@ console.log(data, formData, "Called");
           text: "",
           custom_pieces: "",
           points: 0,
-          pgn: new File([""], ""),
+          pgn: "",
         },
       ],
     });

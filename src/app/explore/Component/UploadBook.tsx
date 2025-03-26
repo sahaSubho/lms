@@ -5,7 +5,7 @@ import CCText from "@/atom/CCText";
 import CCButton from "@/atom/CCButton";
 import { useUploadCourseBook } from "@/APIHooks/uploadCoursesApi";
 import ChapterForm from "./ChapterForm";
-import { GetUserCourseLearning, RegisteredCourseDetails } from "@/APIHooks/GetUserCourseLearning/GetUserCourseLearning";
+import { GetUserCourseLearning } from "@/APIHooks/GetUserCourseLearning/GetUserCourseLearning";
 import CCDivider from "@/atom/CCDivider";
 import { TiDelete } from "react-icons/ti";
 
@@ -41,7 +41,8 @@ const UploadBookForm = () => {
         index,
         title: chapter.title,
         pages: chapter.pages,
-      }))); 
+      })));
+      chapterId = learningData.chapters.length; 
       if (learningData.chapters.length)
         setSelectedChapter({
           index: 0,
