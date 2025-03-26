@@ -53,7 +53,7 @@ export default function ChapterForm({
   chapterIndex: number;
   submitChapter: (chapterData: Chapter, chapterId?: number) => void;
 }) {
-
+  const [sortingEnabled, setSortingEnabled] = useState(false);
   const [formData, setFormData] = useState<Chapter>({
     index: 0,
     title: "",
@@ -63,7 +63,7 @@ export default function ChapterForm({
         content_type: "",
         custom_pieces: "",
         points: 0,
-        pgn: '',
+        pgn: "",
       },
     ],
   });
@@ -71,16 +71,16 @@ export default function ChapterForm({
   const resetForm = () => {
     setFormData({
       index: 0,
-      title: "",        
-        pages: [
-            {
-            heading: "",
-            content_type: "",
-            custom_pieces: "",
-            points: 0,
-            pgn: '',
-            },
-        ],      
+      title: "",
+      pages: [
+        {
+          heading: "",
+          content_type: "",
+          custom_pieces: "",
+          points: 0,
+          pgn: "",
+        },
+      ],
     });
   };
 
@@ -88,7 +88,7 @@ export default function ChapterForm({
     if (data) {
       resetForm();
       setTimeout(() => {
-          setFormData(data);
+        setFormData(data);
       }, 300);
     }
   }, [data]);
@@ -147,11 +147,12 @@ export default function ChapterForm({
   const handleMCQChange = (
     pageIndex: number,
     key: keyof MCQ,
-    value: string
+    value: string,
+    optionIndex?: number
   ) => {
     const newPages = [...formData.pages];
-    if (key === "options" && Array.isArray(value)) {
-      newPages[pageIndex].mcq[key] = value;
+    if (key === "options" && optionIndex !== undefined) {
+      newPages[pageIndex].mcq[key][optionIndex] = value;
     } else if (key !== "options" && typeof value === "string") {
       newPages[pageIndex].mcq[key] = value;
     }
@@ -197,11 +198,27 @@ export default function ChapterForm({
           placeholder="Title"
           value={formData.title}
           onChange={(e) => {
-            setFormData({ ...formData, title: e.target.value })
+            setFormData({ ...formData, title: e.target.value });
           }}
         />
         {formData.pages.map((page, pageIndex) => (
-          <div key={pageIndex} className="rounded-lg">
+          <div key={pageIndex} className="relative rounded-lg">
+            <div className="flex mb-4 items-center justify-between">
+              <h3 className="text-lg text-textColor-default font-bold">
+                Page {pageIndex + 1}
+              </h3>
+              <FaMinusCircle
+                color="red"
+                fontSize={20}
+                className="cursor-pointer"
+                onClick={() => {
+                  const newPages = formData.pages.filter(
+                    (_, i) => i !== pageIndex
+                  );
+                  setFormData({ ...formData, pages: newPages });
+                }}
+              />
+            </div>
             <Input
               name="page"
               placeholder="Page title"
@@ -274,14 +291,14 @@ export default function ChapterForm({
               className="text-gray-500 border p-2 rounded-md"
             />
             <Spacer spacing={10} />
-            {page.text !== undefined &&
-                <RichTextEditor
+            {page.text !== undefined && (
+              <RichTextEditor
                 className="text-black"
                 value={page.text}
                 placeholder="Content of the Page"
                 onChange={(content) => handleTextChange(pageIndex, content)}
-                />
-            }
+              />
+            )}
             <Spacer spacing={10} />
             <div className="flex items-start gap-10">
               <div>
@@ -404,8 +421,10 @@ export default function ChapterForm({
                     collisionDetection={closestCenter}
                   >
                     <SortableContext
+                      key={pageIndex}
                       items={page?.mcq?.options}
                       strategy={verticalListSortingStrategy}
+                      disabled={sortingEnabled}
                     >
                       {page?.mcq?.options?.map(
                         (option: string, optionIndex: number) => (
@@ -416,17 +435,24 @@ export default function ChapterForm({
                                 <h4 className="text-textColor-default">
                                   {optionIndex + 1}:
                                 </h4>
-                                <Input
-                                  placeholder={`Option ${optionIndex + 1}`}
-                                  value={option}
-                                  onChange={(e) =>
-                                    handleMCQChange(
-                                      pageIndex,
-                                      "options" as keyof MCQ,
-                                      e.target.value
-                                    )
-                                  }
-                                />
+                                <div
+                                  className="w-full"
+                                  onMouseEnter={() => setSortingEnabled(true)}
+                                  onMouseLeave={() => setSortingEnabled(false)}
+                                >
+                                  <Input
+                                    placeholder={`Option ${optionIndex + 1}`}
+                                    value={option}
+                                    onChange={(e) => {
+                                      handleMCQChange(
+                                        pageIndex,
+                                        "options" as keyof MCQ,
+                                        e.target.value,
+                                        optionIndex
+                                      );
+                                    }}
+                                  />
+                                </div>
                               </div>
                             </SortableItem>
                             <Spacer spacing={5} />
