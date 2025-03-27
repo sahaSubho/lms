@@ -27,6 +27,16 @@ export interface Chapter {
       options: string[];
       answer: string;
     };
+    moves: {
+      ply: number;
+      move: string;
+      comment: string;
+      arrows: { from: string; to: string; color: string }[];
+      highlighted_squares: { square: string; color: string }[];
+    }[];
+    arrows: { from: string; to: string; color: string }[];
+    highlighted_squares: { square: string; color: string }[];
+    board_disable: boolean;
   }[];
   practice_tests: {
     question: string;

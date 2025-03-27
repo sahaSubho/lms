@@ -45,6 +45,16 @@ export type Page = {
     options: string[];
     answer: string;
   };
+  moves: {
+    ply: number;
+    move: string;
+    comment: string;
+    arrows: { from: string; to: string; color: string }[];
+    highlighted_squares: { square: string; color: string }[];
+  }[];
+  arrows: { from: string; to: string; color: string }[];
+  highlighted_squares: { square: string; color: string }[];
+  board_disable: boolean;
 };
 
 // type Chapter = {
@@ -224,6 +234,7 @@ function LearningPage() {
         : type === "prev"
         ? selectPage.id - 1
         : selectPage.id;
+    //
     const currentPage: Page =
       learningDataFormatted?.chapters?.[0]?.pages?.find(
         (p) => p.id === pageId
