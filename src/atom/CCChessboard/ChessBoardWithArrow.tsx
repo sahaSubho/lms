@@ -15,10 +15,13 @@ type ChessboardWithArrowProps = {
   boardOrientation?: "white" | "black";
   customPieces: unknown;
   arrowsToShow?: Arrow[];
+  higlightedSquares?: Square[];
   disabled?: boolean;
 };
 
 type Arrow = [string, string, string];
+type Square = { square: string; color: string };
+
 
 type ChessboardWithArrowHandle = {
   resetArrows: () => void;
@@ -30,10 +33,11 @@ const ChessboardWithArrow: ForwardRefRenderFunction<
   ChessboardWithArrowHandle,
   ChessboardWithArrowProps
 > = (
-  { boardOrientation = "white", arrowsToShow = [], disabled, ...rest },
+  { boardOrientation = "white", arrowsToShow = [],higlightedSquares = [], disabled, ...rest },
   ref
 ) => {
-  const [arrows, setArrows] = useState<Arrow[]>(arrowsToShow);
+  console.log("higlightedSquares", higlightedSquares)
+  const [arrows, setArrows] = useState<Arrow[]>([]);
   const [markedSquares, setMarkedSquares] = useState<
     { square: string; color: string }[]
   >([]);
@@ -54,7 +58,9 @@ const ChessboardWithArrow: ForwardRefRenderFunction<
     if (arrowsToShow.length === 0) {
       setArrows([]);
     }
-    setMarkedSquares([]);
+    if(higlightedSquares.length === 0){
+      setMarkedSquares([]);
+    }
     setDragStartSquare(null);
     setCurrentArrow(null);
   };
@@ -202,6 +208,11 @@ const ChessboardWithArrow: ForwardRefRenderFunction<
     setArrows(arrowsToShow);
   }, [arrowsToShow]);
 
+  useEffect(() => {
+    setMarkedSquares(higlightedSquares);
+  }, [higlightedSquares]);
+
+  console.log("squares", markedSquares)
   return (
     <div
       className="flex justify-center items-center w-full h-full"

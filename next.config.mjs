@@ -7,6 +7,7 @@ const nextConfig = {
       "fastly.picsum.photos",
       "plus.unsplash.com",
       "cc-home.s3.ap-south-1.amazonaws.com",
+      "cc-lms-production.s3.ap-south-1.amazonaws.com",
     ], // Add the external domain here
   },
   // TODO: need to remove this for prod release

@@ -12,6 +12,9 @@ import { FaCircleCheck } from "react-icons/fa6";
 import CoinBg from "@/assets/Components/Coin_bg.png";
 import Coin from "@/assets/Components/borderCoin.svg";
 import { getS3Link } from "@/utils/getS3SignedUrl";
+import { Chess } from "chess.js";
+import useChessStore from "@/store/chessStore";
+import { getColors } from "@/utils/commonUtils";
 
 type Page = {
   id: number;
@@ -28,6 +31,16 @@ type Page = {
   points: number;
   position_order: number;
   is_solved: boolean;
+  moves: {
+    ply: number;
+    move: string;
+    comment: string;
+    arrows: { from: string; to: string; color: string }[];
+    highlighted_squares: { square: string; color: string }[];
+  }[];
+  arrows: { from: string; to: string; color: string }[];
+  highlighted_squares: { square: string; color: string }[];
+  board_disable: boolean;
 };
 
 type RightComponentProps = {
@@ -52,6 +65,17 @@ function RightComponent({
   const [pageSelectedDetails, setPageSelectedDetails] = useState<Page | null>(
     null
   );
+
+  const chessFen = useChessStore((state) => state.fen);
+  const chessArrows = useChessStore((state) => state.arrows);
+  const higlightedSquares = useChessStore((state) => state.squares);
+
+  const updateFen = useChessStore((state) => state.updateFen);
+  const updateArrows = useChessStore((state) => state.updateArrows);
+  const updateSquares = useChessStore((state) => state.updateSquares);
+
+  const [moveIndex, setMoveIndex] = useState<number>(0);
+  const [moveComment, setMoveComment] = useState<string>("");
 
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
   const [confirmAnswer, setConfirmAnswer] = useState<boolean>(false);
@@ -90,6 +114,8 @@ function RightComponent({
       }
       // @ts-ignore
       setPageSelectedDetails(obj);
+      setMoveComment("");
+      setMoveIndex(0);
       if (pageSelected.mcq && pageSelected.is_solved) {
         setConfirmAnswer(true);
         setSelectedAnswer(pageSelected.mcq.answer);
@@ -188,6 +214,57 @@ function RightComponent({
     }
   };
 
+  const handleNextMove = () => {
+    if (chessFen !== "") {
+      const game = new Chess(chessFen, { skipValidation: true });
+      const nextMove = pageSelectedDetails?.moves.find(
+        (m, i) => i === moveIndex
+      );
+
+      if (nextMove) {
+        const drag = nextMove?.move.slice(0, 2);
+        const drop = nextMove?.move.slice(2, 4);
+        const dropzone = document.querySelector(
+          `[data-square="${drop}"]`
+        )?.firstChild;
+
+        if (dropzone) {
+          //@ts-ignore
+          dropzone.style.backgroundColor = "rgb(196, 181, 57)";
+          //@ts-ignore
+          dropzone.style.border = "2px solid rgb(120, 113, 64)";
+          console.log(`Moved Item ${drag} to Dropzone ${drop}`);
+        } else {
+          console.error("Invalid draggable or dropzone ID");
+        }
+        game.move(nextMove.move);
+        updateFen(game.fen());
+        setMoveIndex((prev) => prev + 1);
+        setMoveComment(nextMove.comment);
+        if (nextMove?.arrows) {
+          // @ts-ignore
+          const arrowsArray: Arrow[] = nextMove.arrows.map((arrow) => [
+            arrow.from,
+            arrow.to,
+            getColors(arrow.color),
+          ]);
+          updateArrows(arrowsArray);
+        } else {
+          updateArrows([]);
+        }
+        if (nextMove?.highlighted_squares) {
+          const squares = nextMove.highlighted_squares.map((sq) => ({
+            ...sq,
+            color: getColors(sq.color),
+          }));
+          updateSquares(squares);
+        } else {
+          updateSquares([]);
+        }
+      }
+    }
+  };
+
   useEffect(() => {
     if (selectedAnswer && confirmAnswer && pageSelectedDetails?.mcq)
       triggerSoundForMcq();
@@ -257,6 +334,27 @@ function RightComponent({
           style={{ whiteSpace: "break", height: "54vh" }}
         >
           {pageSelectedDetails?.text}
+          {moveComment && (
+            <>
+              <br />
+              {moveComment}
+            </>
+          )}
+          {(pageSelectedDetails?.moves?.length ?? 0) > 0 &&
+            moveIndex < (pageSelectedDetails?.moves?.length ?? 0) &&
+            pageSelectedDetails?.points === 0 && (
+              <>
+                <br />
+                <br />
+                <CCButton
+                  className="w-48"
+                  buttonStyle="square"
+                  onClick={handleNextMove}
+                >
+                  Next Slide
+                </CCButton>
+              </>
+            )}
           {!!pageSelectedDetails?.mcq && (
             <>
               {pageSelectedDetails?.mcq?.question}
@@ -318,6 +416,7 @@ function RightComponent({
         <div className="flex-[0.5] flex flex-col justify-end items-end">
           {!pageSelectedDetails?.mcq ? (
             <CCButton
+              disable={moveIndex < (pageSelectedDetails?.moves?.length ?? 0)}
               buttonStyle="square"
               onClick={() => {
                 setConfirmAnswer(false);

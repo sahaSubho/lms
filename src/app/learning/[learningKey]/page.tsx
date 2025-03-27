@@ -212,7 +212,7 @@ function LearningPage() {
 
   // Mark as complete when `pageSelected` changes, only on actual selection
   useEffect(() => {
-    if (pageSelected?.content_type === "img") {
+    if (pageSelected?.content_type === "img" && !pageSelected.is_solved) {
       handleMarkComplete(pageSelected?.content_type, pageSelected?.id);
     }
   }, [pageSelected]);
@@ -299,8 +299,8 @@ function LearningPage() {
               }}
             >
               <div
-                className="absolute -top-16 flex justify-center items-center"
-                style={{ gap: 36 }}
+                className="absolute flex justify-center items-center"
+                style={{ gap: 22 , top: -68 }}
               >
                 <StarRating percentage={100} />
                 <StarRating percentage={100} />

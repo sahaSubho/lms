@@ -144,3 +144,19 @@ export function applyMoveAndGetNewFEN(
   // Return the updated FEN after the move
   return chess.fen();
 }
+
+
+export const getColors = (key: string) => {
+    switch (key) {
+      case "R":
+        return "red";
+      case "B":
+        return "blue";
+      case "Y":
+        return "yellow";
+      case "G":
+        return "green";
+      default:
+        return "green"; // default color
+    }
+  }

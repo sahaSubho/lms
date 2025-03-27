@@ -8,6 +8,7 @@ import Image from "next/image";
 import React, { useEffect, useMemo, useState } from "react";
 import { Chess, validateFen } from "chess.js";
 import { getS3Link } from "@/utils/getS3SignedUrl";
+import { getColors } from "@/utils/commonUtils";
 
 type SelectedContentType = {
   chapterId: number;
@@ -25,11 +26,13 @@ type SelectedContentType = {
     move: string;
     comment: string;
   }[];
-  arrows: string;
+  arrows: { from: string; to: string; color: string }[];
+  highlighted_squares: { square: string; color: string }[];
   board_disable: boolean;
 };
 
 type Arrow = [string, string, string];
+type Square = { square: string; color: string };
 
 type MiddleComponentProps = {
   selectedContent: SelectedContentType;
@@ -46,36 +49,29 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
 }) => {
   const [currentPageId, setCurrentPageId] = useState<number>(0);
   const chessFen = useChessStore((state) => state.fen);
+  const chessArrows = useChessStore((state) => state.arrows);
+  const higlightedSquares = useChessStore((state) => state.squares);
+
   const updateFen = useChessStore((state) => state.updateFen);
-  // const [lastMove, setLastMove] = useState("");
-  const [arrowsToShow, setArrowsToShow] = useState<Arrow[]>([]);
+  const updateArrows = useChessStore((state) => state.updateArrows);
+  const updateSquares = useChessStore((state) => state.updateSquares);
+
   const [customPositions, setCustomPositions] = useState<Record<
     string,
     string
   > | null>(null);
   // const [moveCount, setMoveCount] = useState<number>(0);
   const [moveIndex, setMoveIndex] = useState<number>(1);
+  const [lastMove, setLastMove] = useState<{ from: string; to: string } | null>(
+    null
+  );
+
+  const [mediaUrl, setMediaUrl] = useState<string>('')
 
   const isWhiteChance = useMemo(
     () => selectedContent?.content?.includes(" w "),
     [selectedContent?.content]
   );
-
-  const getColors = (key: string) => {
-    switch (key) {
-      case "R":
-        return "red";
-      case "B":
-        return "blue";
-      case "Y":
-        return "yellow";
-      case "G":
-        return "green";
-      default:
-        return "green"; // default color
-    }
-  }
-
 
   useEffect(() => {
     if (
@@ -87,15 +83,39 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
     setCustomPositions(selectedContent?.custom_pieces);
     if (selectedContent?.arrows) {
       // @ts-ignore
-      const arrowsArray: Arrow[] = selectedContent.arrows.map((arrow) =>
-        [arrow.from,arrow.to,getColors(arrow.color)]
-      );
-      setArrowsToShow(arrowsArray);
+      const arrowsArray: Arrow[] = selectedContent.arrows.map((arrow) => [
+        arrow.from,
+        arrow.to,
+        getColors(arrow.color),
+      ]);
+      updateArrows(arrowsArray);
     } else {
-      setArrowsToShow([]);
+      updateArrows([]);
     }
+    if (selectedContent?.highlighted_squares) {
+      const squares: Square[] = selectedContent.highlighted_squares.map(
+        (sq) => ({ ...sq, color: getColors(sq.color) })
+      );
+      updateSquares(squares);
+    } else {
+      updateSquares([]);
+    }
+    setLastMove(null);
     setCurrentPageId(selectedContent?.id);
+    if(['img','video'].includes(selectedContent?.content_type)){
+      fetchFromS3(selectedContent)
+    }
   }, [selectedContent]);
+
+  const fetchFromS3 = async (selectedContent: SelectedContentType) => {
+    const filePath = selectedContent.content.split("/").splice(3,).join('/')
+      console.log("filePath", filePath)
+      const res: { url?: string | undefined; error?: unknown | undefined } =
+      await getS3Link(filePath);
+      if (res.url) {
+        setMediaUrl(res.url)
+      }
+  }
 
   const handleVideoEnd = () => {
     handleMarkComplete(selectedContent?.content_type, selectedContent?.id);
@@ -103,7 +123,7 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
   // @ts-ignore
   const handlePositionChange = async (newFenDetails) => {
     updateFen(newFenDetails?.newFen);
-    console.log("position change", newFenDetails);
+    setLastMove({ from: newFenDetails.from, to: newFenDetails.to });
     // setLastMove(newFenDetails.to);
     if (!!customPositions) {
       if (
@@ -113,6 +133,12 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
           customPositions[newFenDetails.to] !== "wF") ||
           Object.keys(customPositions).length === 1)
       ) {
+        const res: { url?: string | undefined; error?: unknown | undefined } =
+          await getS3Link("sounds/correct_move.wav");
+        if (res.url) {
+          const correctSound = new Audio(res.url);
+          correctSound.play();
+        }
         const updated = { ...customPositions };
         delete updated[newFenDetails.to];
         setCustomPositions(updated);
@@ -129,12 +155,6 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
         setTimeout(() => {
           updateFen(newFenDetails.lastFen);
         }, 100);
-      }
-      const res: { url?: string | undefined; error?: unknown | undefined } =
-        await getS3Link("sounds/correct_move.wav");
-      if (res.url) {
-        const correctSound = new Audio(res.url);
-        correctSound.play();
       }
     } else if (selectedContent.moves) {
       const correctMove = selectedContent.moves.find(
@@ -200,6 +220,7 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
     }
   }, [customPositions]);
 
+  console.log("higlightedSquares........................", higlightedSquares);
   return (
     <div className="h-full">
       {selectedContent?.content_type === "chess_position" && (
@@ -213,8 +234,10 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
               skipValidation={!validateFen(chessFen).ok}
               customPositions={customPositions || {}}
               handleNewFen={handlePositionChange}
-              arrowsToShow={arrowsToShow}
+              arrowsToShow={chessArrows}
+              higlightedSquares={higlightedSquares}
               disabled={selectedContent?.board_disable}
+              lastMove={lastMove}
             />
           </div>
           {!customPositions && (
@@ -228,14 +251,14 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
       )}
       {selectedContent?.content_type === "video" && (
         <CCVideoPlayer
-          videoUrl={selectedContent?.content}
+          videoUrl={mediaUrl}
           onVideoEnd={handleVideoEnd}
         />
       )}
       {selectedContent?.content_type === "img" && (
         <div style={{ height: "100%" }}>
           <Image
-            src={selectedContent?.content}
+            src={mediaUrl}
             alt={selectedContent?.heading}
             // layout="responsive"
             width={600}

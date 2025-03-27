@@ -73,11 +73,11 @@ const BeginnerLMS = () => {
                 key={chapter.id}
                 className="relative flex flex-col justify-center items-center"
                 onClick={() => {
-                  if (!chapter.is_locked) {
+                  // if (!chapter.is_locked) {
                     router.push(
                       `learning/${course.courseKey}?chapter=${i + 1}`
                     );
-                  }
+                  // }
                 }}
               >
                 {chapter.is_locked && (

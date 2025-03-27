@@ -34,8 +34,6 @@ function Header() {
     }
   }, [score]);
 
-  console.log("animateBox", animateBox);
-
   return (
     <header className="sticky top-0 z-10">
       <div className="bg-white w-full p-2.5 flex justify-between">
