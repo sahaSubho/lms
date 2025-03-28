@@ -25,18 +25,20 @@ type Page = {
   heading: string;
   content_type: string;
   text?: string;
-  custom_pieces: string;
-  points: string;
+  custom_pieces: { [key: string]: string };
+  points: number;
   mcq?: MCQ;
   pgn?: File;
   pgn_text?: string;
+  coins: string[];
+  flag: string;
 };
 
 type Chapter = {
   index: number;
   id?: number;
   title: string;
-  pages: any[];
+  pages: Page[];
 };
 
 const RichTextEditor = dynamic(() => import("react-quill"), { ssr: false });
@@ -61,9 +63,11 @@ export default function ChapterForm({
       {
         heading: "",
         content_type: "",
-        custom_pieces: "",
+        custom_pieces: {},
         points: 0,
-        pgn: "",
+        pgn: new File([""], ""),
+        coins: [],
+        flag: "",
       },
     ],
   });
@@ -76,9 +80,11 @@ export default function ChapterForm({
         {
           heading: "",
           content_type: "",
-          custom_pieces: "",
+          custom_pieces: {},
           points: 0,
-          pgn: "",
+          pgn: new File([""], ""),
+          coins: [],
+          flag: "",
         },
       ],
     });
@@ -88,12 +94,33 @@ export default function ChapterForm({
     if (data) {
       resetForm();
       setTimeout(() => {
+        const formdata: Chapter = data;
+        formdata.pages = formdata.pages.map((page) => {
+          if (page.custom_pieces) {
+            console.log("custom_pieces", page.custom_pieces);
+            const coins: string[] = [];
+            let flag = "";
+            Object.keys(page?.custom_pieces).forEach((cp) => {
+              if (page?.custom_pieces[cp] === "wF") {
+                flag = cp;
+              } else {
+                coins.push(cp);
+              }
+            });
+            return {
+              ...page,
+              flag: flag,
+              coins: coins,
+            };
+          }
+          return page;
+        });
         setFormData(data);
       }, 300);
     }
   }, [data]);
 
-  const [coins, setCoins] = useState<string[]>([]);
+  // const [coins, setCoins] = useState<{ number : string[]}>();
 
   const handleChange = <K extends keyof Page>(
     index: number,
@@ -120,9 +147,11 @@ export default function ChapterForm({
           heading: "",
           content_type: "",
           text: "",
-          custom_pieces: "",
+          custom_pieces: {},
           points: 0,
-          pgn: "",
+          pgn: new File([""], ""),
+          coins: [],
+          flag: "",
         },
       ],
     });
@@ -152,9 +181,16 @@ export default function ChapterForm({
   ) => {
     const newPages = [...formData.pages];
     if (key === "options" && optionIndex !== undefined) {
-      newPages[pageIndex].mcq[key][optionIndex] = value;
+      if (
+        newPages[pageIndex].mcq &&
+        Array.isArray(newPages[pageIndex].mcq[key])
+      ) {
+        newPages[pageIndex].mcq[key][optionIndex] = value;
+      }
     } else if (key !== "options" && typeof value === "string") {
-      newPages[pageIndex].mcq[key] = value;
+      if (newPages[pageIndex].mcq) {
+        newPages[pageIndex].mcq[key] = value;
+      }
     }
     setFormData({ ...formData, pages: newPages });
   };
@@ -170,19 +206,50 @@ export default function ChapterForm({
     const { active, over } = event;
     if (over && active.id !== over.id) {
       const newPages = [...formData.pages];
-      const options = newPages[pageIndex].mcq.options;
+      const options = newPages[pageIndex].mcq?.options || [];
       const oldIndex = options.indexOf(active.id as string);
       const newIndex = options.indexOf(over.id as string);
-      newPages[pageIndex].mcq.options = arrayMove(options, oldIndex, newIndex);
+      if (newPages[pageIndex].mcq?.options) {
+        newPages[pageIndex].mcq.options = arrayMove(
+          options,
+          oldIndex,
+          newIndex
+        );
+      }
       setFormData({ ...formData, pages: newPages });
     }
   };
 
+  const handlePageCoins = (index: number, coins: string[]) => {
+    const newPages = [...formData.pages];
+    newPages[index].coins = coins;
+    const customPiecesObject: { [key: string]: string } = {};
+    coins.forEach((coin) => {
+      customPiecesObject[coin] = "wC";
+    });
+    if (newPages[index].flag) {
+      customPiecesObject[newPages[index].flag] = "wF";
+      newPages[index].custom_pieces = customPiecesObject;
+    }
+    setFormData({ ...formData, pages: newPages });
+  };
+
   const handleCustomPiecesChange = (index: number, value: string) => {
     const newPages = [...formData.pages];
-    const coinString = coins.map((coin) => `wC_${coin}`).join(",");
-    newPages[index].custom_pieces = `${coinString},${value}`;
-    setFormData({ ...formData, pages: newPages });
+    if (/^[a-h]{1}[1-8]{0,1}$/g.test(value) || value === "") {
+      const customPiecesObject: { [key: string]: string } = {};
+      newPages[index]?.coins.forEach((coin) => {
+        customPiecesObject[coin] = "wC";
+      });
+      if (value.length === 2) {
+        customPiecesObject[value] = "wF";
+        newPages[index].custom_pieces = customPiecesObject;
+        newPages[index].flag = value;
+      } else {
+        newPages[index].flag = value;
+      }
+      setFormData({ ...formData, pages: newPages });
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -308,7 +375,12 @@ export default function ChapterForm({
                   </label>
                   <div
                     className="cursor-pointer gap-1 flex text-textColor-default items-center"
-                    onClick={() => setCoins((prev) => [...prev, ""])}
+                    onClick={() =>
+                      handlePageCoins(
+                        pageIndex,
+                        page?.coins ? [...page.coins, ""] : [""]
+                      )
+                    }
                   >
                     <MdAddCircle fontSize={20} />
                     Add Coin
@@ -316,7 +388,7 @@ export default function ChapterForm({
                 </div>
                 <Spacer spacing={10} />
                 <div className="w-[200px]">
-                  {coins.map((coin, coinIndex) => (
+                  {page?.coins?.map((coin: string, coinIndex: number) => (
                     <div
                       key={coinIndex}
                       className="flex mb-2 gap-2 items-center"
@@ -331,17 +403,28 @@ export default function ChapterForm({
                         key={coinIndex}
                         placeholder={`Coin ${coinIndex + 1} position`}
                         value={coin}
-                        onChange={(e) =>
-                          setCoins((prev) => [...prev, e.target.value])
-                        }
+                        onChange={(e) => {
+                          console.log("coin", coinIndex, e.target.value);
+                          const coinsCopy = [...page.coins];
+                          if (
+                            /^[a-h]{1}[1-8]{0,1}$/g.test(e.target.value) ||
+                            e.target.value === ""
+                          ) {
+                            coinsCopy[coinIndex] = e.target.value;
+                            handlePageCoins(pageIndex, coinsCopy);
+                          }
+                        }}
                       />
                       <FaMinusCircle
                         fontSize={20}
                         className="cursor-pointer"
                         color="red"
                         onClick={() =>
-                          setCoins((prev) =>
-                            prev.filter((_, i) => i !== coinIndex)
+                          handlePageCoins(
+                            pageIndex,
+                            page.coins.filter(
+                              (_: string, i: number) => i !== coinIndex
+                            )
                           )
                         }
                       />
@@ -356,6 +439,7 @@ export default function ChapterForm({
                     />
                     <Input
                       placeholder="Flag position"
+                      value={page.flag}
                       onChange={(e) =>
                         handleCustomPiecesChange(pageIndex, e.target.value)
                       }
@@ -371,9 +455,9 @@ export default function ChapterForm({
                   type="number"
                   name="points"
                   placeholder="Points"
-                  value={page.points}
+                  value={String(page.points)}
                   onChange={(e) =>
-                    handleChange(pageIndex, "points", e.target.value)
+                    handleChange(pageIndex, "points", Number(e.target.value))
                   }
                 />
               </div>
