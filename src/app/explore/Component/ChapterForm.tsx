@@ -65,7 +65,6 @@ export default function ChapterForm({
         content_type: "",
         custom_pieces: {},
         points: 0,
-        pgn: new File([""], ""),
         coins: [],
         flag: "",
       },
@@ -97,7 +96,6 @@ export default function ChapterForm({
         const formdata: Chapter = data;
         formdata.pages = formdata.pages.map((page) => {
           if (page.custom_pieces) {
-            console.log("custom_pieces", page.custom_pieces);
             const coins: string[] = [];
             let flag = "";
             Object.keys(page?.custom_pieces).forEach((cp) => {
