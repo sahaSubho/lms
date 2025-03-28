@@ -222,7 +222,7 @@ function LearningPage() {
 
   // Mark as complete when `pageSelected` changes, only on actual selection
   useEffect(() => {
-    if (pageSelected?.content_type === "img" && !pageSelected.is_solved) {
+    if (pageSelected?.content_type === "img" && !pageSelected?.mcq && !pageSelected.is_solved) {
       handleMarkComplete(pageSelected?.content_type, pageSelected?.id);
     }
   }, [pageSelected]);
