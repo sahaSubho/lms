@@ -37,6 +37,7 @@ export interface Chapter {
     arrows: { from: string; to: string; color: string }[];
     highlighted_squares: { square: string; color: string }[];
     board_disable: boolean;
+    custom_pieces: { [key: string]: string };
   }[];
   practice_tests: {
     question: string;

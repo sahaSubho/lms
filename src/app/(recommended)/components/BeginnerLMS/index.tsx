@@ -67,7 +67,7 @@ const BeginnerLMS = () => {
           {isLoading ? <EachLearningCardSkeleton /> : <></>}
           {course ? <EachLearningCard {...course} /> : <></>}
           <CCDivider className="my-3" />
-          <div className="my-5 flex gap-16">
+          <div className="my-5 flex flex-wrap gap-16">
             {course?.chapters?.map((chapter, i) => (
               <div
                 key={chapter.id}
@@ -75,12 +75,12 @@ const BeginnerLMS = () => {
                 onClick={() => {
                   // if (!chapter.is_locked) {
                     router.push(
-                      `learning/${course.courseKey}?chapter=${i + 1}`
+                      `/learning/${course.courseKey}?chapter=${i + 1}`
                     );
                   // }
                 }}
               >
-                {chapter.is_locked && (
+                {/* {chapter.is_locked && (
                   <Image
                     className="absolute z-10"
                     src={lock}
@@ -88,7 +88,7 @@ const BeginnerLMS = () => {
                     width={36}
                     height={48}
                   />
-                )}
+                )} */}
                 <div
                   className="relative flex flex-col justify-center items-center"
                   style={{
@@ -98,7 +98,7 @@ const BeginnerLMS = () => {
                     backgroundSize: "100% 100%",
                     width: 200,
                     height: 220,
-                    filter: chapter.is_locked ? "grayscale(1)" : "unset",
+                    // filter: chapter.is_locked ? "grayscale(1)" : "unset",
                   }}
                 >
                   <div

@@ -41,6 +41,7 @@ type Page = {
   arrows: { from: string; to: string; color: string }[];
   highlighted_squares: { square: string; color: string }[];
   board_disable: boolean;
+  custom_pieces: { [key: string]: string };
 };
 
 type RightComponentProps = {
@@ -119,6 +120,9 @@ function RightComponent({
       if (pageSelected.mcq && pageSelected.is_solved) {
         setConfirmAnswer(true);
         setSelectedAnswer(pageSelected.mcq.answer);
+      }else{
+        setSelectedAnswer("")
+        setConfirmAnswer(false);
       }
     }
   }, [pageSelected]);
@@ -277,7 +281,7 @@ function RightComponent({
         width: "-webkit-fill-available",
       }}
     >
-      <div className="relative w-full bg-white px-6 py-3 flex justify-between items-center border-y-2">
+      <div className="sticky w-full bg-white px-6 py-3 flex justify-between items-center border-y-2">
         <CCText>
           {getTextBasedOnType(
             pageSelectedDetails?.mcq ? "mcq" : pageSelectedDetails?.content_type
@@ -416,7 +420,7 @@ function RightComponent({
         <div className="flex-[0.5] flex flex-col justify-end items-end">
           {!pageSelectedDetails?.mcq ? (
             <CCButton
-              disable={moveIndex < (pageSelectedDetails?.moves?.length ?? 0)}
+              disable={!pageSelectedDetails?.custom_pieces && moveIndex < (pageSelectedDetails?.moves?.length ?? 0)}
               buttonStyle="square"
               onClick={() => {
                 setConfirmAnswer(false);
@@ -429,6 +433,7 @@ function RightComponent({
                     pageSelectedDetails?.content_type,
                     pageSelectedDetails?.id
                   );
+                
                 onChange(pageSelectedDetails, "next");
               }}
               buttonType="yellow"

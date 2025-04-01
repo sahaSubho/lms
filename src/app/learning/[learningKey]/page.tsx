@@ -55,6 +55,7 @@ export type Page = {
   arrows: { from: string; to: string; color: string }[];
   highlighted_squares: { square: string; color: string }[];
   board_disable: boolean;
+  custom_pieces: { [key: string]: string };
 };
 
 // type Chapter = {
@@ -221,24 +222,23 @@ function LearningPage() {
   };
 
   // Mark as complete when `pageSelected` changes, only on actual selection
-  useEffect(() => {
-    if (pageSelected?.content_type === "img" && !pageSelected?.mcq && !pageSelected.is_solved) {
-      handleMarkComplete(pageSelected?.content_type, pageSelected?.id);
-    }
-  }, [pageSelected]);
+  // useEffect(() => {
+  //   if (pageSelected?.content_type === "img" && !pageSelected?.mcq && !pageSelected.is_solved) {
+  //     handleMarkComplete(pageSelected?.content_type, pageSelected?.id);
+  //   }
+  // }, [pageSelected]);
 
   const handlePageChange = (selectPage: Page, type?: "prev" | "next") => {
+    const pageIndex = learningDataFormatted?.chapters?.[0]?.pages.findIndex(p => p.id === selectPage.id) || 0;
     const pageId =
       type === "next"
-        ? selectPage.id + 1
+        ? pageIndex + 1
         : type === "prev"
-        ? selectPage.id - 1
-        : selectPage.id;
+        ? pageIndex - 1
+        : pageIndex;
     //
     const currentPage: Page =
-      learningDataFormatted?.chapters?.[0]?.pages?.find(
-        (p) => p.id === pageId
-      ) || selectPage;
+      learningDataFormatted?.chapters?.[0]?.pages?.[pageId] || selectPage;
     if (currentPage)
       setPageSelected({
         ...currentPage,
@@ -364,9 +364,10 @@ function LearningPage() {
                   const newChapterSound = new Audio(res.url);
                   newChapterSound.play();
                 }
-                if (chapterCount > Number(chapter) + 1)
+                isInitialized.current = false;
+                if (chapterCount >= Number(chapter) + 1)
                   router.push(
-                    `learning/${learningKey}?chapter=${Number(chapter) + 1}`
+                    `/learning/${learningKey}?chapter=${Number(chapter) + 1}`
                   );
                 else router.push("/");
               }}

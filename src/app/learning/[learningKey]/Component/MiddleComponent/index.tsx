@@ -18,7 +18,7 @@ type SelectedContentType = {
   text: string;
   content: string; // URL or FEN based on content_type
   content_type: "video" | "chess_position" | "img";
-  custom_pieces: Record<string, string>;
+  custom_pieces: { [key: string]: string };
   position_order: number;
   is_solved: boolean;
   moves: {
@@ -80,7 +80,9 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
     ) {
       updateFen(selectedContent?.content);
     }
-    setCustomPositions(selectedContent?.custom_pieces);
+    if(selectedContent?.custom_pieces && Object.keys(selectedContent?.custom_pieces).length){
+      setCustomPositions(selectedContent?.custom_pieces);
+    }
     if (selectedContent?.arrows) {
       // @ts-ignore
       const arrowsArray: Arrow[] = selectedContent.arrows.map((arrow) => [
@@ -216,6 +218,7 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
       customPositions &&
       Object.keys(customPositions).length === 0
     ) {
+      console.log("selected content", selectedContent)
       handleMarkComplete(selectedContent?.content_type, selectedContent?.id);
     }
   }, [customPositions]);
