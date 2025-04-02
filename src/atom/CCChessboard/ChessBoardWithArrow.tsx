@@ -212,7 +212,6 @@ const ChessboardWithArrow: ForwardRefRenderFunction<
     setMarkedSquares(higlightedSquares);
   }, [higlightedSquares]);
 
-  console.log("squares", markedSquares)
   return (
     <div
       className="flex justify-center items-center w-full h-full"
@@ -223,9 +222,9 @@ const ChessboardWithArrow: ForwardRefRenderFunction<
         <div
           className="relative"
           onContextMenu={(e) => e.preventDefault()}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
+          // onMouseDown={handleMouseDown}
+          // onMouseMove={handleMouseMove}
+          // onMouseUp={handleMouseUp}
         >
           <Chessboard
             ref={chessboardRef}
@@ -233,6 +232,8 @@ const ChessboardWithArrow: ForwardRefRenderFunction<
             boardOrientation={boardOrientation}
             boardWidth={boardWidth}
             customArrows={currentArrow ? [...arrows, currentArrow] : arrows}
+            customArrowColor={colorOptions.default}
+            // onArrowsChange={handleArrowChange}
             {...rest}
           />
           {markedSquares.map(({ square, color }) => {

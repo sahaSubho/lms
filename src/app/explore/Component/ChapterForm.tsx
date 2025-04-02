@@ -239,13 +239,13 @@ export default function ChapterForm({
       newPages[index]?.coins.forEach((coin) => {
         customPiecesObject[coin] = "wC";
       });
-      if (value.length === 2) {
+      // if (value.length === 2) {
         customPiecesObject[value] = "wF";
         newPages[index].custom_pieces = customPiecesObject;
         newPages[index].flag = value;
-      } else {
-        newPages[index].flag = value;
-      }
+      // } else {
+      //   newPages[index].flag = value;
+      // }
       setFormData({ ...formData, pages: newPages });
     }
   };

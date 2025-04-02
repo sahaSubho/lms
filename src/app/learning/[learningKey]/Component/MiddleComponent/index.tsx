@@ -82,6 +82,8 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
     }
     if(selectedContent?.custom_pieces && Object.keys(selectedContent?.custom_pieces).length){
       setCustomPositions(selectedContent?.custom_pieces);
+    }else{
+      setCustomPositions(null)
     }
     if (selectedContent?.arrows) {
       // @ts-ignore
@@ -127,7 +129,7 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
     updateFen(newFenDetails?.newFen);
     setLastMove({ from: newFenDetails.from, to: newFenDetails.to });
     // setLastMove(newFenDetails.to);
-    if (!!customPositions) {
+    if (!!customPositions && !validateFen(chessFen).ok) {
       if (
         customPositions &&
         Object.keys(customPositions).includes(newFenDetails.to) &&
@@ -162,7 +164,7 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
       const correctMove = selectedContent.moves.find(
         (m) => m.ply === moveIndex
       );
-      if (correctMove?.move === `${newFenDetails.from}${newFenDetails.to}`) {
+      if (correctMove?.move.includes(`${newFenDetails.from}${newFenDetails.to}`)) {
         const res: { url?: string | undefined; error?: unknown | undefined } =
           await getS3Link("sounds/correct_move.wav");
         if (res.url) {
@@ -223,7 +225,6 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
     }
   }, [customPositions]);
 
-  console.log("higlightedSquares........................", higlightedSquares);
   return (
     <div className="h-full">
       {selectedContent?.content_type === "chess_position" && (
