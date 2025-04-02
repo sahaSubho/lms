@@ -113,7 +113,6 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
 
   const fetchFromS3 = async (selectedContent: SelectedContentType) => {
     const filePath = selectedContent.content.split("/").splice(3,).join('/')
-      console.log("filePath", filePath)
       const res: { url?: string | undefined; error?: unknown | undefined } =
       await getS3Link(filePath);
       if (res.url) {
@@ -129,7 +128,7 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
     updateFen(newFenDetails?.newFen);
     setLastMove({ from: newFenDetails.from, to: newFenDetails.to });
     // setLastMove(newFenDetails.to);
-    if (!!customPositions && !validateFen(chessFen).ok) {
+    if (!!customPositions) {
       if (
         customPositions &&
         Object.keys(customPositions).includes(newFenDetails.to) &&
@@ -160,7 +159,8 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
           updateFen(newFenDetails.lastFen);
         }, 100);
       }
-    } else if (selectedContent.moves) {
+    } 
+    if (selectedContent.moves && validateFen(newFenDetails?.newFen).ok) {
       const correctMove = selectedContent.moves.find(
         (m) => m.ply === moveIndex
       );
