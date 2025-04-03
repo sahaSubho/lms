@@ -161,7 +161,12 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
         }, 100);
       }
     } 
+    console.log("handle position change");
     if (selectedContent.moves && validateFen(chessFen).ok) {
+      const game = new Chess(newFenDetails?.newFen);
+      if (game.turn() === 'w'){
+        setMoveIndex((prev) => prev+1)
+      }
       const correctMove = selectedContent.moves.find(
         (m) => m.ply === moveIndex
       );
@@ -173,7 +178,6 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
           correctSound.play();
         }
         setTimeout(() => {
-          const game = new Chess(newFenDetails?.newFen);
           const nextMove = selectedContent.moves.find(
             (m) => m.ply === moveIndex + 1
           );
