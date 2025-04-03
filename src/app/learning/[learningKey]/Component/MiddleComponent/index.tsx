@@ -104,6 +104,7 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
     } else {
       updateSquares([]);
     }
+    setMoveIndex(1);
     setLastMove(null);
     setCurrentPageId(selectedContent?.id);
     if(['img','video'].includes(selectedContent?.content_type)){
@@ -160,7 +161,7 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
         }, 100);
       }
     } 
-    if (selectedContent.moves && validateFen(newFenDetails?.newFen).ok) {
+    if (selectedContent.moves && validateFen(chessFen).ok) {
       const correctMove = selectedContent.moves.find(
         (m) => m.ply === moveIndex
       );
@@ -195,9 +196,11 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
             }
             game.move(nextMove.move);
             updateFen(game.fen());
+            setMoveIndex((prev) => prev + 2);
+          }else{
+            handleMarkComplete(selectedContent?.content_type, selectedContent?.id);
           }
         }, 1000);
-        setMoveIndex((prev) => prev + 2);
       } else {
         const res: { url?: string | undefined; error?: unknown | undefined } =
           await getS3Link("sounds/wrong_move.wav");
