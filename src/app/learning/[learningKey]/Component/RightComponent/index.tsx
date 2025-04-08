@@ -321,7 +321,7 @@ function RightComponent({
   };
 
   useEffect(() => {
-    if (selectedAnswer && confirmAnswer && pageSelectedDetails?.mcq)
+    if (selectedAnswer && confirmAnswer && pageSelectedDetails?.mcq && !pageSelectedDetails.is_solved)
       triggerSoundForMcq();
   }, [selectedAnswer, confirmAnswer]);
 

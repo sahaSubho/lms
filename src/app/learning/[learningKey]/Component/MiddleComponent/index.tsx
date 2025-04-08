@@ -66,7 +66,7 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
     null
   );
 
-  const [mediaUrl, setMediaUrl] = useState<string>('')
+  const [mediaUrl, setMediaUrl] = useState<string>("");
 
   const isWhiteChance = useMemo(
     () => selectedContent?.content?.includes(" w "),
@@ -80,10 +80,13 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
     ) {
       updateFen(selectedContent?.content);
     }
-    if(selectedContent?.custom_pieces && Object.keys(selectedContent?.custom_pieces).length){
+    if (
+      selectedContent?.custom_pieces &&
+      Object.keys(selectedContent?.custom_pieces).length
+    ) {
       setCustomPositions(selectedContent?.custom_pieces);
-    }else{
-      setCustomPositions(null)
+    } else {
+      setCustomPositions(null);
     }
     if (selectedContent?.arrows) {
       // @ts-ignore
@@ -107,19 +110,19 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
     setMoveIndex(1);
     setLastMove(null);
     setCurrentPageId(selectedContent?.id);
-    if(['img','video'].includes(selectedContent?.content_type)){
-      fetchFromS3(selectedContent)
+    if (["img", "video"].includes(selectedContent?.content_type)) {
+      fetchFromS3(selectedContent);
     }
   }, [selectedContent]);
 
   const fetchFromS3 = async (selectedContent: SelectedContentType) => {
-    const filePath = selectedContent.content.split("/").splice(3,).join('/')
-      const res: { url?: string | undefined; error?: unknown | undefined } =
+    const filePath = selectedContent.content.split("/").splice(3).join("/");
+    const res: { url?: string | undefined; error?: unknown | undefined } =
       await getS3Link(filePath);
-      if (res.url) {
-        setMediaUrl(res.url)
-      }
-  }
+    if (res.url) {
+      setMediaUrl(res.url);
+    }
+  };
 
   const handleVideoEnd = () => {
     handleMarkComplete(selectedContent?.content_type, selectedContent?.id);
@@ -160,18 +163,20 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
           updateFen(newFenDetails.lastFen);
         }, 100);
       }
-    } 
+    }
     console.log("handle position change");
     if (selectedContent.moves && validateFen(chessFen).ok) {
       const game = new Chess(newFenDetails?.newFen);
-      let currentMoveIndex = moveIndex
-      if (game.turn() === 'w'){
-        currentMoveIndex += 1
+      let currentMoveIndex = moveIndex;
+      if (game.turn() === "w") {
+        currentMoveIndex += 1;
       }
       const correctMove = selectedContent.moves.find(
         (m) => m.ply === currentMoveIndex
       );
-      if (correctMove?.move.includes(`${newFenDetails.from}${newFenDetails.to}`)) {
+      if (
+        correctMove?.move.includes(`${newFenDetails.from}${newFenDetails.to}`)
+      ) {
         const res: { url?: string | undefined; error?: unknown | undefined } =
           await getS3Link("sounds/correct_move.wav");
         if (res.url) {
@@ -202,8 +207,11 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
             game.move(nextMove.move);
             updateFen(game.fen());
             setMoveIndex(currentMoveIndex + 2);
-          }else{
-            handleMarkComplete(selectedContent?.content_type, selectedContent?.id);
+          } else {
+            handleMarkComplete(
+              selectedContent?.content_type,
+              selectedContent?.id
+            );
           }
         }, 1000);
       } else {
@@ -228,7 +236,7 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
       customPositions &&
       Object.keys(customPositions).length === 0
     ) {
-      console.log("selected content", selectedContent)
+      console.log("selected content", selectedContent);
       handleMarkComplete(selectedContent?.content_type, selectedContent?.id);
     }
   }, [customPositions]);
@@ -240,18 +248,20 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
           className="flex flex-col justify-start"
           style={{ height: "100%", width: "78vh", margin: "auto" }}
         >
-          <div className="">
-            <CCChessboard
-              position={chessFen}
-              skipValidation={!validateFen(chessFen).ok}
-              customPositions={customPositions || {}}
-              handleNewFen={handlePositionChange}
-              arrowsToShow={chessArrows}
-              higlightedSquares={higlightedSquares}
-              disabled={selectedContent?.board_disable}
-              lastMove={lastMove}
-            />
-          </div>
+          {currentPageId === selectedContent?.id && (
+            <div className="">
+              <CCChessboard
+                position={chessFen}
+                skipValidation={!validateFen(chessFen).ok}
+                customPositions={customPositions || {}}
+                handleNewFen={handlePositionChange}
+                arrowsToShow={chessArrows}
+                higlightedSquares={higlightedSquares}
+                disabled={selectedContent?.board_disable}
+                lastMove={lastMove}
+              />
+            </div>
+          )}
           {!customPositions && (
             <div className=" bg-brand-orange">
               <CCText className="text-center text-white">{`${
@@ -262,10 +272,7 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
         </div>
       )}
       {selectedContent?.content_type === "video" && (
-        <CCVideoPlayer
-          videoUrl={mediaUrl}
-          onVideoEnd={handleVideoEnd}
-        />
+        <CCVideoPlayer videoUrl={mediaUrl} onVideoEnd={handleVideoEnd} />
       )}
       {selectedContent?.content_type === "img" && (
         <div style={{ height: "100%" }}>
