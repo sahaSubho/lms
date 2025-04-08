@@ -392,7 +392,7 @@ function RightComponent({
           {moveComment && (
             <>
               <br />
-              {moveComment}
+              {moveComment.replace(/\[.*?\]\s*/g, "").trim()}
             </>
           )}
           {(pageSelectedDetails?.moves?.length ?? 0) > 0 &&
