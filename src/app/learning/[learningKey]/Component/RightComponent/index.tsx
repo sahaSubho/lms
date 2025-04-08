@@ -8,7 +8,7 @@ import CCText from "@/atom/CCText";
 import Spacer from "@/atom/Spacer";
 import JumpToModal from "../JumpToModal";
 import CCDivider from "@/atom/CCDivider";
-import { FaCircleCheck } from "react-icons/fa6";
+import { FaCircleCheck, FaLeftLong, FaRightLong } from "react-icons/fa6";
 import CoinBg from "@/assets/Components/Coin_bg.png";
 import Coin from "@/assets/Components/borderCoin.svg";
 import { getS3Link } from "@/utils/getS3SignedUrl";
@@ -218,6 +218,57 @@ function RightComponent({
     }
   };
 
+  const handlePrevMove = () => {
+    if (chessFen !== "") {
+      const game = new Chess(chessFen, { skipValidation: true });
+      const prevMove = pageSelectedDetails?.moves.find(
+        (m, i) => i === moveIndex - 1
+      );
+
+      if (prevMove) {
+        const drag = prevMove?.move.slice(0, 2);
+        const drop = prevMove?.move.slice(2, 4);
+        const dropzone = document.querySelector(
+          `[data-square="${drop}"]`
+        )?.firstChild;
+
+        if (dropzone) {
+          //@ts-ignore
+          dropzone.style.backgroundColor = "rgb(196, 181, 57)";
+          //@ts-ignore
+          dropzone.style.border = "2px solid rgb(120, 113, 64)";
+          console.log(`Moved Item ${drag} to Dropzone ${drop}`);
+        } else {
+          console.error("Invalid draggable or dropzone ID");
+        }
+        game.move(prevMove.move);
+        updateFen(game.fen());
+        setMoveIndex((prev) => prev - 1);
+        setMoveComment(prevMove.comment);
+        if (prevMove?.arrows) {
+          // @ts-ignore
+          const arrowsArray: Arrow[] = prevMove.arrows.map((arrow) => [
+            arrow.from,
+            arrow.to,
+            getColors(arrow.color),
+          ]);
+          updateArrows(arrowsArray);
+        } else {
+          updateArrows([]);
+        }
+        if (prevMove?.highlighted_squares) {
+          const squares = prevMove.highlighted_squares.map((sq) => ({
+            ...sq,
+            color: getColors(sq.color),
+          }));
+          updateSquares(squares);
+        } else {
+          updateSquares([]);
+        }
+      }
+    }
+  };
+
   const handleNextMove = () => {
     if (chessFen !== "") {
       const game = new Chess(chessFen, { skipValidation: true });
@@ -347,17 +398,30 @@ function RightComponent({
           {(pageSelectedDetails?.moves?.length ?? 0) > 0 &&
             moveIndex < (pageSelectedDetails?.moves?.length ?? 0) &&
             pageSelectedDetails?.points === 0 && (
-              <>
-                <br />
-                <br />
+              <div className="mt-5 flex justify-evenly items-center">
                 <CCButton
+                  disable={moveIndex === 0}
+                  className="w-48"
+                  buttonStyle="square"
+                  onClick={handlePrevMove}
+                >
+                 <FaLeftLong
+                  size={20}
+                  className="text-white bg-brand-yellow rounded-full"
+                  />
+                </CCButton>
+                <CCButton
+                  disable={moveIndex === pageSelectedDetails?.moves?.length}
                   className="w-48"
                   buttonStyle="square"
                   onClick={handleNextMove}
                 >
-                  Next Slide
+                 <FaRightLong
+                  size={20}
+                  className="text-white bg-brand-yellow rounded-full"
+                  />
                 </CCButton>
-              </>
+              </div>
             )}
           {!!pageSelectedDetails?.mcq && (
             <>

@@ -164,11 +164,12 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
     console.log("handle position change");
     if (selectedContent.moves && validateFen(chessFen).ok) {
       const game = new Chess(newFenDetails?.newFen);
+      let currentMoveIndex = moveIndex
       if (game.turn() === 'w'){
-        setMoveIndex((prev) => prev+1)
+        currentMoveIndex += 1
       }
       const correctMove = selectedContent.moves.find(
-        (m) => m.ply === moveIndex
+        (m) => m.ply === currentMoveIndex
       );
       if (correctMove?.move.includes(`${newFenDetails.from}${newFenDetails.to}`)) {
         const res: { url?: string | undefined; error?: unknown | undefined } =
@@ -179,7 +180,7 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
         }
         setTimeout(() => {
           const nextMove = selectedContent.moves.find(
-            (m) => m.ply === moveIndex + 1
+            (m) => m.ply === currentMoveIndex + 1
           );
 
           if (nextMove) {
@@ -200,7 +201,7 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
             }
             game.move(nextMove.move);
             updateFen(game.fen());
-            setMoveIndex((prev) => prev + 2);
+            setMoveIndex(currentMoveIndex + 2);
           }else{
             handleMarkComplete(selectedContent?.content_type, selectedContent?.id);
           }
