@@ -32,6 +32,8 @@ type Page = {
   pgn_text?: string;
   coins: string[];
   flag: string;
+  board_disable?: boolean;
+  show_chessboard_text?: boolean;
 };
 
 type Chapter = {
@@ -292,6 +294,61 @@ export default function ChapterForm({
                 handleChange(pageIndex, "heading", e.target.value)
               }
             />
+            <Spacer spacing={10} />
+            <div className="flex gap-2 items-center">
+              <div>
+                <label className="block text-textColor-default font-medium">
+                  Disable Move:
+                </label>
+                {[
+                  { id:1, label: "Enable", value: true },
+                  { id:2, label: "Disable", value: false },
+                ].map((type) => (
+                  <label
+                    key={type.id}
+                    className="inline-flex items-center mr-4"
+                  >
+                    <input
+                      type="radio"
+                      name={`${pageIndex}_board_disable`}
+                      checked={page.board_disable === type.value}
+                      onChange={(e) =>
+                        handleChange(pageIndex, "board_disable", e.target.value === "true")
+                      }
+                    />
+                    <span className="text-textColor-default ml-2">
+                      {type.label}
+                    </span>
+                  </label>
+                ))}
+              </div>
+              <div>
+                <label className="block text-textColor-default font-medium">
+                  Show Chessboard Text:
+                </label>
+                {[
+                  { id:1, label: "Enable", value: true },
+                  { id:2, label: "Disable", value: false },
+                ].map((type) => (
+                  <label
+                    key={type.id}
+                    className="inline-flex items-center mr-4"
+                  >
+                    <input
+                      type="radio"
+                      name={`${pageIndex}_show_chessboard_text`}
+                      checked={page.show_chessboard_text === type.value}
+                      onChange={(e) =>
+                        handleChange(pageIndex, "show_chessboard_text", e.target.value === "true")
+                      }
+                    />
+                    <span className="text-textColor-default ml-2">
+                      {type.label}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
             <Spacer spacing={10} />
             <div>
               <label className="block text-textColor-default font-medium">

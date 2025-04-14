@@ -85,22 +85,21 @@ function EachLearningCard(props: EachLearningCardProp) {
             <CCText className="text-base font-medium">{title}</CCText>
             <Spacer spacing={6} />
             <div className="flex justify-start items-center">
-              <div className="rounded-full bg-brand-background px-[10px] py-[4px]">
+              <div className="flex justify-center rounded-full w-28 bg-brand-background px-[10px] py-[4px]">
                 <CCText className="text-[12px] font-bold">
                   Chapter {`${chapterNumber}`}
                 </CCText>
               </div>
               <Spacer spacing={8} horizontal />
-              <CCText className="flex justify-start items-center">
-                <>
-                  {subTitle} (&nbsp;
-                  <CCCoin />
-                  &nbsp;
-                  {points ||
-                    chapters?.find((c) => c?.id === chapterId)?.points}{" "}
-                  pts )
-                </>
+              <CCText>
+                {subTitle}&nbsp;
+                <CCText className="inline-flex justify-start items-center">
+                (&nbsp;
+                <CCCoin />
+                &nbsp;{(points || chapters?.find((c) => c?.id === chapterId)?.points || 0).toString()}{" "}pts )
               </CCText>
+              </CCText>
+              
             </div>
           </div>
           <div className="flex-[0.3] flex flex-col justify-end items-end w-3/12">

@@ -68,8 +68,6 @@ function RightComponent({
   );
 
   const chessFen = useChessStore((state) => state.fen);
-  const chessArrows = useChessStore((state) => state.arrows);
-  const higlightedSquares = useChessStore((state) => state.squares);
 
   const updateFen = useChessStore((state) => state.updateFen);
   const updateArrows = useChessStore((state) => state.updateArrows);
@@ -77,7 +75,7 @@ function RightComponent({
 
   const [moveIndex, setMoveIndex] = useState<number>(0);
   const [moveComment, setMoveComment] = useState<string>("");
-
+  const [lastFen, setLastFen] = useState<string>("");
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
   const [confirmAnswer, setConfirmAnswer] = useState<boolean>(false);
   const [retryCount, setRetryCount] = useState<number>(0);
@@ -195,8 +193,10 @@ function RightComponent({
         return "View this image and learn something";
       case "video":
         return "Watch the video and learn something";
-      default:
+      case "chess_position":
         return "Make a move on the board and win";
+      default:
+        return ''
     }
   };
 
@@ -218,18 +218,39 @@ function RightComponent({
     }
   };
 
+  function findKingPosition(fen:string, turn: string) {
+    const rows = fen?.split(" ")?.[0]?.split("/");
+    const king = turn === "w" ? "K" : "k";
+
+    for (let row = 0; row < rows?.length; row++) {
+      let col = 0;
+      for (const char of rows[row]) {
+        if (char === king) {
+          return String.fromCharCode(97 + col) + (8 - row);
+        } else if (Number.isNaN(Number(char))) {
+          col++;
+        } else {
+          col += parseInt(char, 10);
+        }
+      }
+    }
+    return null;
+  }
+
   const handlePrevMove = () => {
     if (chessFen !== "") {
-      const game = new Chess(chessFen, { skipValidation: true });
       const prevMove = pageSelectedDetails?.moves.find(
         (m, i) => i === moveIndex - 1
       );
 
       if (prevMove) {
-        const drag = prevMove?.move.slice(0, 2);
-        const drop = prevMove?.move.slice(2, 4);
+        const drag = prevMove?.move.slice(2, 4);
+        const drop = prevMove?.move.slice(0, 2);
         const dropzone = document.querySelector(
           `[data-square="${drop}"]`
+        )?.firstChild;
+        const dragzone = document.querySelector(
+          `[data-square="${drag}"]`
         )?.firstChild;
 
         if (dropzone) {
@@ -238,14 +259,30 @@ function RightComponent({
           //@ts-ignore
           dropzone.style.border = "2px solid rgb(120, 113, 64)";
           console.log(`Moved Item ${drag} to Dropzone ${drop}`);
-        } else {
-          console.error("Invalid draggable or dropzone ID");
         }
-        game.move(prevMove.move);
-        updateFen(game.fen());
+        if (dragzone) {
+          //@ts-ignore
+          dragzone.style.backgroundColor = "transparent";
+          //@ts-ignore
+          dragzone.style.background = "transparent";
+          //@ts-ignore
+          dragzone.style.border = "none";
+        }
+
+        const game = new Chess(chessFen, { skipValidation: true });
+        if(game.inCheck()){
+          const position = findKingPosition(game.fen(),game.turn())
+          const kingSq = document.querySelector(
+            `[data-square="${position}"]`
+          )?.firstChild;
+          //@ts-ignore
+          kingSq.style.background = "transparent";
+        }
+        // game.move(`${drag}${drop}`);
+        updateFen(lastFen);
         setMoveIndex((prev) => prev - 1);
         setMoveComment(prevMove.comment);
-        if (prevMove?.arrows) {
+        if (prevMove?.arrows && moveIndex > 1) {
           // @ts-ignore
           const arrowsArray: Arrow[] = prevMove.arrows.map((arrow) => [
             arrow.from,
@@ -256,7 +293,7 @@ function RightComponent({
         } else {
           updateArrows([]);
         }
-        if (prevMove?.highlighted_squares) {
+        if (prevMove?.highlighted_squares && moveIndex > 1) {
           const squares = prevMove.highlighted_squares.map((sq) => ({
             ...sq,
             color: getColors(sq.color),
@@ -282,6 +319,9 @@ function RightComponent({
         const dropzone = document.querySelector(
           `[data-square="${drop}"]`
         )?.firstChild;
+        const dragzone = document.querySelector(
+          `[data-square="${drag}"]`
+        )?.firstChild;
 
         if (dropzone) {
           //@ts-ignore
@@ -289,11 +329,18 @@ function RightComponent({
           //@ts-ignore
           dropzone.style.border = "2px solid rgb(120, 113, 64)";
           console.log(`Moved Item ${drag} to Dropzone ${drop}`);
-        } else {
-          console.error("Invalid draggable or dropzone ID");
+        } 
+        if (dragzone) {
+          //@ts-ignore
+          dragzone.style.backgroundColor = "transparent";
+          //@ts-ignore
+          dragzone.style.background = "transparent";
+          //@ts-ignore
+          dragzone.style.border = "none";
         }
         game.move(nextMove.move);
         updateFen(game.fen());
+        setLastFen(chessFen);
         setMoveIndex((prev) => prev + 1);
         setMoveComment(nextMove.comment);
         if (nextMove?.arrows) {
@@ -325,6 +372,8 @@ function RightComponent({
       triggerSoundForMcq();
   }, [selectedAnswer, confirmAnswer]);
 
+  console.log(pageSelectedDetails?.custom_pieces, retryCount)
+
   return (
     <div
       className="flex flex-col justify-between items-center "
@@ -335,10 +384,10 @@ function RightComponent({
       <div className="sticky w-full bg-white px-6 py-3 flex justify-between items-center border-y-2">
         <CCText>
           {getTextBasedOnType(
-            pageSelectedDetails?.mcq ? "mcq" : pageSelectedDetails?.content_type
+            pageSelectedDetails?.mcq ? "mcq" : !!pageSelectedDetails?.points ? pageSelectedDetails?.content_type : ''
           )}
         </CCText>
-        {pageSelectedDetails?.points && (
+        {!!pageSelectedDetails?.points && (
           <CCButton
             className="px-4 z-10"
             textColor="white"
@@ -395,34 +444,6 @@ function RightComponent({
               {moveComment.replace(/\[.*?\]\s*/g, "").trim()}
             </>
           )}
-          {(pageSelectedDetails?.moves?.length ?? 0) > 0 &&
-            moveIndex < (pageSelectedDetails?.moves?.length ?? 0) &&
-            pageSelectedDetails?.points === 0 && (
-              <div className="mt-5 flex justify-evenly items-center">
-                <CCButton
-                  disable={moveIndex === 0}
-                  className="w-48"
-                  buttonStyle="square"
-                  onClick={handlePrevMove}
-                >
-                 <FaLeftLong
-                  size={20}
-                  className="text-white bg-brand-yellow rounded-full"
-                  />
-                </CCButton>
-                <CCButton
-                  disable={moveIndex === pageSelectedDetails?.moves?.length}
-                  className="w-48"
-                  buttonStyle="square"
-                  onClick={handleNextMove}
-                >
-                 <FaRightLong
-                  size={20}
-                  className="text-white bg-brand-yellow rounded-full"
-                  />
-                </CCButton>
-              </div>
-            )}
           {!!pageSelectedDetails?.mcq && (
             <>
               {pageSelectedDetails?.mcq?.question}
@@ -447,16 +468,18 @@ function RightComponent({
                     setSelectedAnswer(o);
                   }}
                 >
-                  <div className={selectedAnswer === o ? "text-white" : ""}>
+                  <div className={`${selectedAnswer === o ? "text-white" : ""}`}>
                     {String.fromCharCode(65 + i)}.
                     <Spacer horizontal />
                     {o}
                   </div>
                   {selectedAnswer === o ? (
-                    <FaCircleCheck
-                      size={20}
-                      className="text-brand-yellow bg-brand-darkBrown rounded-full"
-                    />
+                    <div>
+                      <FaCircleCheck
+                        size={20}
+                        className="text-brand-yellow bg-brand-darkBrown rounded-full"
+                      />
+                    </div>
                   ) : (
                     <></>
                   )}
@@ -476,7 +499,14 @@ function RightComponent({
           <CCButton
             buttonStyle="square"
             buttonType="white"
-            onClick={() => onChange(pageSelectedDetails, "prev")}
+            onClick={() => {
+              console.log(pageSelectedDetails?.points, pageSelectedDetails?.moves?.length, moveIndex)
+              if(pageSelectedDetails?.points === 0 && moveIndex && moveIndex >= (pageSelectedDetails?.moves?.length ?? 0)){
+                handlePrevMove()
+              }else{
+                onChange(pageSelectedDetails, "prev")
+              }
+            }}
           >
             Previous
           </CCButton>
@@ -484,21 +514,25 @@ function RightComponent({
         <div className="flex-[0.5] flex flex-col justify-end items-end">
           {!pageSelectedDetails?.mcq ? (
             <CCButton
-              disable={!pageSelectedDetails?.custom_pieces && moveIndex < (pageSelectedDetails?.moves?.length ?? 0)}
+              disable={!!Object?.keys(pageSelectedDetails?.custom_pieces || {})?.length}
               buttonStyle="square"
               onClick={() => {
                 setConfirmAnswer(false);
                 if (
                   handleMarkComplete &&
                   !pageSelectedDetails?.is_solved &&
-                  pageSelectedDetails?.points === 0
+                  pageSelectedDetails?.points === 0 && 
+                  moveIndex >= (pageSelectedDetails?.moves?.length ?? 0)
                 )
                   handleMarkComplete(
                     pageSelectedDetails?.content_type,
                     pageSelectedDetails?.id
                   );
-                
-                onChange(pageSelectedDetails, "next");
+                if(pageSelectedDetails?.points === 0 &&  moveIndex < (pageSelectedDetails?.moves?.length ?? 0)){
+                  handleNextMove()
+                }else{
+                  onChange(pageSelectedDetails, "next");
+                }
               }}
               buttonType="yellow"
             >

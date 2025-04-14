@@ -7,8 +7,8 @@ import LeftComponent from "./Component/LeftComponent";
 import RightComponent from "./Component/RightComponent";
 import { useParams, useSearchParams } from "next/navigation";
 import {
-  GetUserCourseLearning,
-  RegisteredCourseDetails,
+  // GetUserCourseLearning,
+  // RegisteredCourseDetails,
 } from "@/APIHooks/GetUserCourseLearning/GetUserCourseLearning";
 import { useUpdateUserProgress } from "@/APIHooks/UpdateUserProgress/useUpdateUserProgress";
 import LearnPageLoader from "./loading";
@@ -28,6 +28,7 @@ import CCModal from "@/atom/CCModal";
 import CCText from "@/atom/CCText";
 import { useRouter } from "next/navigation";
 import Coin from "@/assets/Components/Coin.png";
+import { useGetBeginnerCourseDetails, BookDetails } from "@/APIHooks/GetBeginnerCourse/useGetBeginnerCourse";
 
 export type Page = {
   id: number;
@@ -94,7 +95,7 @@ function LearningPage() {
   const [showCompletePopup, setShowCompletePopup] = useState<boolean>(false);
   const searchParams = useSearchParams();
 
-  const chapter = searchParams.get("chapter");
+  const chapter = searchParams.get("chapter") || 1;
 
   const [showCoin, setShowCoin] = useState(false);
 
@@ -114,13 +115,15 @@ function LearningPage() {
     }, 2000); // Match animation duration
   };
 
-  const {
-    data: learningData,
-    isLoading,
-    // error,
-    // refetch,
-    // @ts-ignore
-  } = GetUserCourseLearning(learningKey);
+  // const {
+  //   data: learningData,
+  //   isLoading,
+  //   // error,
+  //   // refetch,
+  //   // @ts-ignore
+  // } = GetUserCourseLearning(learningKey);
+
+  const { data: learningData, isLoading } = useGetBeginnerCourseDetails();
 
   const {
     updateProgress,
@@ -128,7 +131,7 @@ function LearningPage() {
     success: progressUpdated,
   } = useUpdateUserProgress();
   const [learningDataFormatted, setLearningDataFormatted] =
-    useState<RegisteredCourseDetails | null>(null);
+    useState<BookDetails | null>(null);
   const [pageSelected, setPageSelected] = useState<Page | undefined>(undefined);
 
   // Initialize `pageSelected` only once, when `learningData` first loads
@@ -245,6 +248,17 @@ function LearningPage() {
         chapterId: learningDataFormatted?.chapters?.[0]?.id,
         pageId: currentPage?.id,
       });
+
+    
+      const pageCount = learningDataFormatted?.chapters?.[0]?.pages?.length || 0;
+      if(pageCount === pageId){
+        const nextChapter = learningData?.chapters?.[Number(chapter)]
+      if (nextChapter && !nextChapter.is_locked)
+        router.push(
+          `/learning/${learningKey}?chapter=${Number(chapter) + 1}`
+        );
+      else router.push("/");
+      }
   };
 
   if (isLoading) {

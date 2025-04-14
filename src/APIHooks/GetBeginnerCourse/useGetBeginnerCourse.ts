@@ -12,19 +12,40 @@ export interface Chapter {
   title: string;
   time_required: number;
   is_locked: boolean;
-  points: number;
-  user_point: number;
   pages: {
+     id: number;
     heading: string;
     text: string;
     content: string;
-    content_type: string;
+    content_type: "chess_position" | "video" | "img";
     position_order: number;
+    points: number;
+    is_solved: boolean;
+    chapterId?: string | number;
+    pageId?: string | number;
+    mcq?: {
+      question: string;
+      options: string[];
+      answer: string;
+    };
+    moves: {
+      ply: number;
+      move: string;
+      comment: string;
+      arrows: { from: string; to: string; color: string }[];
+      highlighted_squares: { square: string; color: string }[];
+    }[];
+    arrows: { from: string; to: string; color: string }[];
+    highlighted_squares: { square: string; color: string }[];
+    board_disable: boolean;
+    show_chessboard_text: boolean;
+    custom_pieces: { [key: string]: string };
   }[];
   practice_tests: {
     question: string;
     solution: string;
     position_order: number;
+    is_solved: boolean;
   }[];
 }
 

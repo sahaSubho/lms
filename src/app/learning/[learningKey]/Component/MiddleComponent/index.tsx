@@ -29,6 +29,7 @@ type SelectedContentType = {
   arrows: { from: string; to: string; color: string }[];
   highlighted_squares: { square: string; color: string }[];
   board_disable: boolean;
+  show_chessboard_text: boolean;
 };
 
 type Arrow = [string, string, string];
@@ -164,11 +165,10 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
         }, 100);
       }
     }
-    console.log("handle position change");
     if (selectedContent.moves && validateFen(chessFen).ok) {
       const game = new Chess(newFenDetails?.newFen);
       let currentMoveIndex = moveIndex;
-      if (game.turn() === "w") {
+      if (currentMoveIndex === 1 && game.turn() === "w") {
         currentMoveIndex += 1;
       }
       const correctMove = selectedContent.moves.find(
@@ -194,6 +194,9 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
             const dropzone = document.querySelector(
               `[data-square="${drop}"]`
             )?.firstChild;
+            const dragzone = document.querySelector(
+              `[data-square="${drag}"]`
+            )?.firstChild;
 
             if (dropzone) {
               //@ts-ignore
@@ -201,8 +204,14 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
               //@ts-ignore
               dropzone.style.border = "2px solid rgb(120, 113, 64)";
               console.log(`Moved Item ${drag} to Dropzone ${drop}`);
-            } else {
-              console.error("Invalid draggable or dropzone ID");
+            }
+            if (dragzone) {
+              //@ts-ignore
+              dragzone.style.background = "transparent";
+              //@ts-ignore
+              dragzone.style.backgroundColor = "transparent";
+              //@ts-ignore
+              dragzone.style.border = "none";
             }
             game.move(nextMove.move);
             updateFen(game.fen());
@@ -236,10 +245,14 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
       customPositions &&
       Object.keys(customPositions).length === 0
     ) {
-      console.log("selected content", selectedContent);
       handleMarkComplete(selectedContent?.content_type, selectedContent?.id);
     }
   }, [customPositions]);
+
+  const chess = useMemo(() => {
+    if (selectedContent?.content && validateFen(selectedContent?.content).ok)
+      return new Chess(selectedContent.content);
+  }, [selectedContent]);
 
   return (
     <div className="h-full">
@@ -253,6 +266,7 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
               <CCChessboard
                 position={chessFen}
                 skipValidation={!validateFen(chessFen).ok}
+                boardOrientation={chess?.turn() === "b" ? "black" : "white"}
                 customPositions={customPositions || {}}
                 handleNewFen={handlePositionChange}
                 arrowsToShow={chessArrows}
@@ -262,7 +276,7 @@ const MiddleComponent: React.FC<MiddleComponentProps> = ({
               />
             </div>
           )}
-          {!customPositions && (
+          {selectedContent?.show_chessboard_text && (
             <div className=" bg-brand-orange">
               <CCText className="text-center text-white">{`${
                 isWhiteChance ? "White" : "Black"
