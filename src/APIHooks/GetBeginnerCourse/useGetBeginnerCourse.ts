@@ -12,6 +12,8 @@ export interface Chapter {
   title: string;
   time_required: number;
   is_locked: boolean;
+  points: number;
+  user_point: number;
   pages: {
      id: number;
     heading: string;

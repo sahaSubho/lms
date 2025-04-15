@@ -73,14 +73,14 @@ const BeginnerLMS = () => {
                 key={chapter.id}
                 className="relative flex flex-col justify-center items-center"
                 onClick={() => {
-                  // if (!chapter.is_locked) {
+                  if (!chapter.is_locked) {
                     router.push(
                       `/learning/${course.courseKey}?chapter=${i + 1}`
                     );
-                  // }
+                  }
                 }}
               >
-                {/* {chapter.is_locked && (
+                {chapter.is_locked && (
                   <Image
                     className="absolute z-10"
                     src={lock}
@@ -88,7 +88,7 @@ const BeginnerLMS = () => {
                     width={36}
                     height={48}
                   />
-                )} */}
+                )}
                 <div
                   className="relative flex flex-col justify-center items-center"
                   style={{
@@ -98,7 +98,7 @@ const BeginnerLMS = () => {
                     backgroundSize: "100% 100%",
                     width: 200,
                     height: 220,
-                    // filter: chapter.is_locked ? "grayscale(1)" : "unset",
+                    filter: chapter.is_locked ? "grayscale(1)" : "unset",
                   }}
                 >
                   <div
