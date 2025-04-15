@@ -313,7 +313,7 @@ export default function ChapterForm({
                       name={`${pageIndex}_board_disable`}
                       checked={page.board_disable === type.value}
                       onChange={(e) =>
-                        handleChange(pageIndex, "board_disable", e.target.value === "true")
+                        handleChange(pageIndex, "board_disable", !page.board_disable)
                       }
                     />
                     <span className="text-textColor-default ml-2">
@@ -339,7 +339,7 @@ export default function ChapterForm({
                       name={`${pageIndex}_show_chessboard_text`}
                       checked={page.show_chessboard_text === type.value}
                       onChange={(e) =>
-                        handleChange(pageIndex, "show_chessboard_text", e.target.value === "true")
+                        handleChange(pageIndex, "show_chessboard_text", !page.show_chessboard_text)
                       }
                     />
                     <span className="text-textColor-default ml-2">
