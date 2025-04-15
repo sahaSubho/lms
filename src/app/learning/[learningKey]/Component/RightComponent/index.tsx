@@ -514,7 +514,7 @@ function RightComponent({
         <div className="flex-[0.5] flex flex-col justify-end items-end">
           {!pageSelectedDetails?.mcq ? (
             <CCButton
-              disable={!!Object?.keys(pageSelectedDetails?.custom_pieces || {})?.length}
+              disable={!pageSelectedDetails?.is_solved && !!Object?.keys(pageSelectedDetails?.custom_pieces || {})?.length}
               buttonStyle="square"
               onClick={() => {
                 setConfirmAnswer(false);

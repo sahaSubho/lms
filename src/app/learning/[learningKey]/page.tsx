@@ -190,6 +190,14 @@ function LearningPage() {
         return returnData;
       });
 
+      setPageSelected((prev) => {
+        if (!prev) return prev; // Ensure prev is defined
+        return {
+          ...prev,
+          is_solved: true,
+        };
+      });
+
       // refetch();
     }
   }, [progressUpdated]);
@@ -251,13 +259,14 @@ function LearningPage() {
 
     
       const pageCount = learningDataFormatted?.chapters?.[0]?.pages?.length || 0;
-      if(pageCount === pageId){
+      if(pageCount === pageId && !showCompletePopup){
         const nextChapter = learningData?.chapters?.[Number(chapter)]
-      if (nextChapter && !nextChapter.is_locked)
-        router.push(
-          `/learning/${learningKey}?chapter=${Number(chapter) + 1}`
-        );
-      else router.push("/");
+        isInitialized.current = false;
+        if (nextChapter && !nextChapter.is_locked)
+          router.push(
+            `/learning/${learningKey}?chapter=${Number(chapter) + 1}`
+          );
+        else router.push("/");
       }
   };
 
