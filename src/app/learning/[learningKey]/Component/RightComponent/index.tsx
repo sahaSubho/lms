@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import CCButton from "@/atom/CCButton";
 import CCText from "@/atom/CCText";
@@ -67,6 +67,17 @@ function RightComponent({
     null
   );
 
+  const updatedPage = useMemo(
+    () =>
+      learningData?.chapters[0]?.pages?.find(
+        (p: Page) => p.id === pageSelected?.id
+      ),
+    [learningData]
+  );
+
+  console.log("learningData", learningData, updatedPage)
+
+  // console.log("updatedPage",updatedPage, pageSelected)
   const chessFen = useChessStore((state) => state.fen);
 
   const updateFen = useChessStore((state) => state.updateFen);
@@ -118,8 +129,8 @@ function RightComponent({
       if (pageSelected.mcq && pageSelected.is_solved) {
         setConfirmAnswer(true);
         setSelectedAnswer(pageSelected.mcq.answer);
-      }else{
-        setSelectedAnswer("")
+      } else {
+        setSelectedAnswer("");
         setConfirmAnswer(false);
       }
     }
@@ -196,7 +207,7 @@ function RightComponent({
       case "chess_position":
         return "Make a move on the board and win";
       default:
-        return ''
+        return "";
     }
   };
 
@@ -218,7 +229,7 @@ function RightComponent({
     }
   };
 
-  function findKingPosition(fen:string, turn: string) {
+  function findKingPosition(fen: string, turn: string) {
     const rows = fen?.split(" ")?.[0]?.split("/");
     const king = turn === "w" ? "K" : "k";
 
@@ -270,8 +281,8 @@ function RightComponent({
         }
 
         const game = new Chess(chessFen, { skipValidation: true });
-        if(game.inCheck()){
-          const position = findKingPosition(game.fen(),game.turn())
+        if (game.inCheck()) {
+          const position = findKingPosition(game.fen(), game.turn());
           const kingSq = document.querySelector(
             `[data-square="${position}"]`
           )?.firstChild;
@@ -329,7 +340,7 @@ function RightComponent({
           //@ts-ignore
           dropzone.style.border = "2px solid rgb(120, 113, 64)";
           console.log(`Moved Item ${drag} to Dropzone ${drop}`);
-        } 
+        }
         if (dragzone) {
           //@ts-ignore
           dragzone.style.backgroundColor = "transparent";
@@ -368,11 +379,16 @@ function RightComponent({
   };
 
   useEffect(() => {
-    if (selectedAnswer && confirmAnswer && pageSelectedDetails?.mcq && !pageSelectedDetails.is_solved)
+    if (
+      selectedAnswer &&
+      confirmAnswer &&
+      pageSelectedDetails?.mcq &&
+      !pageSelectedDetails.is_solved
+    )
       triggerSoundForMcq();
   }, [selectedAnswer, confirmAnswer]);
 
-  console.log(pageSelectedDetails?.custom_pieces, retryCount)
+  console.log(pageSelectedDetails?.custom_pieces, retryCount);
 
   return (
     <div
@@ -384,7 +400,11 @@ function RightComponent({
       <div className="sticky w-full bg-white px-6 py-3 flex justify-between items-center border-y-2">
         <CCText>
           {getTextBasedOnType(
-            pageSelectedDetails?.mcq ? "mcq" : !!pageSelectedDetails?.points ? pageSelectedDetails?.content_type : ''
+            pageSelectedDetails?.mcq
+              ? "mcq"
+              : !!pageSelectedDetails?.points
+              ? pageSelectedDetails?.content_type
+              : ""
           )}
         </CCText>
         {!!pageSelectedDetails?.points && (
@@ -468,7 +488,9 @@ function RightComponent({
                     setSelectedAnswer(o);
                   }}
                 >
-                  <div className={`${selectedAnswer === o ? "text-white" : ""}`}>
+                  <div
+                    className={`${selectedAnswer === o ? "text-white" : ""}`}
+                  >
                     {String.fromCharCode(65 + i)}.
                     <Spacer horizontal />
                     {o}
@@ -500,11 +522,19 @@ function RightComponent({
             buttonStyle="square"
             buttonType="white"
             onClick={() => {
-              console.log(pageSelectedDetails?.points, pageSelectedDetails?.moves?.length, moveIndex)
-              if(pageSelectedDetails?.points === 0 && moveIndex && moveIndex >= (pageSelectedDetails?.moves?.length ?? 0)){
-                handlePrevMove()
-              }else{
-                onChange(pageSelectedDetails, "prev")
+              console.log(
+                pageSelectedDetails?.points,
+                pageSelectedDetails?.moves?.length,
+                moveIndex
+              );
+              if (
+                pageSelectedDetails?.points === 0 &&
+                moveIndex &&
+                moveIndex >= (pageSelectedDetails?.moves?.length ?? 0)
+              ) {
+                handlePrevMove();
+              } else {
+                onChange(pageSelectedDetails, "prev");
               }
             }}
           >
@@ -514,23 +544,29 @@ function RightComponent({
         <div className="flex-[0.5] flex flex-col justify-end items-end">
           {!pageSelectedDetails?.mcq ? (
             <CCButton
-              disable={!pageSelectedDetails?.is_solved && !!Object?.keys(pageSelectedDetails?.custom_pieces || {})?.length}
+              disable={
+                !updatedPage?.is_solved &&
+                !!Object?.keys(pageSelectedDetails?.custom_pieces || {})?.length
+              }
               buttonStyle="square"
               onClick={() => {
                 setConfirmAnswer(false);
                 if (
                   handleMarkComplete &&
                   !pageSelectedDetails?.is_solved &&
-                  pageSelectedDetails?.points === 0 && 
+                  pageSelectedDetails?.points === 0 &&
                   moveIndex >= (pageSelectedDetails?.moves?.length ?? 0)
                 )
                   handleMarkComplete(
                     pageSelectedDetails?.content_type,
                     pageSelectedDetails?.id
                   );
-                if(pageSelectedDetails?.points === 0 &&  moveIndex < (pageSelectedDetails?.moves?.length ?? 0)){
-                  handleNextMove()
-                }else{
+                if (
+                  pageSelectedDetails?.points === 0 &&
+                  moveIndex < (pageSelectedDetails?.moves?.length ?? 0)
+                ) {
+                  handleNextMove();
+                } else {
                   onChange(pageSelectedDetails, "next");
                 }
               }}

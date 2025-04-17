@@ -190,13 +190,13 @@ function LearningPage() {
         return returnData;
       });
 
-      setPageSelected((prev) => {
-        if (!prev) return prev; // Ensure prev is defined
-        return {
-          ...prev,
-          is_solved: true,
-        };
-      });
+      // setPageSelected((prev) => {
+      //   if (!prev) return prev; // Ensure prev is defined
+      //   return {
+      //     ...prev,
+      //     is_solved: true,
+      //   };
+      // });
 
       // refetch();
     }
