@@ -6,10 +6,9 @@ import React, { useEffect, useState, useRef } from "react";
 import LeftComponent from "./Component/LeftComponent";
 import RightComponent from "./Component/RightComponent";
 import { useParams, useSearchParams } from "next/navigation";
-import {
-  // GetUserCourseLearning,
-  // RegisteredCourseDetails,
-} from "@/APIHooks/GetUserCourseLearning/GetUserCourseLearning";
+import // GetUserCourseLearning,
+// RegisteredCourseDetails,
+"@/APIHooks/GetUserCourseLearning/GetUserCourseLearning";
 import { useUpdateUserProgress } from "@/APIHooks/UpdateUserProgress/useUpdateUserProgress";
 import LearnPageLoader from "./loading";
 import useChessStore from "@/store/chessStore";
@@ -28,7 +27,11 @@ import CCModal from "@/atom/CCModal";
 import CCText from "@/atom/CCText";
 import { useRouter } from "next/navigation";
 import Coin from "@/assets/Components/Coin.png";
-import { useGetBeginnerCourseDetails, BookDetails } from "@/APIHooks/GetBeginnerCourse/useGetBeginnerCourse";
+import {
+  useGetBeginnerCourseDetails,
+  BookDetails,
+} from "@/APIHooks/GetBeginnerCourse/useGetBeginnerCourse";
+import BeginnerLMS from "@/app/(recommended)/components/BeginnerLMS";
 
 export type Page = {
   id: number;
@@ -95,7 +98,7 @@ function LearningPage() {
   const [showCompletePopup, setShowCompletePopup] = useState<boolean>(false);
   const searchParams = useSearchParams();
 
-  const chapter = searchParams.get("chapter") || 1;
+  const chapter = searchParams.get("chapter");
 
   const [showCoin, setShowCoin] = useState(false);
 
@@ -123,7 +126,9 @@ function LearningPage() {
   //   // @ts-ignore
   // } = GetUserCourseLearning(learningKey);
 
-  const { data: learningData, isLoading } = useGetBeginnerCourseDetails();
+  const { data: learningData, isLoading } = useGetBeginnerCourseDetails(
+    Array.isArray(learningKey) ? learningKey[0] : learningKey
+  );
 
   const {
     updateProgress,
@@ -240,7 +245,10 @@ function LearningPage() {
   // }, [pageSelected]);
 
   const handlePageChange = (selectPage: Page, type?: "prev" | "next") => {
-    const pageIndex = learningDataFormatted?.chapters?.[0]?.pages.findIndex(p => p.id === selectPage.id) || 0;
+    const pageIndex =
+      learningDataFormatted?.chapters?.[0]?.pages.findIndex(
+        (p) => p.id === selectPage.id
+      ) || 0;
     const pageId =
       type === "next"
         ? pageIndex + 1
@@ -257,17 +265,14 @@ function LearningPage() {
         pageId: currentPage?.id,
       });
 
-    
-      const pageCount = learningDataFormatted?.chapters?.[0]?.pages?.length || 0;
-      if(pageCount === pageId && !showCompletePopup){
-        const nextChapter = learningData?.chapters?.[Number(chapter)]
-        isInitialized.current = false;
-        if (nextChapter && !nextChapter.is_locked)
-          router.push(
-            `/learning/${learningKey}?chapter=${Number(chapter) + 1}`
-          );
-        else router.push("/");
-      }
+    const pageCount = learningDataFormatted?.chapters?.[0]?.pages?.length || 0;
+    if (pageCount === pageId && !showCompletePopup) {
+      const nextChapter = learningData?.chapters?.[Number(chapter)];
+      isInitialized.current = false;
+      if (nextChapter && !nextChapter.is_locked)
+        router.push(`/learning/${learningKey}?chapter=${Number(chapter) + 1}`);
+      else router.push("/");
+    }
   };
 
   if (isLoading) {
@@ -278,7 +283,7 @@ function LearningPage() {
     const newFen = applyMoveAndGetNewFEN(chessFen, val);
     updateFen(newFen);
   };
-  return (
+  return chapter ? (
     <div
       className="flex justify-between items-start w-full"
       style={{ height: "91vh" }}
@@ -334,7 +339,7 @@ function LearningPage() {
             >
               <div
                 className="absolute flex justify-center items-center"
-                style={{ gap: 22 , top: -68 }}
+                style={{ gap: 22, top: -68 }}
               >
                 <StarRating percentage={100} />
                 <StarRating percentage={100} />
@@ -417,6 +422,10 @@ function LearningPage() {
         </motion.div>
       )}
     </div>
+  ) : (
+    <BeginnerLMS
+      uuid={Array.isArray(learningKey) ? learningKey[0] : learningKey}
+    />
   );
 }
 

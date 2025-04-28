@@ -25,8 +25,8 @@ import StarRating from "@/atom/StarRating";
 import CCButton from "@/atom/CCButton";
 import { LeaderBoard } from "@/components/LeaderBoard";
 
-const BeginnerLMS = () => {
-  const { data: course, isLoading } = useGetBeginnerCourseDetails();
+const BeginnerLMS = ({ uuid }:{ uuid: string}) => {
+  const { data: course, isLoading } = useGetBeginnerCourseDetails(uuid);
   const router = useRouter();
 
   const FAQContent = useMemo(

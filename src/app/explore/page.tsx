@@ -4,18 +4,19 @@ import React from "react";
 // import AddNewBook from "./Component/AddNewBook";
 import UploadBookForm from "./Component/UploadBook";
 import CCTabs from "@/atom/CCTabs";
+import ExploreCourses from "../(recommended)/components/ExploreCourses";
 
 function page() {
   const tabs = [
     {
-      name: "Upload books",
+      name: "Upload book",
       // icon: <Image alt="icon" src={TabRecommenedIcon} width={35} height={35} />,
       content: <UploadBookForm />,
     },
     {
-      name: "Bundle books",
+      name: "Edit book",
       // icon: <Image alt="icon" src={TabTimerIcon} width={35} height={35} />,
-      content: <></>,
+      content: <ExploreCourses isEdit />,
     },
     // {
     //   name: "Tab 3",

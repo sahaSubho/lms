@@ -59,8 +59,14 @@ function EachLearningCard(props: EachLearningCardProp) {
   } = props;
   const router = useRouter();
 
+  console.log("props............", props);
+
   const handleResume = () => {
-    router.push(`learning/${courseKey}?chapter=${chapterNumber}`);
+    if (chapterId) {
+      router.push(`learning/${courseKey}?chapter=${chapterNumber}`);
+    } else {
+      router.push(`learning/${courseKey}`);
+    }
   };
   const randomBookUrl = getRandomBookUrl();
 
@@ -94,12 +100,17 @@ function EachLearningCard(props: EachLearningCardProp) {
               <CCText>
                 {subTitle}&nbsp;
                 <CCText className="inline-flex justify-start items-center">
-                (&nbsp;
-                <CCCoin />
-                &nbsp;{(points || chapters?.find((c) => c?.id === chapterId)?.points || 0).toString()}{" "}pts )
+                  (&nbsp;
+                  <CCCoin />
+                  &nbsp;
+                  {(
+                    points ||
+                    chapters?.find((c) => c?.id === chapterId)?.points ||
+                    0
+                  ).toString()}{" "}
+                  pts )
+                </CCText>
               </CCText>
-              </CCText>
-              
             </div>
           </div>
           <div className="flex-[0.3] flex flex-col justify-end items-end w-3/12">

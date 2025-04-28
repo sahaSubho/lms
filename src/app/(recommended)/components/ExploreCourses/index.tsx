@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import { useGetAllCourses } from "@/APIHooks/AllCoursesApi/useGetAllCourses";
 import CourseCardShimmer from "@/components/CourseCard/loading";
 
-function ExploreCourses() {
+function ExploreCourses({ isEdit }:{isEdit?: boolean}) {
   const [openFilter, setOpenFilter] = useState(false);
   const router = useRouter();
   const { data: courses, isLoading, error } = useGetAllCourses();
@@ -58,13 +58,13 @@ function ExploreCourses() {
           </>
         )}
         {courses
-          ?.filter((i) => !i?.already_bought)
+          ?.filter((i) =>  isEdit ? true  :!i?.already_bought )
           ?.map((course) => (
             // @ts-ignore
             <CourseCard
               key={course?.courseKey}
+              isEdit={isEdit}
               {...course}
-              onClick={() => handleCourseClick(course.courseKey)}
             />
           ))}
       </div>

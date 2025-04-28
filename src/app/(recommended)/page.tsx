@@ -15,13 +15,13 @@ export default function Home() {
 
   const tabs = useMemo(
     () => [
-      {
-        name: "Recommended",
-        icon: (
-          <Image alt="icon" src={TabRecommenedIcon} width={35} height={35} />
-        ),
-        content: <RecommendedSection />,
-      },
+      // {
+      //   name: "Recommended",
+      //   icon: (
+      //     <Image alt="icon" src={TabRecommenedIcon} width={35} height={35} />
+      //   ),
+      //   content: <RecommendedSection />,
+      // },
       {
         name: "My Learnings",
         icon: <Image alt="icon" src={TabTimerIcon} width={35} height={35} />,
@@ -39,10 +39,10 @@ export default function Home() {
   return (
     <>
       <Banner />
-      <BeginnerLMS />
-      {/* <div className="-mt-6">
-        <CCTabs tabs={tabs} />
-      </div> */}
+      {/* <BeginnerLMS /> */}
+      <div className="-mt-6">
+        <CCTabs tabs={tabs} active={0} />
+      </div>
     </>
   );
 }

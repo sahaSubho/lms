@@ -26,6 +26,7 @@ type CourseCardProp = {
   rating?: number;
   badges?: badges[];
   cardClassName?: string;
+  isEdit?: boolean;
 };
 
 const Rating = ({ rating }: { rating: number }) => {
@@ -60,12 +61,13 @@ function CourseCard(props: CourseCardProp) {
     cardClassName,
     alreadyBought,
     handleBuy,
+    isEdit = false,
   } = props;
   const randomBookUrl = getRandomBookUrl();
 
   return (
     <div
-      className={`flex flex-col rounded-lg border border-grey w-72 h-[500px] my-5 ${
+      className={`flex flex-col rounded-lg border border-grey w-72 my-5 ${
         cardClassName && cardClassName
       }`}
     >
@@ -116,34 +118,47 @@ function CourseCard(props: CourseCardProp) {
               </div>
             )}
           </div>
-          {badges && badges?.length > 0 && (
+          {/* {badges && badges?.length > 0 && (
             <>
               <Spacer spacing={10} />
               <Badges badges={badges} />
             </>
-          )}
+          )} */}
         </div>
       </div>
       <div className="flex-[0.15] border-b">
         <CCDivider />
         <div className="p-5 flex justify-between items-center">
-          <div className="flex flex-col justify-center items-start">
+          {/* <div className="flex flex-col justify-center items-start">
             <CCText className="font-medium text-base">
               {formatCurrency(price)}
             </CCText>
             <CCText className="font-medium text-opacity-80 text-base text-textColor-grey line-through">
               <>MRP: {formatCurrency(mrp)}</>
             </CCText>
-          </div>
-          <CCButton
-            onClick={() => {
-              onClick?.(courseKey);
-              // @ts-ignore
-              handleBuy?.(courseKey, alreadyBought);
-            }}
-          >
-            {alreadyBought ? "Resume" : "Buy Now"}
-          </CCButton>
+          </div> */}
+          {isEdit ? (
+            <CCButton
+              onClick={() => {
+                if (courseKey) {
+                  localStorage.setItem("courseKey", courseKey);
+                }
+              }}
+            >
+              Edit
+            </CCButton>
+          ) : (
+            <CCButton
+              disable={alreadyBought}
+              onClick={() => {
+                // onClick?.(courseKey);
+                // @ts-ignore
+                // handleBuy?.(courseKey, alreadyBought);
+              }}
+            >
+              {alreadyBought ? "Added" : "Add Now"}
+            </CCButton>
+          )}
         </div>
       </div>
     </div>

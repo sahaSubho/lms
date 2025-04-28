@@ -17,8 +17,8 @@ type Chapter = {
 };
 let chapterId = 0;
 const UploadBookForm = () => {
-  const [courseKey, setCourseKey] = useState<string>('');
-  const { data: learningData, } = GetUserCourseLearning(courseKey);
+  const [courseKey, setCourseKey] = useState<string>("");
+  const { data: learningData } = GetUserCourseLearning(courseKey);
   const [bookTitle, setBookTitle] = useState("");
   const [chapters, setChapters] = useState<Chapter[]>([
     { index: 0, title: "", pages: [] },
@@ -36,13 +36,16 @@ const UploadBookForm = () => {
 
   useEffect(() => {
     if (learningData) {
-      setChapters(learningData.chapters.map((chapter, index) => ({
-        id: chapter.id,
-        index,
-        title: chapter.title,
-        pages: chapter.pages,
-      })));
-      chapterId = learningData.chapters.length - 1; 
+      setBookTitle(learningData.title);
+      setChapters(
+        learningData.chapters.map((chapter, index) => ({
+          id: chapter.id,
+          index,
+          title: chapter.title,
+          pages: chapter.pages,
+        }))
+      );
+      chapterId = learningData.chapters.length - 1;
       if (learningData.chapters.length)
         setSelectedChapter({
           index: 0,
@@ -97,6 +100,7 @@ const UploadBookForm = () => {
     }
 
     const formData = new FormData();
+    formData.append("book_title", bookTitle);
     formData.append("courseKey", courseKey || "");
     formData.append(`chapters`, JSON.stringify(chapters));
     chapters.forEach((chapter, index) => {
@@ -129,21 +133,21 @@ const UploadBookForm = () => {
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          Book Title
+        </label>
+        <input
+          type="text"
+          value={bookTitle}
+          onChange={handleBookTitleChange}
+          className="mt-1 text-gray-700 w-full border p-2 rounded-md"
+          required
+        />
+      </div>
       <CCText className="text-2xl font-bold mb-6">Upload Chapter</CCText>
       {/* <form onSubmit={handleSubmit} className="space-y-4"> */}
       {/* Book Title */}
-      {/* <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Book Title
-          </label>
-          <input
-            type="text"
-            value={bookTitle}
-            onChange={handleBookTitleChange}
-            className="mt-1 text-gray-700 w-full border p-2 rounded-md"
-            required
-          />
-        </div> */}
 
       {/* Chapters */}
       <div>
@@ -160,30 +164,34 @@ const UploadBookForm = () => {
           </CCButton>
         </div>
         <div className="flex flex-wrap items-center gap-2 mb-4">
-          {selectedChapter && chapters.map((chapter, index) => (
-            <CCButton
-              className="relative"
-              buttonStyle="square"
-              onClick={() => setSelectedChapter(chapter)}
-              key={chapter.index}
-              textColor={selectedChapter.index === chapter.index ? "white" : "black"}
-              buttonType={
-                selectedChapter.index === chapter.index ? "darkBrown" : "grey"
-              }
-            >
-              <div>
-                Chapter {String(index + 1)}
-                {index > 0 && (
-                <div className="absolute -right-2 -top-2">
-                  <TiDelete
-                    color="red"
-                    fontSize={20}
-                    onClick={() => removeChapter(index)}
-                  />
-                </div>)}
-              </div>
-            </CCButton>
-          ))}
+          {selectedChapter &&
+            chapters.map((chapter, index) => (
+              <CCButton
+                className="relative"
+                buttonStyle="square"
+                onClick={() => setSelectedChapter(chapter)}
+                key={chapter.index}
+                textColor={
+                  selectedChapter.index === chapter.index ? "white" : "black"
+                }
+                buttonType={
+                  selectedChapter.index === chapter.index ? "darkBrown" : "grey"
+                }
+              >
+                <div>
+                  Chapter {String(index + 1)}
+                  {index > 0 && (
+                    <div className="absolute -right-2 -top-2">
+                      <TiDelete
+                        color="red"
+                        fontSize={20}
+                        onClick={() => removeChapter(index)}
+                      />
+                    </div>
+                  )}
+                </div>
+              </CCButton>
+            ))}
         </div>
         <CCDivider className="my-8" />
         {selectedChapter && (

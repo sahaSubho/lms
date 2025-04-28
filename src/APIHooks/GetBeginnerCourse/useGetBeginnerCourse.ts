@@ -74,7 +74,7 @@ export interface BookDetails {
   }[];
 }
 
-export const useGetBeginnerCourseDetails = () => {
+export const useGetBeginnerCourseDetails = (book_uuid: string) => {
   const [data, setData] = useState<BookDetails | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -85,9 +85,9 @@ export const useGetBeginnerCourseDetails = () => {
       setError(null);
       try {
         const response = await chessClient.get(
-          `/lms/v1/lms-beginner-course`
+          `/lms/v1/lms-beginner-course?book_uuid=${book_uuid}`
         );
-        localStorage.setItem("courseKey", response.data.courseKey);
+        // localStorage.setItem("courseKey", response.data.courseKey);
         setData(response.data);
       } catch (err) {
         setError(
