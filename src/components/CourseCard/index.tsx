@@ -64,6 +64,7 @@ function CourseCard(props: CourseCardProp) {
     isEdit = false,
   } = props;
   const randomBookUrl = getRandomBookUrl();
+  console.log("props", props);
 
   return (
     <div
@@ -109,14 +110,14 @@ function CourseCard(props: CourseCardProp) {
                 </CCText>
               </div>
             )}
-            {timeLength && (
+            {/* {timeLength && (
               <div className="flex justify-start items-center gap-1">
                 <FiClock className="text-textColor-default" size={14} />
                 <CCText className="text-sm text-opacity-80 font-medium">
                   {`${timeLength}`}
                 </CCText>
               </div>
-            )}
+            )} */}
           </div>
           {/* {badges && badges?.length > 0 && (
             <>

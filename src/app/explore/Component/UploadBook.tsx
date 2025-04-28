@@ -133,6 +133,22 @@ const UploadBookForm = () => {
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+      <div className="flex items-center justify-end mb-3">
+        <CCButton
+          buttonType="grey"
+          onClick={() => {
+            const chapter = { index: 0, title: "", pages: [] };
+            setChapters([chapter])
+            setBookTitle("");
+            setSelectedChapter(chapter);
+            localStorage.removeItem("courseKey")
+          }
+          }
+          className="bg-brand-darkBrown text-white rounded-md"
+        >
+          Add New Book
+        </CCButton>
+      </div>
       <div>
         <label className="block text-sm font-medium text-gray-700">
           Book Title
@@ -145,13 +161,13 @@ const UploadBookForm = () => {
           required
         />
       </div>
-      <CCText className="text-2xl font-bold mb-6">Upload Chapter</CCText>
+      {/* <CCText className="text-2xl font-bold mb-6">Upload Chapter</CCText> */}
       {/* <form onSubmit={handleSubmit} className="space-y-4"> */}
       {/* Book Title */}
 
       {/* Chapters */}
       <div>
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between my-3">
           <label className="block text-sm font-medium text-gray-700">
             Chapters
           </label>

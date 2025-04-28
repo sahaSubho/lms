@@ -61,33 +61,14 @@ export default function ChapterForm({
   const [formData, setFormData] = useState<Chapter>({
     index: 0,
     title: "",
-    pages: [
-      {
-        heading: "",
-        content_type: "",
-        custom_pieces: {},
-        points: 0,
-        coins: [],
-        flag: "",
-      },
-    ],
+    pages: [],
   });
 
   const resetForm = () => {
     setFormData({
       index: 0,
       title: "",
-      pages: [
-        {
-          heading: "",
-          content_type: "",
-          custom_pieces: {},
-          points: 0,
-          pgn: new File([""], ""),
-          coins: [],
-          flag: "",
-        },
-      ],
+      pages: [],
     });
   };
 
@@ -242,9 +223,9 @@ export default function ChapterForm({
         customPiecesObject[coin] = "wC";
       });
       // if (value.length === 2) {
-        customPiecesObject[value] = "wF";
-        newPages[index].custom_pieces = customPiecesObject;
-        newPages[index].flag = value;
+      customPiecesObject[value] = "wF";
+      newPages[index].custom_pieces = customPiecesObject;
+      newPages[index].flag = value;
       // } else {
       //   newPages[index].flag = value;
       // }
@@ -301,8 +282,8 @@ export default function ChapterForm({
                   Disable Move:
                 </label>
                 {[
-                  { id:1, label: "Enable", value: true },
-                  { id:2, label: "Disable", value: false },
+                  { id: 1, label: "Enable", value: true },
+                  { id: 2, label: "Disable", value: false },
                 ].map((type) => (
                   <label
                     key={type.id}
@@ -313,7 +294,11 @@ export default function ChapterForm({
                       name={`${pageIndex}_board_disable`}
                       checked={page.board_disable === type.value}
                       onChange={(e) =>
-                        handleChange(pageIndex, "board_disable", !page.board_disable)
+                        handleChange(
+                          pageIndex,
+                          "board_disable",
+                          !page.board_disable
+                        )
                       }
                     />
                     <span className="text-textColor-default ml-2">
@@ -327,8 +312,8 @@ export default function ChapterForm({
                   Show Chessboard Text:
                 </label>
                 {[
-                  { id:1, label: "Enable", value: true },
-                  { id:2, label: "Disable", value: false },
+                  { id: 1, label: "Enable", value: true },
+                  { id: 2, label: "Disable", value: false },
                 ].map((type) => (
                   <label
                     key={type.id}
@@ -339,7 +324,11 @@ export default function ChapterForm({
                       name={`${pageIndex}_show_chessboard_text`}
                       checked={page.show_chessboard_text === type.value}
                       onChange={(e) =>
-                        handleChange(pageIndex, "show_chessboard_text", !page.show_chessboard_text)
+                        handleChange(
+                          pageIndex,
+                          "show_chessboard_text",
+                          !page.show_chessboard_text
+                        )
                       }
                     />
                     <span className="text-textColor-default ml-2">
