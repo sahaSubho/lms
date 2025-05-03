@@ -59,13 +59,11 @@ function EachLearningCard(props: EachLearningCardProp) {
   } = props;
   const router = useRouter();
 
-  console.log("props............", props);
-
   const handleResume = () => {
     if (chapterId) {
-      router.push(`learning/${courseKey}?chapter=${chapterNumber}`);
+      router.push(`/learning/${courseKey}?chapter=${chapterNumber}`);
     } else {
-      router.push(`learning/${courseKey}`);
+      router.push(`/learning/${courseKey}`);
     }
   };
   const randomBookUrl = getRandomBookUrl();
