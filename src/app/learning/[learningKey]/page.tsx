@@ -169,7 +169,7 @@ function LearningPage() {
         chapterId: learningDataFormatted?.chapters?.[0]?.id,
         pageId: currentPage?.id,
       });
-      isInitialized.current = true; // Mark as initialized to prevent further resetting
+      // isInitialized.current = true; // Mark as initialized to prevent further resetting
     }
   }, [learningDataFormatted]);
 
@@ -271,7 +271,7 @@ function LearningPage() {
       isInitialized.current = false;
       if (nextChapter && !nextChapter.is_locked)
         router.push(`/learning/${learningKey}?chapter=${Number(chapter) + 1}`);
-      else router.push("/");
+      else router.push(`/learning/${learningKey}`);
     }
   };
 
@@ -397,7 +397,7 @@ function LearningPage() {
                   router.push(
                     `/learning/${learningKey}?chapter=${Number(chapter) + 1}`
                   );
-                else router.push("/");
+                else router.push(`/learning/${learningKey}`);
               }}
               className="w-3/4 relative m-auto -top-5 border-4 border-white-500"
             >
