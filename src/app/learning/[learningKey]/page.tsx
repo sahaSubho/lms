@@ -269,7 +269,7 @@ function LearningPage() {
     if (pageCount === pageId && !showCompletePopup) {
       const nextChapter = learningData?.chapters?.[Number(chapter)];
       isInitialized.current = false;
-      if (nextChapter && !nextChapter.is_locked)
+      if (nextChapter && nextChapter.is_locked)
         router.push(`/learning/${learningKey}?chapter=${Number(chapter) + 1}`);
       else router.push(`/learning/${learningKey}`);
     }
