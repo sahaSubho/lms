@@ -154,7 +154,7 @@ function CourseCard(props: CourseCardProp) {
               onClick={() => {
                 // onClick?.(courseKey);
                 // @ts-ignore
-                // handleBuy?.(courseKey, alreadyBought);
+                handleBuy?.(courseKey);
               }}
             >
               {alreadyBought ? "Added" : "Add Now"}

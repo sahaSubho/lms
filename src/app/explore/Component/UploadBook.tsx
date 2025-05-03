@@ -142,6 +142,7 @@ const UploadBookForm = () => {
             setBookTitle("");
             setSelectedChapter(chapter);
             localStorage.removeItem("courseKey")
+            setCourseKey("")
           }
           }
           className="bg-brand-darkBrown text-white rounded-md"

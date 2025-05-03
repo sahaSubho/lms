@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CourseCard from "@/components/CourseCard";
 import CCText from "@/atom/CCText";
 import CCInput from "@/atom/CCInput";
@@ -12,11 +12,27 @@ import Spacer from "@/atom/Spacer";
 import { useRouter } from "next/navigation";
 import { useGetAllCourses } from "@/APIHooks/AllCoursesApi/useGetAllCourses";
 import CourseCardShimmer from "@/components/CourseCard/loading";
+import { useRegisterCourse } from "@/APIHooks/RegisterCourseApi/useRegisterCourseApi";
 
-function ExploreCourses({ isEdit }:{isEdit?: boolean}) {
+function ExploreCourses({ isEdit }: { isEdit?: boolean }) {
   const [openFilter, setOpenFilter] = useState(false);
   const router = useRouter();
   const { data: courses, isLoading, error } = useGetAllCourses();
+
+  const {
+    registerCourse,
+    // isLoading: registerCourseLoading,
+    // error: registerCourseError,
+    success: registerCourseSuccess,
+  } = useRegisterCourse();
+
+  useEffect(() => {
+    if (registerCourseSuccess) {
+      alert("Book bought successfully");
+      router.push(`/`);
+      // window.location.reload();
+    }
+  }, [registerCourseSuccess]);
 
   const handleFilterOpen = () => {
     setOpenFilter((prev) => !prev);
@@ -58,14 +74,10 @@ function ExploreCourses({ isEdit }:{isEdit?: boolean}) {
           </>
         )}
         {courses
-          ?.filter((i) =>  isEdit ? true  :!i?.already_bought )
+          ?.filter((i) => (isEdit ? true : !i?.already_bought))
           ?.map((course) => (
             // @ts-ignore
-            <CourseCard
-              key={course?.courseKey}
-              isEdit={isEdit}
-              {...course}
-            />
+            <CourseCard key={course?.courseKey} isEdit={isEdit} {...course} handleBuy={registerCourse} />
           ))}
       </div>
 
