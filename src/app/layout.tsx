@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 // import localFont from "next/font/local";
 import "./globals.css";
-import Header from "@/components/Header";
-import LeftMenu from "@/components/LeftMenu";
 import { DM_Sans } from "@next/font/google";
+import ClientLayoutWrapper from "@/components/ClientLayoutWrapper";
 
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
@@ -39,12 +38,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${dmSans.className} `}>
-        <Header />
-        <LeftMenu />
-        <div style={{ marginLeft: 68 }}>
-          {/* <Spacer spacing={72} horizontal /> */}
-          {children}
-        </div>
+        <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
       </body>
     </html>
   );
