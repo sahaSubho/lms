@@ -21,6 +21,10 @@ import book from "@/assets/Components/Book.png";
 import rectangle from "@/assets/Components/Rectangle.png";
 import rectangle_2 from "@/assets/Components/Rectangle_2.png";
 import star_border from "@/assets/Components/Union.png";
+import PlayGame from "@/assets/BeginnerCards/PlayGame.svg";
+import PracticeChess from "@/assets/BeginnerCards/PracticeChess.svg";
+import ReviewGame from "@/assets/BeginnerCards/ReviewGame.svg";
+import BackgroundPattern from "@/assets/BeginnerCards/Background.svg";
 import CCButton from "@/atom/CCButton";
 import StarRating from "@/atom/StarRating";
 import CCModal from "@/atom/CCModal";
@@ -32,6 +36,8 @@ import {
   BookDetails,
 } from "@/APIHooks/GetBeginnerCourse/useGetBeginnerCourse";
 import BeginnerLMS from "@/app/(recommended)/components/BeginnerLMS";
+import Banner from "@/components/Banner";
+import Cookies from "js-cookie";
 
 export type Page = {
   id: number;
@@ -90,6 +96,7 @@ export type Page = {
 function LearningPage() {
   const { learningKey } = useParams();
   const router = useRouter();
+  const isBeginnerPlayer = Cookies.get("isBeginnerPlayer");
   const chessFen = useChessStore((state) => state.fen);
   const updateFen = useChessStore((state) => state.updateFen);
 
@@ -283,149 +290,215 @@ function LearningPage() {
     const newFen = applyMoveAndGetNewFEN(chessFen, val);
     updateFen(newFen);
   };
-  return chapter ? (
-    <div
-      className="flex justify-between items-start w-full"
-      style={{ height: "91vh" }}
-    >
-      <div className="flex-[0.73] h-full flex flex-col">
-        <LeftComponent
-          learningData={learningDataFormatted}
-          onChange={handlePageChange}
-          handleMarkComplete={handleMarkComplete}
-          pageSelected={pageSelected}
-        />
-      </div>
-      <div
-        className="flex-[0.27] h-full border-l-2 flex-shrink-0 overflow-auto"
-        style={{ width: "30%" }}
-      >
-        {/* <CCText>{chessFen}</CCText> */}
-        <RightComponent
-          learningData={learningDataFormatted}
-          pageSelected={pageSelected}
-          onChange={handlePageChange}
-          handleMove={handleMove}
-          handleMarkComplete={handleMarkComplete}
-        />
-      </div>
-      {showCompletePopup && (
-        <CCModal isOpen={showCompletePopup} type="center" onClose={() => {}}>
-          <div className="flex flex-col items-center">
-            <Image
-              src={star_border}
-              alt="Star"
-              // layout="responsive"
-              width={100}
-              height={100}
-              style={{
-                maxWidth: "102%",
-                width: "102%",
-                height: "122%",
-                top: -75,
-              }}
-              className="w-full absolute -left-1 -z-10"
-            />
-            <div
-              className="relative flex flex-col justify-center items-center"
-              style={{
-                backgroundImage: `url(${bg.src})`,
-                top: 5,
-                left: 0,
-                width: "109%",
-                backgroundSize: "100%",
-                height: 120,
-              }}
-            >
+  return (
+    <>
+      {isBeginnerPlayer === "true" && (
+        <>
+          <Banner learningDataFormatted={learningDataFormatted} />
+          <div className="w-full flex flex-wrap gap-4 justify-between mt-10 mb-5 px-10">
+            {[
+              {
+                title: "Play against Gukesh",
+                img: PlayGame,
+                bgImg: BackgroundPattern,
+                url: "https://learn.circlechess.com/playChess?selectedGame=3",
+              },
+              {
+                title: "Find a square on the board",
+                img: PracticeChess,
+                bgImg: BackgroundPattern,
+                url: "https://learn.circlechess.com/VisualisationTrainer",
+              },
+              {
+                title: "Review your game",
+                img: ReviewGame,
+                bgImg: BackgroundPattern,
+                url: "https://learn.circlechess.com/games",
+              },
+            ].map((card, index) => (
               <div
-                className="absolute flex justify-center items-center"
-                style={{ gap: 22, top: -68 }}
-              >
-                <StarRating percentage={100} />
-                <StarRating percentage={100} />
-                <StarRating percentage={100} />
-              </div>
-              <Image
-                src={rectangle}
-                alt="rect 1"
-                // layout="responsive"
-                width={60}
-                height={400}
-                style={{
-                  position: "absolute",
-                  left: 80,
-                  height: 124,
-                }}
-              />
-              <Image
-                src={rectangle_2}
-                alt="rect 2"
-                // layout="responsive"
-                width={40}
-                height={400}
-                style={{
-                  position: "absolute",
-                  left: 133,
-                  height: 124,
-                }}
-              />
-              <CCText style={{ color: "#fff", fontSize: 28 }}>Completed</CCText>
-            </div>
-            <Image
-              src={book}
-              alt="Book"
-              // layout="responsive"
-              width={400}
-              height={400}
-              // style={{ height: "100%" }}
-              className="mt-5 m-auto"
-            />
-            <CCButton
-              onClick={async () => {
-                const chapterCount = learningData?.chapters?.length || 0;
-                setShowCompletePopup(false);
-                const res: {
-                  url?: string | undefined;
-                  error?: unknown | undefined;
-                } = await getS3Link("sounds/new_chapter.wav");
-                if (res.url) {
-                  const newChapterSound = new Audio(res.url);
-                  newChapterSound.play();
-                }
-                isInitialized.current = false;
-                if (chapterCount >= Number(chapter) + 1)
-                  router.push(
-                    `/learning/${learningKey}?chapter=${Number(chapter) + 1}`
+                key={index}
+                onClick={() => {
+                  window.parent.postMessage(
+                    { type: "REDIRECT", url: card.url },
+                    "*"
                   );
-                else router.push(`/learning/${learningKey}`);
-              }}
-              className="w-3/4 relative m-auto -top-5 border-4 border-white-500"
-            >
-              Continue
-            </CCButton>
+                }}
+                className="relative overflow-hidden rounded-xl bg-[#FACF47] px-4 py-4 w-full sm:w-[31%] shadow cursor-pointer transition-transform hover:scale-105"
+              >
+                <div
+                  className="absolute inset-y-0 left-0 w-24 bg-no-repeat bg-left bg-contain opacity-1"
+                  style={{ backgroundImage: `url(${card.bgImg.src})` }}
+                />
+                <div className="relative flex items-center gap-4">
+                  <div className="flex items-center justify-center -mb-[10px]">
+                    <Image
+                      src={card.img}
+                      alt={card.title}
+                      width={65}
+                      height={65}
+                    />
+                  </div>
+                  <p className="text-black font-medium">{card.title}</p>
+                </div>
+              </div>
+            ))}
           </div>
-        </CCModal>
+        </>
       )}
-      {showCoin && (
-        <motion.div
-          className="absolute w-60 h-60 flex items-center justify-center z-[9999]"
-          initial={{ x: "40vw", y: "70vh", opacity: 1, scale: 1 }} // Starting position
-          animate={{
-            x: ["40vw", "78vw"], // Moves smoothly right
-            y: ["80vh", "-150px"], // Peaks at 20vh, lands at -40px
-            opacity: [1, 1, 0.4], // Fades out at the end
-            scale: [1, 0.5, 0.1], // Shrinks as it moves
-          }}
-          transition={{ duration: 2, ease: "easeInOut" }}
+      {chapter ? (
+        <div
+          className="flex justify-between items-start w-full"
+          style={{ height: "91vh" }}
         >
-          <Image src={Coin} width={150} height={150} alt="Coin" />
-        </motion.div>
+          <div className="flex-[0.73] h-full flex flex-col">
+            <LeftComponent
+              learningData={learningDataFormatted}
+              onChange={handlePageChange}
+              handleMarkComplete={handleMarkComplete}
+              pageSelected={pageSelected}
+            />
+          </div>
+          <div
+            className="flex-[0.27] h-full border-l-2 flex-shrink-0 overflow-auto"
+            style={{ width: "30%" }}
+          >
+            {/* <CCText>{chessFen}</CCText> */}
+            <RightComponent
+              learningData={learningDataFormatted}
+              pageSelected={pageSelected}
+              onChange={handlePageChange}
+              handleMove={handleMove}
+              handleMarkComplete={handleMarkComplete}
+            />
+          </div>
+          {showCompletePopup && (
+            <CCModal
+              isOpen={showCompletePopup}
+              type="center"
+              onClose={() => {}}
+            >
+              <div className="flex flex-col items-center">
+                <Image
+                  src={star_border}
+                  alt="Star"
+                  // layout="responsive"
+                  width={100}
+                  height={100}
+                  style={{
+                    maxWidth: "102%",
+                    width: "102%",
+                    height: "122%",
+                    top: -75,
+                  }}
+                  className="w-full absolute -left-1 -z-10"
+                />
+                <div
+                  className="relative flex flex-col justify-center items-center"
+                  style={{
+                    backgroundImage: `url(${bg.src})`,
+                    top: 5,
+                    left: 0,
+                    width: "109%",
+                    backgroundSize: "100%",
+                    height: 120,
+                  }}
+                >
+                  <div
+                    className="absolute flex justify-center items-center"
+                    style={{ gap: 22, top: -68 }}
+                  >
+                    <StarRating percentage={100} />
+                    <StarRating percentage={100} />
+                    <StarRating percentage={100} />
+                  </div>
+                  <Image
+                    src={rectangle}
+                    alt="rect 1"
+                    // layout="responsive"
+                    width={60}
+                    height={400}
+                    style={{
+                      position: "absolute",
+                      left: 80,
+                      height: 124,
+                    }}
+                  />
+                  <Image
+                    src={rectangle_2}
+                    alt="rect 2"
+                    // layout="responsive"
+                    width={40}
+                    height={400}
+                    style={{
+                      position: "absolute",
+                      left: 133,
+                      height: 124,
+                    }}
+                  />
+                  <CCText style={{ color: "#fff", fontSize: 28 }}>
+                    Completed
+                  </CCText>
+                </div>
+                <Image
+                  src={book}
+                  alt="Book"
+                  // layout="responsive"
+                  width={400}
+                  height={400}
+                  // style={{ height: "100%" }}
+                  className="mt-5 m-auto"
+                />
+                <CCButton
+                  onClick={async () => {
+                    const chapterCount = learningData?.chapters?.length || 0;
+                    setShowCompletePopup(false);
+                    const res: {
+                      url?: string | undefined;
+                      error?: unknown | undefined;
+                    } = await getS3Link("sounds/new_chapter.wav");
+                    if (res.url) {
+                      const newChapterSound = new Audio(res.url);
+                      newChapterSound.play();
+                    }
+                    isInitialized.current = false;
+                    if (chapterCount >= Number(chapter) + 1)
+                      router.push(
+                        `/learning/${learningKey}?chapter=${
+                          Number(chapter) + 1
+                        }`
+                      );
+                    else router.push(`/learning/${learningKey}`);
+                  }}
+                  className="w-3/4 relative m-auto -top-5 border-4 border-white-500"
+                >
+                  Continue
+                </CCButton>
+              </div>
+            </CCModal>
+          )}
+          {showCoin && (
+            <motion.div
+              className="absolute w-60 h-60 flex items-center justify-center z-[9999]"
+              initial={{ x: "40vw", y: "70vh", opacity: 1, scale: 1 }} // Starting position
+              animate={{
+                x: ["40vw", "78vw"], // Moves smoothly right
+                y: ["80vh", "-150px"], // Peaks at 20vh, lands at -40px
+                opacity: [1, 1, 0.4], // Fades out at the end
+                scale: [1, 0.5, 0.1], // Shrinks as it moves
+              }}
+              transition={{ duration: 2, ease: "easeInOut" }}
+            >
+              <Image src={Coin} width={150} height={150} alt="Coin" />
+            </motion.div>
+          )}
+        </div>
+      ) : (
+        <BeginnerLMS
+          uuid={Array.isArray(learningKey) ? learningKey[0] : learningKey}
+        />
       )}
-    </div>
-  ) : (
-    <BeginnerLMS
-      uuid={Array.isArray(learningKey) ? learningKey[0] : learningKey}
-    />
+    </>
   );
 }
 
