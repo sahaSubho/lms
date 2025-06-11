@@ -25,7 +25,7 @@ const cards = [
   },
 ];
 
-const Banner = ({ learningDataFormatted }: { learningDataFormatted: any }) => {
+const Banner = ({ learningDataFormatted }: { learningDataFormatted?: any }) => {
   const router = useRouter();
   const isBeginnerPlayer = Cookies.get("isBeginnerPlayer");
 
