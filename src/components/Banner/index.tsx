@@ -30,10 +30,10 @@ const Banner = ({ learningDataFormatted }: { learningDataFormatted?: any }) => {
   const isBeginnerPlayer = Cookies.get("isBeginnerPlayer");
 
   const getLastUnlockedChapter = () => {
-    const unlockedChapters = learningDataFormatted.chapters.filter(
+    const unlockedChapters = learningDataFormatted?.chapters.filter(
       (chapter: { is_locked: boolean }) => chapter.is_locked === false
     );
-    if (unlockedChapters.length > 0) {
+    if (unlockedChapters?.length > 0) {
       const lastChapter = unlockedChapters[unlockedChapters.length - 1];
       const chapterIndex = learningDataFormatted.chapters.findIndex(
         (chapter: { id: string }) => chapter.id === lastChapter.id

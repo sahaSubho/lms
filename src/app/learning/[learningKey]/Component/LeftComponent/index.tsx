@@ -14,6 +14,9 @@ import { FaCircleCheck } from "react-icons/fa6";
 import { getRandomBookUrl } from "@/utils/commonUtils";
 import Image from "next/image";
 import { Page } from "../../page";
+import { useRouter } from "next/navigation";
+import { IoChevronBackOutline } from "react-icons/io5";
+
 type EachPageTileProp = {
   id: number;
   is_solved: boolean;
@@ -210,18 +213,33 @@ type CourseContentComponentProps = {
     index: number | string
   ) => void;
   selectedContent: { chapterId: number; pageId: number };
+  learningId: string;
 };
 
 const CourseContentComponent = ({
   learningDataFormated,
   handleSelectContent,
   selectedContent,
+  learningId,
 }: CourseContentComponentProps) => {
+  const router = useRouter();
+
+  const handleGoBack = () => {
+    router.push(`/learning/${learningId}`);
+  };
+
   return (
     <div className="flex-col items-start justify-start">
-      <CCText className="bg-white uppercase font-medium text-sm px-2 py-2 text-start">
-        Course Content
-      </CCText>
+      <div className="flex items-center bg-white uppercase font-medium text-sm px-2 py-2 text-start gap-2 cursor-pointer">
+        <IoChevronBackOutline
+          size={18}
+          className="text-textColor-default"
+          onClick={handleGoBack}
+        />
+        <CCText className="bg-white uppercase font-medium text-sm px-2 py-2 text-start">
+          Course Content
+        </CCText>
+      </div>
       <CCDivider />
       <div className="flex-col items-start justify-start ">
         {/* @ts-ignore  */}
@@ -249,6 +267,7 @@ type LeftComponentProps = {
     pageId: number,
     move?: string
   ) => void;
+  learningId: string;
 };
 
 const LeftComponent = ({
@@ -256,6 +275,7 @@ const LeftComponent = ({
   onChange,
   pageSelected,
   handleMarkComplete,
+  learningId,
 }: LeftComponentProps) => {
   // const [selectedContent, setSelectedContent] = useState<{
   //   chapterId: number;
@@ -371,6 +391,7 @@ const LeftComponent = ({
             handleSelectContent={handleSelectContent}
             // @ts-ignore
             selectedContent={pageSelected}
+            learningId={learningId}
           />
         </div>
         <div className="flex-[0.7] h-full border-l-2">
