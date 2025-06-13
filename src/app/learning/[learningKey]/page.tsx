@@ -294,6 +294,7 @@ function LearningPage() {
           onChange={handlePageChange}
           handleMarkComplete={handleMarkComplete}
           pageSelected={pageSelected}
+          learningId={learningKey as string}
         />
       </div>
       <div

@@ -5,15 +5,26 @@ export function middleware(request: NextRequest) {
   const url = request.nextUrl;
   const pathname = url.pathname;
   const token = url.searchParams.get("token");
-  const noHeader = url.searchParams.get('noheader')
-
+  const noHeader = url.searchParams.get("noheader");
+  const isBeginnerParam = url.searchParams.get("isbeginner");
 
   if (token) {
     const newUrl = new URL(url.origin + url.pathname); // Remove query params
     const res = NextResponse.redirect(newUrl);
     res.cookies.set("auth_token", token, { httpOnly: false, secure: false });
-    if(Number(noHeader) > 0){
+    if (Number(noHeader) > 0) {
       res.cookies.set("no_header", "1", { httpOnly: false, secure: false });
+    }
+    if (isBeginnerParam === "true") {
+      res.cookies.set("isBeginnerPlayer", "true", {
+        httpOnly: false,
+        secure: false,
+      });
+    } else {
+      res.cookies.set("isBeginnerPlayer", "false", {
+        httpOnly: false,
+        secure: false,
+      });
     }
     return res;
   }
