@@ -75,8 +75,6 @@ function RightComponent({
     [learningData]
   );
 
-  console.log("learningData", learningData, updatedPage)
-
   // console.log("updatedPage",updatedPage, pageSelected)
   const chessFen = useChessStore((state) => state.fen);
 
@@ -392,12 +390,13 @@ function RightComponent({
 
   return (
     <div
-      className="flex flex-col justify-between items-center "
+      className="flex flex-col justify-between items-center relative"
       style={{
         width: "-webkit-fill-available",
+        height: "100vh",
       }}
     >
-      <div className="sticky w-full bg-white px-6 py-3 flex justify-between items-center border-y-2">
+      <div className="sticky top-0 w-full bg-white px-6 py-3 flex justify-between items-center border-y-2 z-20">
         <CCText>
           {getTextBasedOnType(
             pageSelectedDetails?.mcq
@@ -426,10 +425,8 @@ function RightComponent({
         />
       </div>
       <div
-        className="p-6"
-        style={{
-          width: "-webkit-fill-available",
-        }}
+        className="flex-1 overflow-auto p-6 w-full"
+        style={{ paddingBottom: "120px" }}
       >
         <div
           className="flex justify-between items-center"
@@ -512,11 +509,11 @@ function RightComponent({
         </div>
       </div>
 
-      <Spacer spacing={22} />
+      {/* <Spacer spacing={22} />
       <CCDivider />
-      <Spacer spacing={32} />
+      <Spacer spacing={32} /> */}
 
-      <div className="flex w-full px-5 justify-between items-center">
+      <div className="fixed bottom-4 right-0 flex justify-between items-center z-30 px-3 py-3">
         <div className="flex-[0.5] flex flex-col justify-start items-start">
           <CCButton
             buttonStyle="square"
@@ -541,7 +538,7 @@ function RightComponent({
             Previous
           </CCButton>
         </div>
-        <div className="flex-[0.5] flex flex-col justify-end items-end">
+        <div className="flex-[0.5] flex flex-col justify-end items-end ml-2">
           {!pageSelectedDetails?.mcq ? (
             <CCButton
               disable={

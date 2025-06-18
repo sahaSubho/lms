@@ -241,7 +241,13 @@ const CourseContentComponent = ({
         </CCText>
       </div>
       <CCDivider />
-      <div className="flex-col items-start justify-start ">
+      <div
+        className="flex-col items-start justify-start overflow-auto h-[calc(100vh-250px)]"
+        style={{
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
+      >
         {/* @ts-ignore  */}
         {learningDataFormated?.chapters?.map((chapter, i) => (
           <EachChapterTile
