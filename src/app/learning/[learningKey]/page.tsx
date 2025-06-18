@@ -299,7 +299,11 @@ function LearningPage() {
       </div>
       <div
         className="flex-[0.27] h-full border-l-2 flex-shrink-0 overflow-auto"
-        style={{ width: "30%" }}
+        style={{
+          width: "30%",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
       >
         {/* <CCText>{chessFen}</CCText> */}
         <RightComponent
