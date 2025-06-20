@@ -72,7 +72,7 @@ const BeginnerLMS = ({ uuid }: { uuid: string }) => {
       {isBeginnerPlayer === "true" && (
         <>
           <Banner learningDataFormatted={course} />
-          <div className="w-full flex flex-wrap gap-4 justify-between mt-10 mb-5 px-10">
+          {/* <div className="w-full flex flex-wrap gap-4 justify-between mt-10 mb-5 px-10">
             {[
               {
                 title: "Play against Gukesh",
@@ -120,7 +120,7 @@ const BeginnerLMS = ({ uuid }: { uuid: string }) => {
                 </div>
               </div>
             ))}
-          </div>
+          </div> */}
         </>
       )}
       <div className="px-10 my-6 flex flex-row gap-14">
