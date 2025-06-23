@@ -61,7 +61,7 @@ function EachLearningCard(props: EachLearningCardProp) {
 
   const handleResume = () => {
     if (chapterId) {
-      router.push(`/learning/${courseKey}?chapter=${chapterNumber}`);
+      router.push(`/learning/${courseKey}?chapter=${chapterId}`);
     } else {
       router.push(`/learning/${courseKey}`);
     }
@@ -89,7 +89,7 @@ function EachLearningCard(props: EachLearningCardProp) {
             <CCText className="text-base font-medium">{title}</CCText>
             <Spacer spacing={6} />
             <div className="flex justify-start items-center">
-              <div className="flex justify-center rounded-full w-28 bg-brand-background px-[10px] py-[4px]">
+              <div className="flex justify-center rounded-full w-32 bg-brand-background px-[10px] py-[4px]">
                 <CCText className="text-[12px] font-bold">
                   Chapter {`${chapterNumber}`}
                 </CCText>

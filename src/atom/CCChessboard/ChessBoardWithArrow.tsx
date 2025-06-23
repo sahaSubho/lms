@@ -36,7 +36,6 @@ const ChessboardWithArrow: ForwardRefRenderFunction<
   { boardOrientation = "white", arrowsToShow = [],higlightedSquares = [], disabled, ...rest },
   ref
 ) => {
-  console.log("higlightedSquares", higlightedSquares)
   const [arrows, setArrows] = useState<Arrow[]>([]);
   const [markedSquares, setMarkedSquares] = useState<
     { square: string; color: string }[]

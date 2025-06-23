@@ -127,7 +127,8 @@ function LearningPage() {
   // } = GetUserCourseLearning(learningKey);
 
   const { data: learningData, isLoading } = useGetBeginnerCourseDetails(
-    Array.isArray(learningKey) ? learningKey[0] : learningKey
+    Array.isArray(learningKey) ? learningKey[0] : learningKey,
+    chapter ? Number(chapter) : undefined
   );
 
   const {
@@ -147,10 +148,10 @@ function LearningPage() {
     if (!isInitialized.current && learningData) {
       let filterLearningData = learningData;
       if (Number(chapter) > 0) {
-        const chapters = filterLearningData.chapters[Number(chapter) - 1];
+        const chapters = filterLearningData.chapters.filter(c => c.id === Number(chapter));
         filterLearningData = {
           ...filterLearningData,
-          chapters: [chapters],
+          chapters: chapters,
         };
       }
       setLearningDataFormatted(filterLearningData);
@@ -194,6 +195,10 @@ function LearningPage() {
         returnData = { ...prev, chapters: returnData };
         return returnData;
       });
+
+      if(pageSelected){
+        handlePageChange(pageSelected, 'next')
+      }
 
       // setPageSelected((prev) => {
       //   if (!prev) return prev; // Ensure prev is defined
@@ -267,10 +272,10 @@ function LearningPage() {
 
     const pageCount = learningDataFormatted?.chapters?.[0]?.pages?.length || 0;
     if (pageCount === pageId && !showCompletePopup) {
-      const nextChapter = learningData?.chapters?.[Number(chapter)];
       isInitialized.current = false;
-      if (nextChapter && nextChapter.is_locked)
-        router.push(`/learning/${learningKey}?chapter=${Number(chapter) + 1}`);
+      if (learningData?.nextChapterId) {
+        router.push(`/learning/${learningKey}?chapter=${Number(learningData?.nextChapterId)}`);
+      }
       else router.push(`/learning/${learningKey}`);
     }
   };
@@ -285,6 +290,7 @@ function LearningPage() {
   };
   return chapter ? (
     <div
+      key={chapter}
       className="flex justify-between items-start w-full"
       style={{ height: "91vh" }}
     >
@@ -387,7 +393,6 @@ function LearningPage() {
             />
             <CCButton
               onClick={async () => {
-                const chapterCount = learningData?.chapters?.length || 0;
                 setShowCompletePopup(false);
                 const res: {
                   url?: string | undefined;
@@ -398,10 +403,11 @@ function LearningPage() {
                   newChapterSound.play();
                 }
                 isInitialized.current = false;
-                if (chapterCount >= Number(chapter) + 1)
+                if (learningData?.nextChapterId){
                   router.push(
-                    `/learning/${learningKey}?chapter=${Number(chapter) + 1}`
+                    `/learning/${learningKey}?chapter=${learningData?.nextChapterId}`
                   );
+                }
                 else router.push(`/learning/${learningKey}`);
               }}
               className="w-3/4 relative m-auto -top-5 border-4 border-white-500"

@@ -519,11 +519,6 @@ function RightComponent({
             buttonStyle="square"
             buttonType="white"
             onClick={() => {
-              console.log(
-                pageSelectedDetails?.points,
-                pageSelectedDetails?.moves?.length,
-                moveIndex
-              );
               if (
                 pageSelectedDetails?.points === 0 &&
                 moveIndex &&
@@ -558,7 +553,7 @@ function RightComponent({
                     pageSelectedDetails?.content_type,
                     pageSelectedDetails?.id
                   );
-                if (
+                else if (
                   pageSelectedDetails?.points === 0 &&
                   moveIndex < (pageSelectedDetails?.moves?.length ?? 0)
                 ) {
@@ -588,12 +583,14 @@ function RightComponent({
                     handleMarkComplete &&
                     pageSelectedDetails
                   ) {
-                    if (!pageSelectedDetails.is_solved)
+                    if (!pageSelectedDetails.is_solved){
                       handleMarkComplete(
                         pageSelectedDetails?.content_type,
                         pageSelectedDetails?.id
                       );
-                    onChange(pageSelectedDetails, "next");
+                    }else{
+                      onChange(pageSelectedDetails, "next");
+                    }
                   } else {
                     setConfirmAnswer(true);
                   }

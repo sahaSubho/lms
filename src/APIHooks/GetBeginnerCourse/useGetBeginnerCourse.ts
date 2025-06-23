@@ -65,6 +65,7 @@ export interface BookDetails {
   rating: number;
   badges: string[];
   points: number;
+  nextChapterId: number | null;
   chapters: Chapter[];
   user_score: number;
   leaderboard: {
@@ -74,7 +75,7 @@ export interface BookDetails {
   }[];
 }
 
-export const useGetBeginnerCourseDetails = (book_uuid: string) => {
+export const useGetBeginnerCourseDetails = (book_uuid: string,  chapter_id?: number) => {
   const [data, setData] = useState<BookDetails | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -83,10 +84,13 @@ export const useGetBeginnerCourseDetails = (book_uuid: string) => {
     const fetchCourseDetails = async () => {
       setIsLoading(true);
       setError(null);
+      let url = `/lms/v1/lms-beginner-course?book_uuid=${book_uuid}`
+      if (chapter_id) {
+        url += `&chapter_id=${chapter_id}`
+      }
+      console.log("Fetching course details from URL:", url);
       try {
-        const response = await chessClient.get(
-          `/lms/v1/lms-beginner-course?book_uuid=${book_uuid}`
-        );
+        const response = await chessClient.get(url);
         // localStorage.setItem("courseKey", response.data.courseKey);
         setData(response.data);
       } catch (err) {
@@ -98,7 +102,7 @@ export const useGetBeginnerCourseDetails = (book_uuid: string) => {
       }
     };
     fetchCourseDetails();
-  }, []);
+  }, [book_uuid, chapter_id]);
 
   return { data, isLoading, error };
 };
