@@ -137,7 +137,7 @@ const BeginnerLMS = ({ uuid }: { uuid: string }) => {
                   onClick={() => {
                     if (!chapter.is_locked) {
                       router.push(
-                        `/learning/${course.courseKey}?chapter=${i + 1}`
+                        `/learning/${course.courseKey}?chapter=${chapter.id}`
                       );
                     }
                   }}
